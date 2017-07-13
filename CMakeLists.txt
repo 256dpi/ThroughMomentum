@@ -9,15 +9,11 @@ set(CMAKE_C_STANDARD 99)
 
 # add your source files
 set(SOURCE_FILES
-        src/audio.c
-        src/audio.h
         src/dist.c
         src/dist.h
         src/led.c
         src/led.h
         src/main.c
-        src/mic.c
-        src/mic.h
         src/smooth.c
         src/smooth.h)
 

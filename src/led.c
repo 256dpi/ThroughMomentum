@@ -3,21 +3,14 @@
 void led_init() {
   // prepare timer config
   ledc_timer_config_t ledc_timer = {
-      .bit_num = LEDC_TIMER_10_BIT,
-      .freq_hz = 5000,
-      .speed_mode = LEDC_HIGH_SPEED_MODE,
-      .timer_num = LEDC_TIMER_0
-  };
+      .bit_num = LEDC_TIMER_10_BIT, .freq_hz = 5000, .speed_mode = LEDC_HIGH_SPEED_MODE, .timer_num = LEDC_TIMER_0};
 
   // configure timer
   ESP_ERROR_CHECK(ledc_timer_config(&ledc_timer));
 
   // prepare channel config
   ledc_channel_config_t ledc_channel = {
-      .duty = 0,
-      .intr_type = LEDC_INTR_FADE_END,
-      .speed_mode = LEDC_HIGH_SPEED_MODE,
-      .timer_sel = LEDC_TIMER_0,
+      .duty = 0, .intr_type = LEDC_INTR_FADE_END, .speed_mode = LEDC_HIGH_SPEED_MODE, .timer_sel = LEDC_TIMER_0,
   };
 
   // configure red channel
