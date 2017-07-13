@@ -1,4 +1,12 @@
 {
-  "broker": "mqtts://key:secret@broker.shiftr.io",
-  "devices": {}
+  "broker": "mqtts://96c342e4:1724bcdee75a6f0b@broker.shiftr.io",
+  "devices": {
+    "vas17": {
+      "base_topic": "vas17",
+      "name": "vas17",
+      "type": "vas17",
+      "firmware_version": "0.0.1",
+      "parameters": {}
+    }
+  }
 }
