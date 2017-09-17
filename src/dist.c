@@ -1,32 +1,16 @@
 #include <driver/gpio.h>
 #include <naos/utils.h>
-#include <sys/time.h>
-#include <rom/ets_sys.h>
 
-uint32_t dist_last_poll = 0;
-uint32_t dist_echo_start = 0;
+uint64_t dist_last_poll = 0;
+uint64_t dist_echo_start = 0;
 double dist_value = 0;
-
-uint64_t micros() {
-  struct timeval tv;
-  gettimeofday(&tv, NULL);
-  return 1000000 * tv.tv_sec + tv.tv_usec;
-}
-
-//void delay(uint32_t ms) {
-//  vTaskDelay(ms / portTICK_PERIOD_MS);
-//}
-
-void naos_sleep(uint32_t us) {
-  ets_delay_us(us);
-}
 
 void dist_handler(void *_) {
   // handle start and stop of pulse and calculate distance
   if(gpio_get_level(GPIO_NUM_27) == 1) {
-    dist_echo_start = micros();
+    dist_echo_start = naos_micros();
   } else if(dist_echo_start > 0) {
-    dist_value = (micros() - dist_echo_start) / 2 / 29.1;
+    dist_value = (naos_micros() - dist_echo_start) / 2 / 29.1;
     dist_echo_start = 0;
   }
 }
@@ -62,7 +46,7 @@ void dist_init() {
 
 double dist_get() {
   // generate trigger pulse if poll window has arrived
-  if (dist_last_poll + 50 < naos_millis()) {
+  if (dist_last_poll + 60 < naos_millis()) {
     dist_last_poll = naos_millis();
 
     gpio_set_level(GPIO_NUM_14, 1);

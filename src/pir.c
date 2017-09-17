@@ -3,7 +3,7 @@
 
 #include "pir.h"
 
-uint32_t pir_last_trigger = 0;
+uint64_t pir_last_trigger = 0;
 
 static void pir_handler(void *_) {
   // save trigger time
