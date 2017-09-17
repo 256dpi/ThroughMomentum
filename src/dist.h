@@ -1,3 +1,3 @@
 void dist_init();
 
-double dist_read();
+double dist_get();

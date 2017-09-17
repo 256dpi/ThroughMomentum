@@ -14,6 +14,8 @@ set(SOURCE_FILES
         src/led.c
         src/led.h
         src/main.c
+        src/pir.c
+        src/pir.h
         src/smooth.c
         src/smooth.h)
 

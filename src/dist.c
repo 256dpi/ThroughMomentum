@@ -1,23 +1,74 @@
-#include <driver/adc.h>
+#include <driver/gpio.h>
 #include <naos/utils.h>
+#include <sys/time.h>
+#include <rom/ets_sys.h>
 
-#include "smooth.h"
+uint32_t dist_last_poll = 0;
+uint32_t dist_echo_start = 0;
+double dist_value = 0;
 
-#define DIST_SAMPLE_INTERVAL 16
+uint64_t micros() {
+  struct timeval tv;
+  gettimeofday(&tv, NULL);
+  return 1000000 * tv.tv_sec + tv.tv_usec;
+}
 
-static smooth_t dist_smooth = smooth_default;
+//void delay(uint32_t ms) {
+//  vTaskDelay(ms / portTICK_PERIOD_MS);
+//}
 
-static double dist_last_value = 0;
-static uint32_t dist_last_sample = 0;
+void naos_sleep(uint32_t us) {
+  ets_delay_us(us);
+}
 
-void dist_init() { adc1_config_channel_atten(ADC1_CHANNEL_0, ADC_ATTEN_11db); }
+void dist_handler(void *_) {
+  // handle start and stop of pulse and calculate distance
+  if(gpio_get_level(GPIO_NUM_27) == 1) {
+    dist_echo_start = micros();
+  } else if(dist_echo_start > 0) {
+    dist_value = (micros() - dist_echo_start) / 2 / 29.1;
+    dist_echo_start = 0;
+  }
+}
 
-double dist_read() {
-  if (dist_last_sample + DIST_SAMPLE_INTERVAL < naos_millis()) {
-    dist_last_sample = naos_millis();
+void dist_init() {
+  // prepare trigger config
+  gpio_config_t trig = {
+      .pin_bit_mask  = GPIO_SEL_14,
+      .mode = GPIO_MODE_OUTPUT,
+      .pull_up_en = GPIO_PULLUP_DISABLE,
+      .pull_down_en = GPIO_PULLDOWN_ENABLE,
+      .intr_type = GPIO_INTR_DISABLE
+  };
 
-    dist_last_value = smooth_update(&dist_smooth, adc1_get_voltage(ADC1_CHANNEL_0));
+  // configure trigger
+  ESP_ERROR_CHECK(gpio_config(&trig));
+
+  // prepare echo config
+  gpio_config_t echo = {
+      .pin_bit_mask  = GPIO_SEL_27,
+      .mode = GPIO_MODE_INPUT,
+      .pull_up_en = GPIO_PULLUP_DISABLE,
+      .pull_down_en = GPIO_PULLDOWN_ENABLE,
+      .intr_type = GPIO_INTR_ANYEDGE
+  };
+
+  // configure echo
+  ESP_ERROR_CHECK(gpio_config(&echo));
+
+  // attach handler
+  ESP_ERROR_CHECK(gpio_isr_handler_add(GPIO_NUM_27, dist_handler, NULL));
+}
+
+double dist_get() {
+  // generate trigger pulse if poll window has arrived
+  if (dist_last_poll + 50 < naos_millis()) {
+    dist_last_poll = naos_millis();
+
+    gpio_set_level(GPIO_NUM_14, 1);
+    naos_sleep(10);
+    gpio_set_level(GPIO_NUM_14, 0);
   }
 
-  return dist_last_value;
+  return dist_value;
 }

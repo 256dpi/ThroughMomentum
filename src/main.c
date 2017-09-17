@@ -1,68 +1,57 @@
 #include <driver/adc.h>
 #include <naos.h>
-#include <stdlib.h>
-#include <string.h>
+#include <driver/gpio.h>
 
+#include "pir.h"
 #include "dist.h"
-#include "led.h"
 
+bool last_pir = false;
 double last_dist = 0;
 
-int red = 0;
-int green = 0;
-int blue = 0;
+void online() {}
 
-void online() {
-  naos_subscribe("red", 0, NAOS_GLOBAL);
-  naos_subscribe("blue", 0, NAOS_GLOBAL);
-  naos_subscribe("green", 0, NAOS_GLOBAL);
-}
-
-void message(const char *topic, const char *payload, unsigned int len, naos_scope_t scope) {
-  if (strcmp(topic, "red") == 0) {
-    red = atoi(payload);
-    led_set(red, green, blue);
-  } else if (strcmp(topic, "green") == 0) {
-    green = atoi(payload);
-    led_set(red, green, blue);
-  } else if (strcmp(topic, "blue") == 0) {
-    blue = atoi(payload);
-    led_set(red, green, blue);
-  }
-}
+void message(const char *topic, uint8_t *payload, size_t len, naos_scope_t scope) {}
 
 void loop() {
-  // check for distance change
-  double d = dist_read();
-  //    naos_log("dist: %f", d);
-  if (d > last_dist + 10 || d < last_dist - 10) {
-    // send update
-    char buf[64];
-    sprintf(buf, "%f", d);
-    naos_publish_str("dist", buf, 0, false, NAOS_GLOBAL);
+  // check pir state
+  if(last_pir != pir_get()) {
+    last_pir = pir_get();
 
-    // save value
-    last_dist = d;
+    if(last_pir) {
+      naos_log("hello");
+    } else {
+      naos_log("bye");
+    }
+  }
+
+  // check dist
+  if(last_dist != dist_get()) {
+    last_dist = dist_get();
+
+    naos_log("dist: %lf", last_dist);
   }
 }
 
 static naos_config_t config = {.device_type = "vas17",
-                               .firmware_version = "0.0.1",
+                               .firmware_version = "0.1.0",
                                .loop_callback = loop,
                                .loop_interval = 0,
                                .online_callback = online,
                                .message_callback = message};
 
 void app_main() {
-  // set general adc width
+  // set global adc width
   adc1_config_width(ADC_WIDTH_10Bit);
+
+  // install global interrupt service
+  gpio_install_isr_service(0);
 
   // initialize naos
   naos_init(&config);
 
+  // initialize motion sensor
+  pir_init();
+
   // initialize distance sensor
   dist_init();
-
-  // initialize led
-  led_init();
 }
