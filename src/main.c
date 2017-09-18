@@ -1,5 +1,6 @@
 #include <driver/adc.h>
 #include <driver/gpio.h>
+#include <math.h>
 #include <naos.h>
 #include <stdlib.h>
 #include <string.h>
@@ -10,9 +11,9 @@
 #include "pir.h"
 
 bool last_pir = false;
-double last_dist = 0;
+int last_dist = 0;
 
-void online() {
+static void online() {
   // disable motor
   mot_set(0);
 
@@ -21,12 +22,12 @@ void online() {
   naos_subscribe("brightness", 0, NAOS_LOCAL);
 }
 
-void offline() {
+static void offline() {
   // disable motor
   mot_set(0);
 }
 
-void message(const char *topic, uint8_t *payload, size_t len, naos_scope_t scope) {
+static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_t scope) {
   // set motor speed
   if (strcmp(topic, "speed") == 0 && scope == NAOS_LOCAL) {
     int speed = (int)strtol((const char *)payload, NULL, 10);
@@ -40,24 +41,32 @@ void message(const char *topic, uint8_t *payload, size_t len, naos_scope_t scope
   }
 }
 
-void loop() {
-  //  // check pir state
-  //  if (last_pir != pir_get()) {
-  //    last_pir = pir_get();
-  //
-  //    if (last_pir) {
-  //      naos_log("hello");
-  //    } else {
-  //      naos_log("bye");
-  //    }
-  //  }
-  //
-  //  // check dist
-  //  if (last_dist != dist_get()) {
-  //    last_dist = dist_get();
-  //
-  //    naos_log("dist: %lf", last_dist);
-  //  }
+static void loop() {
+  // read pir sensor
+  bool new_pir = pir_get();
+
+  // check pir state
+  if (last_pir != new_pir) {
+    last_pir = new_pir;
+
+    // publish update
+    if (new_pir) {
+      naos_publish_int("motion", 1, 0, false, NAOS_LOCAL);
+    } else {
+      naos_publish_int("motion", 0, 0, false, NAOS_LOCAL);
+    }
+  }
+
+  // read distance
+  int new_dist = (int)round(dist_get());
+
+  // check dist
+  if (last_dist != new_dist) {
+    last_dist = new_dist;
+
+    // publish update
+    naos_publish_int("distance", new_dist, 0, false, NAOS_LOCAL);
+  }
 }
 
 static naos_config_t config = {.device_type = "vas17",
