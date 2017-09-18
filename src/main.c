@@ -1,23 +1,26 @@
 #include <driver/adc.h>
-#include <naos.h>
 #include <driver/gpio.h>
+#include <naos.h>
 
-#include "pir.h"
 #include "dist.h"
+#include "mot.h"
+#include "pir.h"
 
 bool last_pir = false;
 double last_dist = 0;
 
-void online() {}
+void online() { mot_set(0); }
+
+void offline() { mot_set(0); }
 
 void message(const char *topic, uint8_t *payload, size_t len, naos_scope_t scope) {}
 
 void loop() {
   // check pir state
-  if(last_pir != pir_get()) {
+  if (last_pir != pir_get()) {
     last_pir = pir_get();
 
-    if(last_pir) {
+    if (last_pir) {
       naos_log("hello");
     } else {
       naos_log("bye");
@@ -25,7 +28,7 @@ void loop() {
   }
 
   // check dist
-  if(last_dist != dist_get()) {
+  if (last_dist != dist_get()) {
     last_dist = dist_get();
 
     naos_log("dist: %lf", last_dist);
@@ -37,6 +40,7 @@ static naos_config_t config = {.device_type = "vas17",
                                .loop_callback = loop,
                                .loop_interval = 0,
                                .online_callback = online,
+                               .offline_callback = offline,
                                .message_callback = message};
 
 void app_main() {
@@ -46,12 +50,16 @@ void app_main() {
   // install global interrupt service
   gpio_install_isr_service(0);
 
-  // initialize naos
-  naos_init(&config);
-
   // initialize motion sensor
   pir_init();
 
   // initialize distance sensor
   dist_init();
+
+  // initialize motor
+  mot_init();
+  mot_set(0);
+
+  // initialize naos
+  naos_init(&config);
 }
