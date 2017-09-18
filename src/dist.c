@@ -5,7 +5,7 @@ uint64_t dist_last_poll = 0;
 uint64_t dist_echo_start = 0;
 double dist_value = 0;
 
-void dist_handler(void *_) {
+static void dist_handler(void *_) {
   // handle start and stop of pulse and calculate distance
   if (gpio_get_level(GPIO_NUM_27) == 1) {
     dist_echo_start = naos_micros();
@@ -41,14 +41,16 @@ void dist_init() {
 }
 
 double dist_get() {
-  // generate trigger pulse if poll window has arrived
+  // check trigger window
   if (dist_last_poll + 60 < naos_millis()) {
     dist_last_poll = naos_millis();
 
+    // generate trigger pulse
     gpio_set_level(GPIO_NUM_14, 1);
     naos_sleep(10);
     gpio_set_level(GPIO_NUM_14, 0);
   }
 
+  // return saved value
   return dist_value;
 }
