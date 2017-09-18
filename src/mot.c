@@ -13,7 +13,7 @@ void mot_init() {
 
   // prepare ledc timer config
   ledc_timer_config_t t = {
-      .bit_num = LEDC_TIMER_10_BIT, .freq_hz = 5000, .speed_mode = LEDC_HIGH_SPEED_MODE, .timer_num = LEDC_TIMER_0};
+      .bit_num = LEDC_TIMER_10_BIT, .freq_hz = 10000, .speed_mode = LEDC_HIGH_SPEED_MODE, .timer_num = LEDC_TIMER_0};
 
   // configure ledc timer
   ESP_ERROR_CHECK(ledc_timer_config(&t));
@@ -43,6 +43,11 @@ void mot_set(int speed) {
     // go forwards
     ESP_ERROR_CHECK(gpio_set_level(GPIO_NUM_32, 1));
     ESP_ERROR_CHECK(gpio_set_level(GPIO_NUM_33, 0));
+  }
+
+  // handle minus speeds
+  if (speed < 0) {
+    speed = speed * -1;
   }
 
   // set duty

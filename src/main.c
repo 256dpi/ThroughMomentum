@@ -1,6 +1,8 @@
 #include <driver/adc.h>
 #include <driver/gpio.h>
 #include <naos.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "dist.h"
 #include "mot.h"
@@ -9,30 +11,46 @@
 bool last_pir = false;
 double last_dist = 0;
 
-void online() { mot_set(0); }
+void online() {
+  // disable motor
+  mot_set(0);
 
-void offline() { mot_set(0); }
+  // subscribe local topics
+  naos_subscribe("speed", 0, NAOS_LOCAL);
+}
 
-void message(const char *topic, uint8_t *payload, size_t len, naos_scope_t scope) {}
+void offline() {
+  // disable motor
+  mot_set(0);
+}
+
+void message(const char *topic, uint8_t *payload, size_t len, naos_scope_t scope) {
+  // set motor speed
+  if (strcmp(topic, "speed") == 0 && scope == NAOS_LOCAL) {
+    int speed = (int)strtol((const char *)payload, NULL, 10);
+    naos_log("speed: %d", speed);
+    mot_set(speed);
+  }
+}
 
 void loop() {
-  // check pir state
-  if (last_pir != pir_get()) {
-    last_pir = pir_get();
-
-    if (last_pir) {
-      naos_log("hello");
-    } else {
-      naos_log("bye");
-    }
-  }
-
-  // check dist
-  if (last_dist != dist_get()) {
-    last_dist = dist_get();
-
-    naos_log("dist: %lf", last_dist);
-  }
+  //  // check pir state
+  //  if (last_pir != pir_get()) {
+  //    last_pir = pir_get();
+  //
+  //    if (last_pir) {
+  //      naos_log("hello");
+  //    } else {
+  //      naos_log("bye");
+  //    }
+  //  }
+  //
+  //  // check dist
+  //  if (last_dist != dist_get()) {
+  //    last_dist = dist_get();
+  //
+  //    naos_log("dist: %lf", last_dist);
+  //  }
 }
 
 static naos_config_t config = {.device_type = "vas17",

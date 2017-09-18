@@ -5,7 +5,7 @@
       "base_topic": "vas17",
       "name": "vas17",
       "type": "vas17",
-      "firmware_version": "0.0.1",
+      "firmware_version": "0.1.0",
       "parameters": {}
     }
   }
