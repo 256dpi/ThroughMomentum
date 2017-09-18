@@ -10,8 +10,11 @@
 #include "mot.h"
 #include "pir.h"
 
-bool last_pir = false;
-int last_dist = 0;
+bool automate = false;
+
+bool motion = false;
+int distance = 0;
+bool go_up = true;
 
 static void online() {
   // disable motor
@@ -20,6 +23,7 @@ static void online() {
   // subscribe local topics
   naos_subscribe("speed", 0, NAOS_LOCAL);
   naos_subscribe("brightness", 0, NAOS_LOCAL);
+  naos_subscribe("automate", 0, NAOS_LOCAL);
 }
 
 static void offline() {
@@ -39,40 +43,91 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
     int brightness = (int)strtol((const char *)payload, NULL, 10);
     led_set(brightness, brightness, brightness, brightness);
   }
+
+  // set automate
+  if(strcmp(topic, "automate") == 0) {
+    automate = strcmp((const char *)payload, "on") == 0;
+  }
 }
 
 static void loop() {
   // read pir sensor
-  bool new_pir = pir_get();
+  bool new_motion = pir_get();
+
+  // check if pir changed
+  bool motion_changed = motion != new_motion;
 
   // check pir state
-  if (last_pir != new_pir) {
-    last_pir = new_pir;
+  if (motion_changed) {
+    motion = new_motion;
 
     // publish update
-    if (new_pir) {
-      naos_publish_int("motion", 1, 0, false, NAOS_LOCAL);
-    } else {
-      naos_publish_int("motion", 0, 0, false, NAOS_LOCAL);
-    }
+    naos_publish_int("motion", motion ? 1 : 0, 0, false, NAOS_LOCAL);
   }
 
   // read distance
-  int new_dist = (int)round(dist_get());
+  int new_distance = (int)round(dist_get());
+
+  // check if distance changed
+  bool distance_changed = new_distance > distance + 5 || new_distance < distance - 5;
+
+  // get dist change (+=up, -=down)
+  int distance_change = (distance - new_distance) * -1;
 
   // check dist
-  if (last_dist != new_dist) {
-    last_dist = new_dist;
+  if (distance_changed) {
+    distance = new_distance;
 
     // publish update
-    naos_publish_int("distance", new_dist, 0, false, NAOS_LOCAL);
+    naos_publish_int("distance", distance, 0, false, NAOS_LOCAL);
   }
+
+  // exit if no automated or distance and motion have not changed
+  if(!automate || (!distance_changed && !motion_changed)) {
+    return;
+  }
+
+  // log distance change
+  naos_log("distance change: %d", distance_change);
+
+  // set target distance
+  int target = 100;
+  if(motion) {
+    target = 25;
+  }
+
+  // log target
+  naos_log("target: %d", target);
+
+  // check if target has been reached
+  if (distance < target + 10 && distance > target - 10) {
+    naos_log("target reached!");
+    mot_set(0);
+    return;
+  }
+
+  // if light goes down but needs to go up
+  if (distance_change < 0 && target > distance) {
+    // drive up
+    naos_log("drive up!");
+    go_up = !go_up;
+  }
+
+  // if light goes up but needs to go down
+  if (distance_change > 0 && target < distance) {
+    // drive down
+    naos_log("drive down!");
+    go_up = !go_up;
+  }
+
+  // set motor speed
+  mot_set(go_up ? 750 : -750);
 }
 
 static naos_config_t config = {.device_type = "vas17",
                                .firmware_version = "0.1.0",
                                .loop_callback = loop,
-                               .loop_interval = 0,
+                               .loop_interval = 100,
                                .online_callback = online,
                                .offline_callback = offline,
                                .message_callback = message};
