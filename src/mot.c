@@ -1,5 +1,7 @@
 #include <driver/ledc.h>
 
+// TODO: Use fade module to drive ramps?
+
 void mot_init() {
   // prepare in a+b config
   gpio_config_t inAB = {.pin_bit_mask = GPIO_SEL_32 | GPIO_SEL_33,
