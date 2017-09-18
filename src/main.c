@@ -5,6 +5,7 @@
 #include <string.h>
 
 #include "dist.h"
+#include "led.h"
 #include "mot.h"
 #include "pir.h"
 
@@ -17,6 +18,7 @@ void online() {
 
   // subscribe local topics
   naos_subscribe("speed", 0, NAOS_LOCAL);
+  naos_subscribe("brightness", 0, NAOS_LOCAL);
 }
 
 void offline() {
@@ -28,8 +30,13 @@ void message(const char *topic, uint8_t *payload, size_t len, naos_scope_t scope
   // set motor speed
   if (strcmp(topic, "speed") == 0 && scope == NAOS_LOCAL) {
     int speed = (int)strtol((const char *)payload, NULL, 10);
-    naos_log("speed: %d", speed);
     mot_set(speed);
+  }
+
+  // set led brightness
+  if (strcmp(topic, "brightness") == 0 && scope == NAOS_LOCAL) {
+    int brightness = (int)strtol((const char *)payload, NULL, 10);
+    led_set(brightness, brightness, brightness, brightness);
   }
 }
 
@@ -77,6 +84,10 @@ void app_main() {
   // initialize motor
   mot_init();
   mot_set(0);
+
+  // initialize led
+  led_init();
+  led_set(0, 0, 0, 0);
 
   // initialize naos
   naos_init(&config);
