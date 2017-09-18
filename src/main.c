@@ -63,10 +63,10 @@ static naos_config_t config = {.device_type = "vas17",
 
 void app_main() {
   // set global adc width
-  adc1_config_width(ADC_WIDTH_10Bit);
+  ESP_ERROR_CHECK(adc1_config_width(ADC_WIDTH_10Bit));
 
   // install global interrupt service
-  gpio_install_isr_service(0);
+  ESP_ERROR_CHECK(gpio_install_isr_service(0));
 
   // initialize motion sensor
   pir_init();
