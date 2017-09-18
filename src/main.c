@@ -6,14 +6,15 @@
 #include <string.h>
 
 #include "dist.h"
+#include "enc.h"
 #include "led.h"
 #include "mot.h"
 #include "pir.h"
 
 bool automate = false;
-
 bool motion = false;
 int distance = 0;
+double position = 0;
 bool go_up = true;
 
 static void online() {
@@ -45,7 +46,7 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
   }
 
   // set automate
-  if(strcmp(topic, "automate") == 0) {
+  if (strcmp(topic, "automate") == 0) {
     automate = strcmp((const char *)payload, "on") == 0;
   }
 }
@@ -82,8 +83,21 @@ static void loop() {
     naos_publish_int("distance", distance, 0, false, NAOS_LOCAL);
   }
 
+  // get encoder
+  int rotation_change = enc_get();
+
+  // apply rotation
+  if (rotation_change != 0) {
+    position += (double)rotation_change / 20.0;
+
+    // publish update
+    char position_str[10];
+    snprintf(position_str, 10, "%.3f", position);
+    naos_publish_str("position", position_str, 0, false, NAOS_LOCAL);
+  }
+
   // exit if no automated or distance and motion have not changed
-  if(!automate || (!distance_changed && !motion_changed)) {
+  if (!automate || (!distance_changed && !motion_changed)) {
     return;
   }
 
@@ -92,7 +106,7 @@ static void loop() {
 
   // set target distance
   int target = 100;
-  if(motion) {
+  if (motion) {
     target = 25;
   }
 
@@ -152,6 +166,9 @@ void app_main() {
   // initialize led
   led_init();
   led_set(0, 0, 0, 0);
+
+  // initialize encoder
+  enc_init();
 
   // initialize naos
   naos_init(&config);
