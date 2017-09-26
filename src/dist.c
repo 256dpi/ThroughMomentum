@@ -1,16 +1,29 @@
 #include <driver/gpio.h>
+#include <esp_system.h>
+#include <limits.h>
 #include <naos/utils.h>
+#include <sdkconfig.h>
 
-uint64_t dist_last_poll = 0;
-uint64_t dist_echo_start = 0;
+uint32_t dist_last_poll = 0;
+uint32_t dist_echo_start = 0;
 double dist_value = 0;
+
+#define clockCyclesPerMicrosecond() (CONFIG_ESP32_DEFAULT_CPU_FREQ_MHZ)
+#define clockCyclesToMicroseconds(a) ((a) / clockCyclesPerMicrosecond())
 
 static void dist_handler(void *_) {
   // handle start and stop of pulse and calculate distance
   if (gpio_get_level(GPIO_NUM_27) == 1) {
-    dist_echo_start = naos_micros();
+    dist_echo_start = xthal_get_ccount();
   } else if (dist_echo_start > 0) {
-    dist_value = (naos_micros() - dist_echo_start) / 2 / 29.1;
+    uint32_t echo_now = xthal_get_ccount();
+    if (echo_now < dist_echo_start) {
+      echo_now += UINT_MAX;
+    }
+
+    uint32_t echo_time = clockCyclesToMicroseconds(echo_now - dist_echo_start);
+
+    dist_value = (double)echo_time / 2.0 / 29.1;
     dist_echo_start = 0;
   }
 }
@@ -47,7 +60,7 @@ double dist_get() {
 
     // generate trigger pulse
     gpio_set_level(GPIO_NUM_14, 1);
-    naos_sleep(10);
+    ets_delay_us(10);
     gpio_set_level(GPIO_NUM_14, 0);
   }
 
