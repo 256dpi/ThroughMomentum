@@ -1,7 +1,5 @@
 #include <driver/ledc.h>
 
-// TODO: Use fade module to drive ramps?
-
 void mot_init() {
   // prepare in a+b config
   gpio_config_t inAB = {.pin_bit_mask = GPIO_SEL_32 | GPIO_SEL_33,
@@ -22,7 +20,7 @@ void mot_init() {
 
   // prepare ledc channel config
   ledc_channel_config_t c = {.duty = 0,
-                             .intr_type = LEDC_INTR_DISABLE,
+                             .intr_type = LEDC_INTR_FADE_END,
                              .speed_mode = LEDC_HIGH_SPEED_MODE,
                              .timer_sel = LEDC_TIMER_0,
                              .gpio_num = GPIO_NUM_25,
@@ -53,7 +51,9 @@ void mot_set(int speed) {
   }
 
   // set duty
-  ESP_ERROR_CHECK(ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, (uint32_t)speed));
+  ESP_ERROR_CHECK(ledc_set_fade_with_time(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, (uint32_t)speed, 1000));
+  ESP_ERROR_CHECK(ledc_fade_start(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, LEDC_FADE_NO_WAIT));
+  //  ESP_ERROR_CHECK(ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, (uint32_t)speed));
 
   // update channel
   ESP_ERROR_CHECK(ledc_update_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0));
