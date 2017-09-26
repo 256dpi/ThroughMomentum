@@ -1,5 +1,6 @@
 #include <driver/adc.h>
 #include <driver/gpio.h>
+#include <driver/ledc.h>
 #include <math.h>
 #include <naos.h>
 #include <stdlib.h>
@@ -152,6 +153,9 @@ void app_main() {
 
   // install global interrupt service
   ESP_ERROR_CHECK(gpio_install_isr_service(0));
+
+  // initialize global ledc fade service
+  ESP_ERROR_CHECK(ledc_fade_func_install(0));
 
   // initialize motion sensor
   pir_init();
