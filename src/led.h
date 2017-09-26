@@ -1,3 +1,6 @@
+#ifndef LED_H
+#define LED_H
+
 /**
  * Initialize LED module.
  */
@@ -12,3 +15,5 @@ void led_init();
  * @param w - Value from 0 to 1023.
  */
 void led_set(int r, int g, int b, int w);
+
+#endif  // LED_H
