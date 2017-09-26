@@ -70,9 +70,6 @@ void enc_init() {
   if (gpio_get_level(GPIO_NUM_23)) enc_rotation_state |= 1;
   if (gpio_get_level(GPIO_NUM_22)) enc_rotation_state |= 2;
 
-  // install gpio interrupt service
-  gpio_install_isr_service(0);
-
   // add interrupt handlers
   gpio_isr_handler_add(GPIO_NUM_23, enc_rotation_handler, NULL);
   gpio_isr_handler_add(GPIO_NUM_22, enc_rotation_handler, NULL);
