@@ -2,7 +2,7 @@
 
 #include "pulse_out.h"
 
-void pulse_out_init(pulse_out_t * po) {
+void pulse_out_init(pulse_out_t* po) {
   // prepare config
   rmt_config_t config;
   config.rmt_mode = RMT_MODE_TX;
@@ -25,7 +25,7 @@ void pulse_out_init(pulse_out_t * po) {
   ESP_ERROR_CHECK(rmt_driver_install(po->ch, 0, 0));
 }
 
-void pulse_out_generate(pulse_out_t * po) {
+void pulse_out_generate(pulse_out_t* po) {
   // write high
   po->item.level0 = 1;
   po->item.duration0 = 100;  // 10us
@@ -33,5 +33,5 @@ void pulse_out_generate(pulse_out_t * po) {
   po->item.duration1 = 100;  // 10us
 
   // show the pixels
-  ESP_ERROR_CHECK(rmt_write_items(po->ch, &po->item, 1, true)); // TODO: Do not wait!
+  ESP_ERROR_CHECK(rmt_write_items(po->ch, &po->item, 1, true));  // TODO: Do not wait!
 }
