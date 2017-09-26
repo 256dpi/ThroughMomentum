@@ -1,30 +1,29 @@
 #include <driver/gpio.h>
+#include <driver/timer.h>
 #include <esp_system.h>
-#include <limits.h>
 #include <naos/utils.h>
-#include <sdkconfig.h>
 
-uint32_t dist_last_poll = 0;
-uint32_t dist_echo_start = 0;
-double dist_value = 0;
+#define DIST_TIMER_GROUP TIMER_GROUP_0
+#define DIST_TIMER_NUM TIMER_0
 
-#define clockCyclesPerMicrosecond() (CONFIG_ESP32_DEFAULT_CPU_FREQ_MHZ)
-#define clockCyclesToMicroseconds(a) ((a) / clockCyclesPerMicrosecond())
+static double dist_value = 0;
 
 static void dist_handler(void *_) {
-  // handle start and stop of pulse and calculate distance
+  // check current pin state
   if (gpio_get_level(GPIO_NUM_27) == 1) {
-    dist_echo_start = xthal_get_ccount();
-  } else if (dist_echo_start > 0) {
-    uint32_t echo_now = xthal_get_ccount();
-    if (echo_now < dist_echo_start) {
-      echo_now += UINT_MAX;
+    // reset and start timer
+    ESP_ERROR_CHECK(timer_set_counter_value(DIST_TIMER_GROUP, DIST_TIMER_NUM, 0));
+    timer_start(DIST_TIMER_GROUP, DIST_TIMER_NUM);
+  } else {
+    // get timer value and pause timer
+    uint64_t value = 0;
+    ESP_ERROR_CHECK(timer_get_counter_value(DIST_TIMER_GROUP, DIST_TIMER_NUM, &value));
+    ESP_ERROR_CHECK(timer_pause(DIST_TIMER_GROUP, DIST_TIMER_NUM));
+
+    // calculate new distance if value is greater than zero
+    if (value > 0) {
+      dist_value = value / 2.0 / 29.1;
     }
-
-    uint32_t echo_time = clockCyclesToMicroseconds(echo_now - dist_echo_start);
-
-    dist_value = (double)echo_time / 2.0 / 29.1;
-    dist_echo_start = 0;
   }
 }
 
@@ -38,6 +37,24 @@ void dist_init() {
 
   // configure trigger
   ESP_ERROR_CHECK(gpio_config(&trig));
+
+  // prepare timer config
+  timer_config_t tim = {
+      .alarm_en = false,
+      .counter_en = true,
+      .intr_type = TIMER_INTR_LEVEL,
+      .counter_dir = TIMER_COUNT_UP,
+      .divider = 240  // 1 count = 1us
+  };
+
+  // initialize timer
+  ESP_ERROR_CHECK(timer_init(DIST_TIMER_GROUP, DIST_TIMER_NUM, &tim));
+
+  // stop timer
+  ESP_ERROR_CHECK(timer_pause(DIST_TIMER_GROUP, DIST_TIMER_NUM));
+
+  // reset timer
+  ESP_ERROR_CHECK(timer_set_counter_value(DIST_TIMER_GROUP, DIST_TIMER_NUM, 0));
 
   // prepare echo config
   gpio_config_t echo = {.pin_bit_mask = GPIO_SEL_27,
@@ -54,9 +71,14 @@ void dist_init() {
 }
 
 double dist_get() {
+  // track last poll of sensor
+  static uint32_t last_poll = 0;
+
   // check trigger window
-  if (dist_last_poll + 60 < naos_millis()) {
-    dist_last_poll = naos_millis();
+  if (last_poll + 100 < naos_millis()) {
+    last_poll = naos_millis();
+
+    // TODO: Use RMT module to generate outward pulse.
 
     // generate trigger pulse
     gpio_set_level(GPIO_NUM_14, 1);
