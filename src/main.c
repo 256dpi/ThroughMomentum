@@ -16,6 +16,7 @@ bool automate = false;
 bool motion = false;
 int distance = 0;
 double position = 0;
+double target = 0;
 bool go_up = true;
 
 static void online() {
@@ -23,8 +24,9 @@ static void online() {
   mot_set(0);
 
   // subscribe local topics
-  naos_subscribe("speed", 0, NAOS_LOCAL);
   naos_subscribe("brightness", 0, NAOS_LOCAL);
+  naos_subscribe("target", 0, NAOS_LOCAL);
+  naos_subscribe("reset", 0, NAOS_LOCAL);
   naos_subscribe("automate", 0, NAOS_LOCAL);
 }
 
@@ -34,12 +36,6 @@ static void offline() {
 }
 
 static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_t scope) {
-  // set motor speed
-  if (strcmp(topic, "speed") == 0 && scope == NAOS_LOCAL) {
-    int speed = (int)strtol((const char *)payload, NULL, 10);
-    mot_set(speed);
-  }
-
   // set led brightness
   if (strcmp(topic, "brightness") == 0 && scope == NAOS_LOCAL) {
     int brightness = (int)strtol((const char *)payload, NULL, 10);
@@ -49,6 +45,17 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
   // set automate
   if (strcmp(topic, "automate") == 0) {
     automate = strcmp((const char *)payload, "on") == 0;
+  }
+
+  // set target
+  if (strcmp(topic, "target") == 0) {
+    target = strtod((const char *)payload, NULL);
+  }
+
+  // reset position
+  if (strcmp(topic, "reset") == 0) {
+    position = 0;
+    target = 0;
   }
 }
 
@@ -65,6 +72,7 @@ static void loop() {
 
     // publish update
     naos_publish_int("motion", motion ? 1 : 0, 0, false, NAOS_LOCAL);
+    naos_log("motion: %d", new_motion);
   }
 
   // read distance
@@ -82,6 +90,7 @@ static void loop() {
 
     // publish update
     naos_publish_int("distance", distance, 0, false, NAOS_LOCAL);
+    naos_log("distance: %d", new_distance);
   }
 
   // get encoder
@@ -97,52 +106,66 @@ static void loop() {
     naos_publish_str("position", position_str, 0, false, NAOS_LOCAL);
   }
 
-  // exit if no automated or distance and motion have not changed
-  if (!automate || (!distance_changed && !motion_changed)) {
-    return;
-  }
+  // TODO: Evaluate Automation and adjust target.
 
-  // log distance change
-  naos_log("distance change: %d", distance_change);
-
-  // set target distance
-  int target = 100;
-  if (motion) {
-    target = 25;
-  }
-
-  // log target
-  naos_log("target: %d", target);
-
-  // check if target has been reached
-  if (distance < target + 10 && distance > target - 10) {
-    naos_log("target reached!");
+  // set motor
+  if (position < target + 0.1 && position > target - 0.1) {
+    // break if target has been reached
     mot_set(0);
-    return;
+  } else if (position < target) {
+    // go down
+    mot_set(750);
+  } else if (position > target) {
+    // go up
+    mot_set(-750);
   }
 
-  // if light goes down but needs to go up
-  if (distance_change < 0 && target > distance) {
-    // drive up
-    naos_log("drive up!");
-    go_up = !go_up;
-  }
-
-  // if light goes up but needs to go down
-  if (distance_change > 0 && target < distance) {
-    // drive down
-    naos_log("drive down!");
-    go_up = !go_up;
-  }
-
-  // set motor speed
-  mot_set(go_up ? 750 : -750);
+  //  // exit if no automated or distance and motion have not changed
+  //  if (!automate || (!distance_changed && !motion_changed)) {
+  //    return;
+  //  }
+  //
+  //  // log distance change
+  //  naos_log("distance change: %d", distance_change);
+  //
+  //  // set target distance
+  //  int target = 100;
+  //  if (motion) {
+  //    target = 25;
+  //  }
+  //
+  //  // log target
+  //  naos_log("target: %d", target);
+  //
+  //  // check if target has been reached
+  //  if (distance < target + 10 && distance > target - 10) {
+  //    naos_log("target reached!");
+  //    mot_set(0);
+  //    return;
+  //  }
+  //
+  //  // if light goes down but needs to go up
+  //  if (distance_change < 0 && target > distance) {
+  //    // drive up
+  //    naos_log("drive up!");
+  //    go_up = !go_up;
+  //  }
+  //
+  //  // if light goes up but needs to go down
+  //  if (distance_change > 0 && target < distance) {
+  //    // drive down
+  //    naos_log("drive down!");
+  //    go_up = !go_up;
+  //  }
+  //
+  //  // set motor speed
+  //  mot_set(go_up ? 750 : -750);
 }
 
 static naos_config_t config = {.device_type = "vas17",
                                .firmware_version = "0.1.0",
                                .loop_callback = loop,
-                               .loop_interval = 100,
+                               .loop_interval = 0,
                                .online_callback = online,
                                .offline_callback = offline,
                                .message_callback = message};
