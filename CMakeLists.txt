@@ -20,6 +20,8 @@ set(SOURCE_FILES
         src/mot.h
         src/pir.c
         src/pir.h
+        src/pulse_in.c
+        src/pulse_in.h
         src/pulse_out.c
         src/pulse_out.h)
 
