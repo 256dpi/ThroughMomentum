@@ -9,12 +9,16 @@
 static double dist_value = 0;
 
 static void dist_handler(void *_) {
+  // track if we are currently reading
+  static bool reading = false;
+
   // check current pin state
   if (gpio_get_level(GPIO_NUM_27) == 1) {
     // reset and start timer
     ESP_ERROR_CHECK(timer_set_counter_value(DIST_TIMER_GROUP, DIST_TIMER_NUM, 0));
     timer_start(DIST_TIMER_GROUP, DIST_TIMER_NUM);
-  } else {
+    reading = true;
+  } else if (reading) {
     // get timer value and pause timer
     uint64_t value = 0;
     ESP_ERROR_CHECK(timer_get_counter_value(DIST_TIMER_GROUP, DIST_TIMER_NUM, &value));
@@ -22,7 +26,7 @@ static void dist_handler(void *_) {
 
     // calculate new distance if value is greater than zero
     if (value > 0) {
-      dist_value = value / 2.0 / 29.1;
+      dist_value = (double)value / 58.7;  // 29.3866996 us/cm
     }
   }
 }
@@ -44,7 +48,7 @@ void dist_init() {
       .counter_en = true,
       .intr_type = TIMER_INTR_LEVEL,
       .counter_dir = TIMER_COUNT_UP,
-      .divider = 240  // 1 count = 1us
+      .divider = 80  // 80Mhz: 1 count = 1us
   };
 
   // initialize timer
@@ -75,7 +79,7 @@ double dist_get() {
   static uint32_t last_poll = 0;
 
   // check trigger window
-  if (last_poll + 100 < naos_millis()) {
+  if (last_poll + 60 < naos_millis()) {
     last_poll = naos_millis();
 
     // TODO: Use RMT module to generate outward pulse.

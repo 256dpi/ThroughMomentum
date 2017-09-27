@@ -72,14 +72,13 @@ static void loop() {
 
     // publish update
     naos_publish_int("motion", motion ? 1 : 0, 0, false, NAOS_LOCAL);
-    naos_log("motion: %d", new_motion);
   }
 
   // read distance
   int new_distance = (int)round(dist_get());
 
   // check if distance changed
-  bool distance_changed = new_distance > distance + 5 || new_distance < distance - 5;
+  bool distance_changed = new_distance > distance + 2 || new_distance < distance - 2;
 
   // get dist change (+=up, -=down)
   int distance_change = (distance - new_distance) * -1;
@@ -90,7 +89,6 @@ static void loop() {
 
     // publish update
     naos_publish_int("distance", distance, 0, false, NAOS_LOCAL);
-    naos_log("distance: %d", new_distance);
   }
 
   // get encoder
