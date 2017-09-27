@@ -19,11 +19,7 @@ set(SOURCE_FILES
         src/mot.c
         src/mot.h
         src/pir.c
-        src/pir.h
-        src/pulse_in.c
-        src/pulse_in.h
-        src/pulse_out.c
-        src/pulse_out.h)
+        src/pir.h)
 
 # create a fake library target
 add_library(${CMAKE_PROJECT_NAME} ${SOURCE_FILES})
