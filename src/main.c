@@ -100,7 +100,7 @@ static void loop() {
   }
 
   // prepare new target
-  double new_target = 0;
+  double new_target = target;
 
   // automate positioning
   if (automate) {
@@ -124,9 +124,9 @@ static void loop() {
   }
 
   // publish target update
-  if (new_target > target + 2 || new_target < target - 2) {
+  if (new_target != target) {
     char target_str[10];
-    snprintf(target_str, 10, "%.3f", position);
+    snprintf(target_str, 10, "%.3f", target);
     naos_publish_str("target", target_str, 0, false, NAOS_LOCAL);
   }
 
