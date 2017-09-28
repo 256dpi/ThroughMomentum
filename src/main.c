@@ -41,17 +41,17 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
   }
 
   // set automate
-  if (strcmp(topic, "automate") == 0) {
+  if (strcmp(topic, "automate") == 0 && scope == NAOS_LOCAL) {
     automate = strcmp((const char *)payload, "on") == 0;
   }
 
   // set target
-  if (strcmp(topic, "move") == 0) {
+  if (strcmp(topic, "move") == 0 && scope == NAOS_LOCAL) {
     target = strtod((const char *)payload, NULL);
   }
 
   // reset position
-  if (strcmp(topic, "reset") == 0) {
+  if (strcmp(topic, "reset") == 0 && scope == NAOS_LOCAL) {
     position = strtod((const char *)payload, NULL);
     target = strtod((const char *)payload, NULL);
   }
