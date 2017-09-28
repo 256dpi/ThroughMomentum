@@ -91,7 +91,7 @@ static void loop() {
 
   // apply rotation
   if (rotation_change != 0) {
-    position += (double)rotation_change / 20.0 * 75;  // TODO: Calculate average length of wire per revolution.
+    position += (double)rotation_change / 20.0 * 7.5;  // TODO: Calculate average length of wire per revolution.
 
     // publish update
     char position_str[10];
