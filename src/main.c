@@ -91,7 +91,7 @@ static void loop() {
 
   // apply rotation
   if (rotation_change != 0) {
-    position += (double)rotation_change / 20.0 * 7.5;  // TODO: Calculate average length of wire per revolution.
+    position += (double)rotation_change / 20.0 * 7.5 *-1;  // TODO: Calculate average length of wire per revolution.
 
     // publish update
     char position_str[10];
@@ -139,10 +139,10 @@ static void loop() {
     mot_set(0);
   } else if (position < target) {
     // go down
-    mot_set(750);  // TODO: Go full speed?
+    mot_set(1000);
   } else if (position > target) {
     // go up
-    mot_set(-750);  // TODO: Go full speed?
+    mot_set(-1000);
   }
 }
 
