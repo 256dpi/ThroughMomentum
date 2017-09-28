@@ -17,7 +17,6 @@ bool motion = false;
 int distance = 0;
 double position = 0;
 double target = 0;
-bool go_up = true;
 
 static void online() {
   // disable motor
@@ -25,7 +24,7 @@ static void online() {
 
   // subscribe local topics
   naos_subscribe("brightness", 0, NAOS_LOCAL);
-  naos_subscribe("target", 0, NAOS_LOCAL);
+  naos_subscribe("move", 0, NAOS_LOCAL);
   naos_subscribe("reset", 0, NAOS_LOCAL);
   naos_subscribe("automate", 0, NAOS_LOCAL);
 }
@@ -48,14 +47,14 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
   }
 
   // set target
-  if (strcmp(topic, "target") == 0) {
+  if (strcmp(topic, "move") == 0) {
     target = strtod((const char *)payload, NULL);
   }
 
   // reset position
   if (strcmp(topic, "reset") == 0) {
-    position = 0;
-    target = 0;
+    position = strtod((const char *)payload, NULL);
+    target = strtod((const char *)payload, NULL);
   }
 }
 
@@ -80,9 +79,6 @@ static void loop() {
   // check if distance changed
   bool distance_changed = new_distance > distance + 2 || new_distance < distance - 2;
 
-  // get dist change (+=up, -=down)
-  int distance_change = (distance - new_distance) * -1;
-
   // check dist
   if (distance_changed) {
     distance = new_distance;
@@ -96,7 +92,7 @@ static void loop() {
 
   // apply rotation
   if (rotation_change != 0) {
-    position += (double)rotation_change / 20.0;
+    position += (double)rotation_change / 20.0 * 75;  // TODO: Calculate average length of wire per revolution.
 
     // publish update
     char position_str[10];
@@ -104,7 +100,39 @@ static void loop() {
     naos_publish_str("position", position_str, 0, false, NAOS_LOCAL);
   }
 
-  // TODO: Evaluate Automation and adjust target.
+  // prepare new target
+  double new_target = 0;
+
+  // automate positioning
+  if (automate) {
+    if (motion) {
+      // go up and down 1cm depending on current distance
+      if (distance > 25) {
+        new_target = position - 1;
+      } else if (distance < 25) {
+        new_target = position + 1;
+      }
+
+      // constrain movement to 150cm to 250cm
+      if (new_target < 150) {
+        new_target = 150;
+      } else if (target > 250) {
+        new_target = 250;
+      }
+    } else {
+      new_target = 100;
+    }
+  }
+
+  // publish target update
+  if (new_target > target + 2 || new_target < target - 2) {
+    char target_str[10];
+    snprintf(target_str, 10, "%.3f", position);
+    naos_publish_str("target", target_str, 0, false, NAOS_LOCAL);
+  }
+
+  // apply new target
+  target = new_target;
 
   // set motor
   if (position < target + 0.1 && position > target - 0.1) {
@@ -112,52 +140,11 @@ static void loop() {
     mot_set(0);
   } else if (position < target) {
     // go down
-    mot_set(750);
+    mot_set(750);  // TODO: Go full speed?
   } else if (position > target) {
     // go up
-    mot_set(-750);
+    mot_set(-750);  // TODO: Go full speed?
   }
-
-  //  // exit if no automated or distance and motion have not changed
-  //  if (!automate || (!distance_changed && !motion_changed)) {
-  //    return;
-  //  }
-  //
-  //  // log distance change
-  //  naos_log("distance change: %d", distance_change);
-  //
-  //  // set target distance
-  //  int target = 100;
-  //  if (motion) {
-  //    target = 25;
-  //  }
-  //
-  //  // log target
-  //  naos_log("target: %d", target);
-  //
-  //  // check if target has been reached
-  //  if (distance < target + 10 && distance > target - 10) {
-  //    naos_log("target reached!");
-  //    mot_set(0);
-  //    return;
-  //  }
-  //
-  //  // if light goes down but needs to go up
-  //  if (distance_change < 0 && target > distance) {
-  //    // drive up
-  //    naos_log("drive up!");
-  //    go_up = !go_up;
-  //  }
-  //
-  //  // if light goes up but needs to go down
-  //  if (distance_change > 0 && target < distance) {
-  //    // drive down
-  //    naos_log("drive down!");
-  //    go_up = !go_up;
-  //  }
-  //
-  //  // set motor speed
-  //  mot_set(go_up ? 750 : -750);
 }
 
 static naos_config_t config = {.device_type = "vas17",
