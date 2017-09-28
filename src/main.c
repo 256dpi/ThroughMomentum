@@ -134,7 +134,7 @@ static void loop() {
   target = new_target;
 
   // set motor
-  if (position < target + 0.1 && position > target - 0.1) {
+  if (position < target + 1 && position > target - 1) {
     // break if target has been reached
     mot_set(0);
   } else if (position < target) {
