@@ -1,10 +1,11 @@
 #include <driver/gpio.h>
+#include <driver/rmt.h>
 #include <driver/timer.h>
-#include <esp_system.h>
 #include <naos/utils.h>
 
 #define DIST_TIMER_GROUP TIMER_GROUP_0
 #define DIST_TIMER_NUM TIMER_0
+#define DIST_TRIGGER_RMT_CHANNEL RMT_CHANNEL_0
 
 static double dist_value = 0;
 
@@ -24,23 +25,37 @@ static void dist_handler(void *_) {
     ESP_ERROR_CHECK(timer_get_counter_value(DIST_TIMER_GROUP, DIST_TIMER_NUM, &value));
     ESP_ERROR_CHECK(timer_pause(DIST_TIMER_GROUP, DIST_TIMER_NUM));
 
+    // calculate real distance
+    double real_distance = (double)value / 58.7;  // 29.3866996 us/cm
+
     // calculate new distance if value is greater than zero
-    if (value > 0) {
-      dist_value = (double)value / 58.7;  // 29.3866996 us/cm
+    if (real_distance > 0 && real_distance <= 400) {
+      dist_value = real_distance;
     }
   }
 }
 
 void dist_init() {
-  // prepare trigger config
-  gpio_config_t trig = {.pin_bit_mask = GPIO_SEL_14,
-                        .mode = GPIO_MODE_OUTPUT,
-                        .pull_up_en = GPIO_PULLUP_DISABLE,
-                        .pull_down_en = GPIO_PULLDOWN_ENABLE,
-                        .intr_type = GPIO_INTR_DISABLE};
+  // prepare trigger rmt channel
+  rmt_config_t trig;
+  trig.rmt_mode = RMT_MODE_TX;
+  trig.channel = DIST_TRIGGER_RMT_CHANNEL;
+  trig.gpio_num = GPIO_NUM_14;
+  trig.mem_block_num = 1;
+  trig.clk_div = 80;  // 80Mhz: 1 count = 1us
+  trig.tx_config.loop_en = 0;
+  trig.tx_config.carrier_en = 0;
+  trig.tx_config.idle_output_en = 1;
+  trig.tx_config.idle_level = RMT_IDLE_LEVEL_LOW;
+  trig.tx_config.carrier_freq_hz = 100;
+  trig.tx_config.carrier_level = RMT_CARRIER_LEVEL_LOW;
+  trig.tx_config.carrier_duty_percent = 50;
 
-  // configure trigger
-  ESP_ERROR_CHECK(gpio_config(&trig));
+  // configure trigger rmt channel
+  ESP_ERROR_CHECK(rmt_config(&trig));
+
+  // install trigger rmt driver
+  ESP_ERROR_CHECK(rmt_driver_install(DIST_TRIGGER_RMT_CHANNEL, 0, 0));
 
   // prepare timer config
   timer_config_t tim = {
@@ -74,20 +89,27 @@ void dist_init() {
   ESP_ERROR_CHECK(gpio_isr_handler_add(GPIO_NUM_27, dist_handler, NULL));
 }
 
+static void dist_trigger() {
+  // create rmt waveform item
+  static rmt_item32_t item = {
+      .level0 = 1,
+      .duration0 = 10,  // 10us
+      .level1 = 0,
+      .duration1 = 10  // 10us
+  };
+
+  // generate trigger signal
+  ESP_ERROR_CHECK(rmt_write_items(DIST_TRIGGER_RMT_CHANNEL, &item, 1, false));
+}
+
 double dist_get() {
   // track last poll of sensor
   static uint32_t last_poll = 0;
 
-  // check trigger window
-  if (last_poll + 60 < naos_millis()) {
+  // generate trigger every 60ms
+  if (last_poll + 100 < naos_millis()) {
     last_poll = naos_millis();
-
-    // TODO: Use RMT module to generate outward pulse.
-
-    // generate trigger pulse
-    gpio_set_level(GPIO_NUM_14, 1);
-    ets_delay_us(10);
-    gpio_set_level(GPIO_NUM_14, 0);
+    dist_trigger();
   }
 
   // return saved value
