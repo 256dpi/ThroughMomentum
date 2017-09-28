@@ -106,9 +106,9 @@ static void loop() {
   if (automate) {
     if (motion) {
       // go up and down 1cm depending on current distance
-      if (distance > 25) {
+      if (distance > 25 + 1) {
         new_target = position - 1;
-      } else if (distance < 25) {
+      } else if (distance < 25 - 1) {
         new_target = position + 1;
       }
 
