@@ -11,6 +11,7 @@
 #include "mot.h"
 #include "pir.h"
 
+int speed = 0;
 bool automate = false;
 bool motion = false;
 int distance = 0;
@@ -24,6 +25,7 @@ static void online() {
   // subscribe local topics
   naos_subscribe("brightness", 0, NAOS_LOCAL);
   naos_subscribe("move", 0, NAOS_LOCAL);
+  naos_subscribe("speed", 0, NAOS_LOCAL);
   naos_subscribe("reset", 0, NAOS_LOCAL);
   naos_subscribe("automate", 0, NAOS_LOCAL);
 }
@@ -40,20 +42,25 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
     led_set(brightness, brightness, brightness, brightness);
   }
 
-  // set automate
-  if (strcmp(topic, "automate") == 0 && scope == NAOS_LOCAL) {
-    automate = strcmp((const char *)payload, "on") == 0;
-  }
-
   // set target
   if (strcmp(topic, "move") == 0 && scope == NAOS_LOCAL) {
     target = strtod((const char *)payload, NULL);
+  }
+
+  // set speed
+  if (strcmp(topic, "speed") == 0 && scope == NAOS_LOCAL) {
+    speed = (int)strtol((const char *)payload, NULL, 10);
   }
 
   // reset position
   if (strcmp(topic, "reset") == 0 && scope == NAOS_LOCAL) {
     position = strtod((const char *)payload, NULL);
     target = strtod((const char *)payload, NULL);
+  }
+
+  // set automate
+  if (strcmp(topic, "automate") == 0 && scope == NAOS_LOCAL) {
+    automate = strcmp((const char *)payload, "on") == 0;
   }
 }
 
@@ -139,10 +146,10 @@ static void loop() {
     mot_set(0);
   } else if (position < target) {
     // go down
-    mot_set(1000);
+    mot_set(speed);
   } else if (position > target) {
     // go up
-    mot_set(-1000);
+    mot_set(speed * -1);
   }
 }
 
