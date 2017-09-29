@@ -9,7 +9,7 @@ static uint8_t enc_rotation_state = 0;
 static void enc_rotation_handler(void *_) {
   // read GPIOs
   int p1 = gpio_get_level(GPIO_NUM_23);
-  int p2 = gpio_get_level(GPIO_NUM_22);
+  int p2 = gpio_get_level(GPIO_NUM_25);
 
   // calculate encoder change
   uint8_t state = (uint8_t)(enc_rotation_state & 3);
@@ -59,7 +59,7 @@ void enc_init() {
 
   // configure rotation pins
   gpio_config_t rc;
-  rc.pin_bit_mask = GPIO_SEL_23 | GPIO_SEL_22;
+  rc.pin_bit_mask = GPIO_SEL_23 | GPIO_SEL_25;
   rc.mode = GPIO_MODE_INPUT;
   rc.intr_type = GPIO_INTR_ANYEDGE;
   rc.pull_up_en = GPIO_PULLUP_ENABLE;
@@ -68,11 +68,11 @@ void enc_init() {
 
   // preset state
   if (gpio_get_level(GPIO_NUM_23)) enc_rotation_state |= 1;
-  if (gpio_get_level(GPIO_NUM_22)) enc_rotation_state |= 2;
+  if (gpio_get_level(GPIO_NUM_25)) enc_rotation_state |= 2;
 
   // add interrupt handlers
   gpio_isr_handler_add(GPIO_NUM_23, enc_rotation_handler, NULL);
-  gpio_isr_handler_add(GPIO_NUM_22, enc_rotation_handler, NULL);
+  gpio_isr_handler_add(GPIO_NUM_25, enc_rotation_handler, NULL);
 }
 
 int enc_get() {

@@ -15,22 +15,22 @@ void led_init() {
 
   // configure red channel
   ledc_channel.channel = LEDC_CHANNEL_1;
-  ledc_channel.gpio_num = GPIO_NUM_21;
+  ledc_channel.gpio_num = GPIO_NUM_27;
   ESP_ERROR_CHECK(ledc_channel_config(&ledc_channel));
 
   // configure green channel
   ledc_channel.channel = LEDC_CHANNEL_2;
-  ledc_channel.gpio_num = GPIO_NUM_19;
+  ledc_channel.gpio_num = GPIO_NUM_26;
   ESP_ERROR_CHECK(ledc_channel_config(&ledc_channel));
 
   // configure blue channel
   ledc_channel.channel = LEDC_CHANNEL_3;
-  ledc_channel.gpio_num = GPIO_NUM_18;
+  ledc_channel.gpio_num = GPIO_NUM_32;
   ESP_ERROR_CHECK(ledc_channel_config(&ledc_channel));
 
   // configure white channel
   ledc_channel.channel = LEDC_CHANNEL_4;
-  ledc_channel.gpio_num = GPIO_NUM_15;
+  ledc_channel.gpio_num = GPIO_NUM_33;
   ESP_ERROR_CHECK(ledc_channel_config(&ledc_channel));
 }
 

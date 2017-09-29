@@ -2,7 +2,7 @@
 
 void mot_init() {
   // prepare in a+b config
-  gpio_config_t inAB = {.pin_bit_mask = GPIO_SEL_32 | GPIO_SEL_33,
+  gpio_config_t inAB = {.pin_bit_mask = GPIO_SEL_14 | GPIO_SEL_16,
                         .mode = GPIO_MODE_OUTPUT,
                         .pull_up_en = GPIO_PULLUP_DISABLE,
                         .pull_down_en = GPIO_PULLDOWN_ENABLE,
@@ -23,7 +23,7 @@ void mot_init() {
                              .intr_type = LEDC_INTR_FADE_END,
                              .speed_mode = LEDC_HIGH_SPEED_MODE,
                              .timer_sel = LEDC_TIMER_0,
-                             .gpio_num = GPIO_NUM_25,
+                             .gpio_num = GPIO_NUM_17,
                              .channel = LEDC_CHANNEL_0};
 
   // configure ledc channel
@@ -33,16 +33,16 @@ void mot_init() {
 void mot_set(int speed) {
   if (speed == 0) {
     // disable motor (brake to GND)
-    ESP_ERROR_CHECK(gpio_set_level(GPIO_NUM_32, 0));
-    ESP_ERROR_CHECK(gpio_set_level(GPIO_NUM_33, 0));
+    ESP_ERROR_CHECK(gpio_set_level(GPIO_NUM_14, 0));
+    ESP_ERROR_CHECK(gpio_set_level(GPIO_NUM_16, 0));
   } else if (speed < 0) {
     // go backwards
-    ESP_ERROR_CHECK(gpio_set_level(GPIO_NUM_32, 0));
-    ESP_ERROR_CHECK(gpio_set_level(GPIO_NUM_33, 1));
+    ESP_ERROR_CHECK(gpio_set_level(GPIO_NUM_14, 0));
+    ESP_ERROR_CHECK(gpio_set_level(GPIO_NUM_16, 1));
   } else if (speed > 0) {
     // go forwards
-    ESP_ERROR_CHECK(gpio_set_level(GPIO_NUM_32, 1));
-    ESP_ERROR_CHECK(gpio_set_level(GPIO_NUM_33, 0));
+    ESP_ERROR_CHECK(gpio_set_level(GPIO_NUM_14, 1));
+    ESP_ERROR_CHECK(gpio_set_level(GPIO_NUM_16, 0));
   }
 
   // handle minus speeds

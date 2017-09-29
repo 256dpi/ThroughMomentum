@@ -1,4 +1,5 @@
 {
+  "version": "master",
   "broker": "mqtts://96c342e4:1724bcdee75a6f0b@broker.shiftr.io",
   "devices": {
     "vas17": {

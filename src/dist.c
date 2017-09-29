@@ -14,7 +14,7 @@ static void dist_handler(void *_) {
   static bool reading = false;
 
   // check current pin state
-  if (gpio_get_level(GPIO_NUM_27) == 1) {
+  if (gpio_get_level(GPIO_NUM_22) == 1) {
     // reset and start timer
     ESP_ERROR_CHECK(timer_set_counter_value(DIST_TIMER_GROUP, DIST_TIMER_NUM, 0));
     timer_start(DIST_TIMER_GROUP, DIST_TIMER_NUM);
@@ -40,7 +40,7 @@ void dist_init() {
   rmt_config_t trig;
   trig.rmt_mode = RMT_MODE_TX;
   trig.channel = DIST_TRIGGER_RMT_CHANNEL;
-  trig.gpio_num = GPIO_NUM_14;
+  trig.gpio_num = GPIO_NUM_21;
   trig.mem_block_num = 1;
   trig.clk_div = 80;  // 80Mhz: 1 count = 1us
   trig.tx_config.loop_en = 0;
@@ -76,7 +76,7 @@ void dist_init() {
   ESP_ERROR_CHECK(timer_set_counter_value(DIST_TIMER_GROUP, DIST_TIMER_NUM, 0));
 
   // prepare echo config
-  gpio_config_t echo = {.pin_bit_mask = GPIO_SEL_27,
+  gpio_config_t echo = {.pin_bit_mask = GPIO_SEL_22,
                         .mode = GPIO_MODE_INPUT,
                         .pull_up_en = GPIO_PULLUP_DISABLE,
                         .pull_down_en = GPIO_PULLDOWN_ENABLE,
@@ -86,7 +86,7 @@ void dist_init() {
   ESP_ERROR_CHECK(gpio_config(&echo));
 
   // attach handler
-  ESP_ERROR_CHECK(gpio_isr_handler_add(GPIO_NUM_27, dist_handler, NULL));
+  ESP_ERROR_CHECK(gpio_isr_handler_add(GPIO_NUM_22, dist_handler, NULL));
 }
 
 static void dist_trigger() {

@@ -12,7 +12,7 @@ static void pir_handler(void *_) {
 
 void pir_init() {
   // prepare pin config
-  gpio_config_t config = {.pin_bit_mask = GPIO_SEL_35,
+  gpio_config_t config = {.pin_bit_mask = GPIO_SEL_19,
                           .mode = GPIO_MODE_INPUT,
                           .pull_up_en = GPIO_PULLUP_DISABLE,
                           .pull_down_en = GPIO_PULLDOWN_DISABLE,
@@ -22,7 +22,7 @@ void pir_init() {
   ESP_ERROR_CHECK(gpio_config(&config));
 
   // add interrupt handler
-  ESP_ERROR_CHECK(gpio_isr_handler_add(GPIO_NUM_35, pir_handler, NULL));
+  ESP_ERROR_CHECK(gpio_isr_handler_add(GPIO_NUM_19, pir_handler, NULL));
 }
 
 bool pir_get() {
