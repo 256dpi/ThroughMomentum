@@ -1,5 +1,5 @@
 #include <driver/gpio.h>
-#include <naos/utils.h>
+#include <naos.h>
 
 #include "pir.h"
 

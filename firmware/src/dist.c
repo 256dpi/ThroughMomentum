@@ -1,7 +1,7 @@
 #include <driver/gpio.h>
 #include <driver/rmt.h>
 #include <driver/timer.h>
-#include <naos/utils.h>
+#include <naos.h>
 
 #define DIST_TIMER_GROUP TIMER_GROUP_0
 #define DIST_TIMER_NUM TIMER_0
