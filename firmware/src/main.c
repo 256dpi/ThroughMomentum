@@ -137,11 +137,9 @@ static void loop() {
     }
   }
 
-  // publish target update
+  // log target if changed
   if (new_target != target) {
-    char target_str[10];
-    snprintf(target_str, 10, "%.3f", target);
-    naos_publish_str("target", target_str, 0, false, NAOS_LOCAL);
+    naos_log("updated target: %.3f", target);
   }
 
   // apply new target
