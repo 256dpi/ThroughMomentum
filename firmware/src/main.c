@@ -11,6 +11,7 @@
 #include "mot.h"
 #include "pir.h"
 
+uint32_t flash_end = 0;
 int speed = 0;
 bool automate = false;
 bool motion = false;
@@ -30,7 +31,7 @@ static void online() {
   mot_set(0);
 
   // subscribe local topics
-  naos_subscribe("brightness", 0, NAOS_LOCAL);
+  naos_subscribe("flash", 0, NAOS_LOCAL);
   naos_subscribe("move", 0, NAOS_LOCAL);
   naos_subscribe("speed", 0, NAOS_LOCAL);
   naos_subscribe("reset", 0, NAOS_LOCAL);
@@ -46,10 +47,10 @@ static void offline() {
 }
 
 static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_t scope) {
-  // set led brightness
-  if (strcmp(topic, "brightness") == 0 && scope == NAOS_LOCAL) {
-    int brightness = (int)strtol((const char *)payload, NULL, 10);
-    led_set(brightness, brightness, brightness, brightness);
+  // perform flash
+  if (strcmp(topic, "flash") == 0 && scope == NAOS_LOCAL) {
+    flash_end = naos_millis() + (uint32_t)strtol((const char *)payload, NULL, 10);
+    led_set(0, 0, 0, 1023);
   }
 
   // set target
@@ -158,6 +159,12 @@ static void loop() {
   } else if (position > target) {
     // go up
     mot_set(speed * -1);
+  }
+
+  // finish flash
+  if(flash_end > 0 && flash_end < naos_millis()) {
+    led_set(0, 0, 0, 0);
+    flash_end = 0;
   }
 }
 
