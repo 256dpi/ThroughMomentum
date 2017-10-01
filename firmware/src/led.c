@@ -1,5 +1,7 @@
 #include <driver/ledc.h>
 
+#include "led.h"
+
 void led_init() {
   // prepare timer config
   ledc_timer_config_t ledc_timer = {
@@ -32,6 +34,9 @@ void led_init() {
   ledc_channel.channel = LEDC_CHANNEL_4;
   ledc_channel.gpio_num = GPIO_NUM_33;
   ESP_ERROR_CHECK(ledc_channel_config(&ledc_channel));
+
+  // reset led
+  led_set(0, 0, 0, 0);
 }
 
 void led_set(int r, int g, int b, int w) {

@@ -182,11 +182,9 @@ void app_main() {
 
   // initialize motor
   mot_init();
-  mot_set(0);
 
   // initialize led
   led_init();
-  led_set(0, 0, 0, 0);
 
   // initialize encoder
   enc_init();

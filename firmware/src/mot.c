@@ -1,5 +1,7 @@
 #include <driver/ledc.h>
 
+#include "mot.h"
+
 void mot_init() {
   // prepare in a+b config
   gpio_config_t inAB = {.pin_bit_mask = GPIO_SEL_14 | GPIO_SEL_16,
@@ -28,6 +30,9 @@ void mot_init() {
 
   // configure ledc channel
   ESP_ERROR_CHECK(ledc_channel_config(&c));
+
+  // reset motor
+  mot_set(0);
 }
 
 void mot_set(int speed) {
