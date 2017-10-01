@@ -40,6 +40,9 @@ static void online() {
 static void offline() {
   // disable motor
   mot_set(0);
+
+  // disabled led
+  led_set(0, 0, 0, 0);
 }
 
 static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_t scope) {
