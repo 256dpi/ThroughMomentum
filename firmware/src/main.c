@@ -31,6 +31,9 @@ static void online() {
   // disable motor
   mot_set(0);
 
+  // enable idle light
+  led_set(0, 0, 0, 127);
+
   // subscribe local topics
   naos_subscribe("flash", 0, NAOS_LOCAL);
   naos_subscribe("disco", 0, NAOS_LOCAL);
@@ -174,7 +177,7 @@ static void loop() {
 
   // finish flash
   if(flash_end > 0 && flash_end < naos_millis()) {
-    led_set(0, 0, 0, 0);
+    led_set(0, 0, 0, 127);
     flash_end = 0;
   }
 }
