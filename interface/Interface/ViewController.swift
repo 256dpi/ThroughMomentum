@@ -148,22 +148,15 @@ class ViewController: UIViewController, CocoaMQTTDelegate {
     }
     
     func mqtt(_ mqtt: CocoaMQTT, didConnectAck ack: CocoaMQTTConnAck) {
-        print("connected")
-        
         // set flag
         connected = true
-        
-        // subscribe to topics
-        mqtt.subscribe("activate", qos: .qos0)
     }
     
     func mqtt(_ mqtt: CocoaMQTT, didPublishMessage message: CocoaMQTTMessage, id: UInt16) {}
     
     func mqtt(_ mqtt: CocoaMQTT, didPublishAck id: UInt16) {}
     
-    func mqtt(_ mqtt: CocoaMQTT, didReceiveMessage message: CocoaMQTTMessage, id: UInt16) {
-        // TODO: Handle messages.
-    }
+    func mqtt(_ mqtt: CocoaMQTT, didReceiveMessage message: CocoaMQTTMessage, id: UInt16) {}
     
     func mqtt(_ mqtt: CocoaMQTT, didSubscribeTopic topic: String) {}
     
@@ -174,12 +167,12 @@ class ViewController: UIViewController, CocoaMQTTDelegate {
     func mqttDidReceivePong(_ mqtt: CocoaMQTT) {}
     
     func mqttDidDisconnect(_ mqtt: CocoaMQTT, withError err: Error?) {
-        print("disconnected")
-        
         // set flag
         connected = false
         
-        // attempt reconnect
-        client!.connect()
+        // attempt reconnect in one second
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now()+1) {
+            self.client!.connect()
+        }
     }
 }
