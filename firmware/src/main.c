@@ -38,6 +38,7 @@ static void online() {
   naos_subscribe("flash", 0, NAOS_LOCAL);
   naos_subscribe("disco", 0, NAOS_LOCAL);
   naos_subscribe("move", 0, NAOS_LOCAL);
+  naos_subscribe("stop", 0, NAOS_LOCAL);
   naos_subscribe("speed", 0, NAOS_LOCAL);
   naos_subscribe("reset", 0, NAOS_LOCAL);
   naos_subscribe("automate", 0, NAOS_LOCAL);
@@ -70,6 +71,12 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
   // set target
   if (strcmp(topic, "move") == 0 && scope == NAOS_LOCAL) {
     target = strtod((const char *)payload, NULL);
+  }
+
+  // stop motor
+  if (strcmp(topic, "stop") == 0 && scope == NAOS_LOCAL) {
+    target = position;
+    mot_set(0);
   }
 
   // set speed
