@@ -18,6 +18,12 @@ int distance = 0;
 double position = 0;
 double target = 0;
 
+static void ping() {
+  led_set(0, 0, 0, 512);
+  naos_delay(200);
+  led_set(0, 0, 0, 0);
+}
+
 static void online() {
   // disable motor
   mot_set(0);
@@ -155,6 +161,7 @@ static void loop() {
 
 static naos_config_t config = {.device_type = "vas17",
                                .firmware_version = "0.1.0",
+                               .ping_callback = ping,
                                .loop_callback = loop,
                                .loop_interval = 0,
                                .online_callback = online,
