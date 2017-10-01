@@ -7,15 +7,18 @@
 //
 
 import UIKit
+import CocoaMQTT
 
 let lightsPerRow = 8
 let lightsPerColumn = 6
 let lightDotSize = 12
 let padding: Double = 150
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, CocoaMQTTDelegate {
     var circles: [[UIView]]?
     var states: [[Bool]]?
+    var client: CocoaMQTT?
+    var connected = false
     
     var fw: Double = 0
     var fh: Double = 0
@@ -61,6 +64,15 @@ class ViewController: UIViewController {
                 states![y].insert(false, at: x)
             }
         }
+        
+        // create client
+        client = CocoaMQTT(clientID: "interface", host: "broker.shiftr.io", port: 1883)
+        client!.username = "96c342e4"
+        client!.password = "1724bcdee75a6f0b"
+        client!.delegate = self
+        
+        // connect to broker
+        client!.connect()
     }
     
     func handleTouches(touches: Set<UITouch>) {
@@ -92,7 +104,10 @@ class ViewController: UIViewController {
         // get view from array
         let v = circles![yy][xx]
         
-        // TODO: send message
+        // send message
+        if connected {
+            client!.publish("activate", withString: String(yy*lightsPerRow+xx))
+        }
         
         // set state
         states![yy][xx] = true
@@ -126,5 +141,45 @@ class ViewController: UIViewController {
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         handleTouches(touches: touches)
+    }
+    
+    func mqtt(_ mqtt: CocoaMQTT, didConnect host: String, port: Int) {
+        connected = true
+    }
+    
+    func mqtt(_ mqtt: CocoaMQTT, didConnectAck ack: CocoaMQTTConnAck) {
+        print("connected")
+        
+        // set flag
+        connected = true
+        
+        // subscribe to topics
+        mqtt.subscribe("activate", qos: .qos0)
+    }
+    
+    func mqtt(_ mqtt: CocoaMQTT, didPublishMessage message: CocoaMQTTMessage, id: UInt16) {}
+    
+    func mqtt(_ mqtt: CocoaMQTT, didPublishAck id: UInt16) {}
+    
+    func mqtt(_ mqtt: CocoaMQTT, didReceiveMessage message: CocoaMQTTMessage, id: UInt16) {
+        // TODO: Handle messages.
+    }
+    
+    func mqtt(_ mqtt: CocoaMQTT, didSubscribeTopic topic: String) {}
+    
+    func mqtt(_ mqtt: CocoaMQTT, didUnsubscribeTopic topic: String) {}
+    
+    func mqttDidPing(_ mqtt: CocoaMQTT) {}
+    
+    func mqttDidReceivePong(_ mqtt: CocoaMQTT) {}
+    
+    func mqttDidDisconnect(_ mqtt: CocoaMQTT, withError err: Error?) {
+        print("disconnected")
+        
+        // set flag
+        connected = false
+        
+        // attempt reconnect
+        client!.connect()
     }
 }
