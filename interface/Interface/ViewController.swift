@@ -68,10 +68,15 @@ class ViewController: UIViewController, CocoaMQTTDelegate {
             }
         }
         
+        // get settings
+        let host = UserDefaults.standard.string(forKey: "host") ?? ""
+        let username = UserDefaults.standard.string(forKey: "username")
+        let password = UserDefaults.standard.string(forKey: "password")
+        
         // create client
-        client = CocoaMQTT(clientID: "interface", host: "broker.shiftr.io", port: 1883)
-        client!.username = "96c342e4"
-        client!.password = "1724bcdee75a6f0b"
+        client = CocoaMQTT(clientID: "interface", host: host, port: 1883)
+        client!.username = username
+        client!.password = password
         client!.delegate = self
         
         // connect to broker
