@@ -19,6 +19,7 @@ double position = 0;
 double target = 0;
 
 static void ping() {
+  // flash white for 200ms
   led_set(0, 0, 0, 512);
   naos_delay(200);
   led_set(0, 0, 0, 0);
