@@ -14,6 +14,9 @@ let lightsPerColumn = 6
 let lightDotSize = 12
 let padding: Double = 150
 
+let offColor = UIColor(white: 0.1, alpha: 1)
+let onColor = UIColor(white: 1, alpha: 1)
+
 class ViewController: UIViewController, CocoaMQTTDelegate {
     var circles: [[UIView]]?
     var states: [[Bool]]?
@@ -53,7 +56,7 @@ class ViewController: UIViewController, CocoaMQTTDelegate {
                 
                 // create view
                 let v = UIView(frame: CGRect(x: xx, y: yy, width: Double(lightDotSize), height: Double(lightDotSize)))
-                v.backgroundColor = UIColor(white: 0.25, alpha: 1)
+                v.backgroundColor = offColor
                 v.layer.cornerRadius = CGFloat(lightDotSize) / 2.0
                 
                 // add to view
@@ -115,11 +118,11 @@ class ViewController: UIViewController, CocoaMQTTDelegate {
         // animate circle
         UIView.animate(withDuration: 0.25, delay: 0.0, animations: {
             // increase intensity
-            v.backgroundColor = UIColor(white: 1, alpha: 1)
+            v.backgroundColor = onColor
         }, completion: { finished in
             UIView.animate(withDuration: 0.25, delay: 0.0, animations: {
                 // decrease intensity
-                v.backgroundColor = UIColor(white: 0.25, alpha: 1)
+                v.backgroundColor = offColor
             }, completion: { finished in
                 // reset state
                 self.states![yy][xx] = false
