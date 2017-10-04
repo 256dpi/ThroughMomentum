@@ -18,6 +18,7 @@ let offColor = UIColor(white: 0.1, alpha: 1)
 let onColor = UIColor(white: 1, alpha: 1)
 
 class ViewController: UIViewController, CocoaMQTTDelegate {
+    var container: UIView?
     var circles: [[UIView]]?
     var states: [[Bool]]?
     var client: CocoaMQTT?
@@ -31,13 +32,18 @@ class ViewController: UIViewController, CocoaMQTTDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // create container
+        container = UIView(frame: view.frame)
+        container!.alpha = 0
+        view.addSubview(container!)
+        
         // allocate arrays
         circles = [[UIView]]()
         states = [[Bool]]()
         
         // get frame size
-        fw = Double(view.frame.width)
-        fh = Double(view.frame.height)
+        fw = Double(container!.frame.width)
+        fh = Double(container!.frame.height)
         
         // calcuate gaps
         gx = (fw-(2.0*padding))/Double(lightsPerRow-1)
@@ -60,7 +66,7 @@ class ViewController: UIViewController, CocoaMQTTDelegate {
                 v.layer.cornerRadius = CGFloat(lightDotSize) / 2.0
                 
                 // add to view
-                view.addSubview(v)
+                container!.addSubview(v)
                 
                 // add to arrays
                 circles![y].insert(v, at: x)
@@ -78,6 +84,8 @@ class ViewController: UIViewController, CocoaMQTTDelegate {
         client!.username = username
         client!.password = password
         client!.delegate = self
+        client!.autoReconnect = true
+        client!.autoReconnectTimeInterval = 1
         
         // connect to broker
         client!.connect()
@@ -92,8 +100,8 @@ class ViewController: UIViewController, CocoaMQTTDelegate {
     
     func handleTouch(touch: UITouch) {
         // get location
-        let x = Double(touch.location(in: view).x) - Double(padding)
-        let y = Double(touch.location(in: view).y) - Double(padding)
+        let x = Double(touch.location(in: container).x) - Double(padding)
+        let y = Double(touch.location(in: container).y) - Double(padding)
         
         // calculate row and column number
         let xx = Int(round(x / gx))
@@ -151,13 +159,20 @@ class ViewController: UIViewController, CocoaMQTTDelegate {
         handleTouches(touches: touches)
     }
     
-    func mqtt(_ mqtt: CocoaMQTT, didConnect host: String, port: Int) {
-        connected = true
-    }
-    
     func mqtt(_ mqtt: CocoaMQTT, didConnectAck ack: CocoaMQTTConnAck) {
+        // return immediately if connection has been rejected
+        if ack != .accept {
+            return
+        }
+        
         // set flag
         connected = true
+        
+        // animate container
+        UIView.animate(withDuration: 0.25, delay: 0.0, animations: {
+            // set transparency
+            self.container!.alpha = 1
+        })
     }
     
     func mqtt(_ mqtt: CocoaMQTT, didPublishMessage message: CocoaMQTTMessage, id: UInt16) {}
@@ -178,9 +193,10 @@ class ViewController: UIViewController, CocoaMQTTDelegate {
         // set flag
         connected = false
         
-        // attempt reconnect in one second
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now()+1) {
-            self.client!.connect()
-        }
+        // animate container
+        UIView.animate(withDuration: 0.25, delay: 0.0, animations: {
+            // set transparency
+            self.container!.alpha = 0
+        })
     }
 }
