@@ -25,6 +25,7 @@ int motor_speed = 0;
 
 bool motion = false;
 uint32_t last_distance = 0;
+bool manual = false;
 double position = 0;
 double target = 0;
 uint32_t flash_end = 0;
@@ -75,6 +76,7 @@ static void online() {
 
   // subscribe local topics
   naos_subscribe("flash", 0, NAOS_LOCAL);
+  naos_subscribe("turn", 0, NAOS_LOCAL);
   naos_subscribe("move", 0, NAOS_LOCAL);
   naos_subscribe("stop", 0, NAOS_LOCAL);
   naos_subscribe("reset", 0, NAOS_LOCAL);
@@ -148,6 +150,17 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
     led_set(flash_intensity, flash_intensity, flash_intensity, flash_intensity);
   }
 
+  // set turn
+  if (strcmp(topic, "turn") == 0 && scope == NAOS_LOCAL) {
+    if (strcmp((const char *)payload, "up") == 0) {
+      manual = true;
+      mot_set(512);
+    } else if (strcmp((const char *)payload, "down") == 0) {
+      manual = true;
+      mot_set(-512);
+    }
+  }
+
   // set target
   if (strcmp(topic, "move") == 0 && scope == NAOS_LOCAL) {
     target = strtod((const char *)payload, NULL);
@@ -155,8 +168,11 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
 
   // stop motor
   if (strcmp(topic, "stop") == 0 && scope == NAOS_LOCAL) {
-    target = position;
     mot_set(0);
+    manual = false;
+    target = position;
+    automate = false;
+    naos_set("automate", "off");
   }
 
   // reset position
@@ -217,6 +233,11 @@ static void loop() {
   if (flash_end > 0 && flash_end < naos_millis()) {
     led_set(idle_light, idle_light, idle_light, idle_light);
     flash_end = 0;
+  }
+
+  // return immediately in manual mode
+  if (manual) {
+    return;
   }
 
   // prepare new target
