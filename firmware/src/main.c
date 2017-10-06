@@ -24,7 +24,7 @@ double saved_position = -9999;
 int motor_speed = 0;
 
 bool motion = false;
-double distance = 0;
+uint32_t last_distance = 0;
 double position = 0;
 double target = 0;
 uint32_t flash_end = 0;
@@ -187,14 +187,12 @@ static void loop() {
   }
 
   // read distance
-  double new_distance = dist_get();
+  double distance = dist_get();
 
-  // check distance
-  if (new_distance != distance) {
-    distance = new_distance;
-
-    // publish update
+  // publish distance every second
+  if (last_distance + 1000 < naos_millis()) {
     naos_publish("distance", a32_d2str(distance), 0, false, NAOS_LOCAL);
+    last_distance = naos_millis();
   }
 
   // get encoder
