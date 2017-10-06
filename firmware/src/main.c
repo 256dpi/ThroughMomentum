@@ -24,7 +24,7 @@ double saved_position = -9999;
 uint32_t flash_end = 0;
 int speed = 0;
 bool motion = false;
-int distance = 0;
+double distance = 0;
 double position = 0;
 double target = 0;
 
@@ -169,11 +169,8 @@ static void loop() {
   // read pir sensor
   bool new_motion = pir_get();
 
-  // check if pir changed
-  bool motion_changed = motion != new_motion;
-
-  // check pir state
-  if (motion_changed) {
+  // check motion
+  if (motion != new_motion) {
     motion = new_motion;
 
     // publish update
@@ -181,19 +178,14 @@ static void loop() {
   }
 
   // read distance
-  int new_distance = (int)round(dist_get());
+  double new_distance = dist_get();
 
-  // TODO: Threshold check really needed?
-
-  // check if distance changed
-  bool distance_changed = new_distance > distance + 2 || new_distance < distance - 2;
-
-  // check dist
-  if (distance_changed) {
+  // check distance
+  if (new_distance != distance) {
     distance = new_distance;
 
     // publish update
-    naos_publish("distance", a32_l2str(distance), 0, false, NAOS_LOCAL);
+    naos_publish("distance", a32_d2str(distance), 0, false, NAOS_LOCAL);
   }
 
   // get encoder
@@ -239,7 +231,7 @@ static void loop() {
 
   // log target if changed
   if (new_target != target) {
-    naos_log("updated target: %.3f", target);
+    naos_log("updated target: %f", target);
   }
 
   // apply new target
