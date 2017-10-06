@@ -18,6 +18,8 @@ double max_height = 0;
 bool automate = false;
 int idle_light = 0;
 int flash_intensity = 0;
+double save_threshold = 0;
+double saved_position = -10001;
 
 uint32_t flash_end = 0;
 int speed = 0;
@@ -45,6 +47,8 @@ static void online() {
   naos_ensure("automate", "off");
   naos_ensure("idle-light", "127");
   naos_ensure("flash-intensity", "1023");
+  naos_ensure("save-threshold", "2");
+  naos_ensure("saved-position", "0");
 
   // read settings
   winding_length = a32_str2d(naos_get("winding-length"));
@@ -54,6 +58,11 @@ static void online() {
   automate = strcmp(naos_get("automate"), "on") == 0;
   idle_light = a32_str2i(naos_get("idle-light"));
   flash_intensity = a32_str2i(naos_get("flash-intensity"));
+
+  // read position on first boot
+  if (saved_position <= -9999) {
+    saved_position = a32_str2d(naos_get("saved-position"));
+  }
 
   // enable idle light
   led_set(0, 0, 0, idle_light);
@@ -109,6 +118,11 @@ static void update(const char *param, const char *value) {
   // set flash intensity
   if (strcmp(param, "flash-intensity") == 0) {
     flash_intensity = a32_str2i(value);
+  }
+
+  // set save threshold
+  if (strcmp(param, "save-threshold") == 0) {
+    save_threshold = a32_str2i(value);
   }
 }
 
@@ -191,6 +205,12 @@ static void loop() {
 
     // publish update
     naos_publish("position", a32_d2str(position), 0, false, NAOS_LOCAL);
+  }
+
+  // save position if threshold has been passed
+  if (position > saved_position + save_threshold || position < saved_position - save_threshold) {
+    naos_set("saved-position", a32_d2str(position));
+    saved_position = position;
   }
 
   // prepare new target

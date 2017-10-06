@@ -31,3 +31,11 @@ The intensity of the light in idle mode.
 ## `flash-intensity (1023)`
 
 The intensity of the light flash.
+
+## `save-threshold (2)`
+
+The threshold to pass to trigger a position save.
+
+## `saved-position (0)`
+
+The last auto-saved position.
