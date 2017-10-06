@@ -114,6 +114,8 @@ static void loop() {
   // read distance
   int new_distance = (int)round(dist_get());
 
+  // TODO: Threshold check really needed?
+
   // check if distance changed
   bool distance_changed = new_distance > distance + 2 || new_distance < distance - 2;
 
