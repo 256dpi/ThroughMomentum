@@ -1,10 +1,10 @@
 #include <driver/adc.h>
 #include <driver/gpio.h>
+#include <esp_system.h>
 #include <math.h>
 #include <naos.h>
 #include <stdlib.h>
 #include <string.h>
-#include <esp_system.h>
 
 #include "dist.h"
 #include "enc.h"
@@ -185,7 +185,7 @@ static void loop() {
   }
 
   // finish flash
-  if(flash_end > 0 && flash_end < naos_millis()) {
+  if (flash_end > 0 && flash_end < naos_millis()) {
     led_set(0, 0, 0, 127);
     flash_end = 0;
   }
