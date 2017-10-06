@@ -57,7 +57,5 @@ void mot_set(int speed) {
 
   // set duty
   ESP_ERROR_CHECK(ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, (uint32_t)speed));
-
-  // update channel
   ESP_ERROR_CHECK(ledc_update_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0));
 }
