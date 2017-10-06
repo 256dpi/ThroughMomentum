@@ -1,7 +1,6 @@
 #include <art32/strconv.h>
 #include <driver/adc.h>
 #include <esp_system.h>
-#include <math.h>
 #include <naos.h>
 #include <string.h>
 
@@ -20,13 +19,13 @@ int idle_light = 0;
 int flash_intensity = 0;
 double save_threshold = 0;
 double saved_position = -9999;
+int motor_speed = 0;
 
-uint32_t flash_end = 0;
-int speed = 0;
 bool motion = false;
 double distance = 0;
 double position = 0;
 double target = 0;
+uint32_t flash_end = 0;
 
 static void ping() {
   // flash white for 200ms
@@ -49,6 +48,7 @@ static void online() {
   naos_ensure("flash-intensity", "1023");
   naos_ensure("save-threshold", "2");
   naos_ensure("saved-position", "0");
+  naos_ensure("motor-speed", "950");
 
   // read settings
   winding_length = a32_str2d(naos_get("winding-length"));
@@ -58,6 +58,7 @@ static void online() {
   automate = strcmp(naos_get("automate"), "on") == 0;
   idle_light = a32_str2i(naos_get("idle-light"));
   flash_intensity = a32_str2i(naos_get("flash-intensity"));
+  motor_speed = a32_str2i(naos_get("motor-speed"));
 
   // read position on first boot
   if (saved_position == -9999) {
@@ -71,7 +72,6 @@ static void online() {
   naos_subscribe("flash", 0, NAOS_LOCAL);
   naos_subscribe("move", 0, NAOS_LOCAL);
   naos_subscribe("stop", 0, NAOS_LOCAL);
-  naos_subscribe("speed", 0, NAOS_LOCAL);
   naos_subscribe("reset", 0, NAOS_LOCAL);
   naos_subscribe("disco", 0, NAOS_LOCAL);
 }
@@ -124,6 +124,11 @@ static void update(const char *param, const char *value) {
   if (strcmp(param, "save-threshold") == 0) {
     save_threshold = a32_str2i(value);
   }
+
+  // set motor speed
+  if (strcmp(param, "motor-speed") == 0) {
+    motor_speed = a32_str2i(value);
+  }
 }
 
 static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_t scope) {
@@ -142,11 +147,6 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
   if (strcmp(topic, "stop") == 0 && scope == NAOS_LOCAL) {
     target = position;
     mot_set(0);
-  }
-
-  // set speed
-  if (strcmp(topic, "speed") == 0 && scope == NAOS_LOCAL) {
-    speed = (int)strtol((const char *)payload, NULL, 10);
   }
 
   // reset position
@@ -243,10 +243,10 @@ static void loop() {
     mot_set(0);
   } else if (position < target) {
     // go down
-    mot_set(speed);
+    mot_set(motor_speed);
   } else if (position > target) {
     // go up
-    mot_set(speed * -1);
+    mot_set(motor_speed * -1);
   }
 
   // finish flash

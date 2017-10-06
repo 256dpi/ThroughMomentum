@@ -2,6 +2,28 @@
 
 **The ESP32 and NAOS based light object firmware.**
 
+## Topics
+
+`> flash {TIME}`
+
+Flashes the light for the specified amount of milliseconds.
+
+`> move {POSITION}`
+
+Moves the object to the specified height/position.
+
+`> stop`
+
+Stop immediately stops any movement. The `automate` parameter should be set to `off` beforehand.
+
+`> reset {POSITION}`
+
+Reset will save the specified position as the current position.
+
+`> disco`
+
+Disco randomly selects a color for the lights.
+
 ## Parameters
 
 ## `winding-length (7.5)`
@@ -39,3 +61,7 @@ The threshold to pass to trigger a position save.
 ## `saved-position (0)`
 
 The last auto-saved position.
+
+## `motor-speed (950)`
+
+The used motor speed.
