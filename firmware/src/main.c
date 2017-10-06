@@ -1,9 +1,7 @@
 #include <driver/adc.h>
-#include <driver/gpio.h>
 #include <esp_system.h>
 #include <math.h>
 #include <naos.h>
-#include <stdlib.h>
 #include <string.h>
 
 #include "dist.h"
