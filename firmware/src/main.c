@@ -13,9 +13,9 @@
 #include "pir.h"
 
 bool automate = false;
-double idle_target = 0;
-double rise_target = 0;
-double max_target = 0;
+double idle_height = 0;
+double rise_height = 0;
+double max_height = 0;
 
 uint32_t flash_end = 0;
 int speed = 0;
@@ -42,9 +42,9 @@ static void online() {
 
   // read settings
   automate = strcmp(naos_get("automate"), "on") == 0;
-  idle_target = strtod(naos_get("idle-target"), NULL);
-  rise_target = strtod(naos_get("rise-target"), NULL);
-  max_target = strtod(naos_get("max-target"), NULL);
+  idle_height = strtod(naos_get("idle-height"), NULL);
+  rise_height = strtod(naos_get("rise-height"), NULL);
+  max_height = strtod(naos_get("max-height"), NULL);
 
   // subscribe local topics
   naos_subscribe("flash", 0, NAOS_LOCAL);
@@ -69,19 +69,19 @@ static void update(const char *param, const char *value) {
     automate = strcmp(value, "on") == 0;
   }
 
-  // set idle target
-  if (strcmp(param, "idle-target") == 0) {
-    idle_target = strtod(value, NULL);
+  // set idle height
+  if (strcmp(param, "idle-height") == 0) {
+    idle_height = strtod(value, NULL);
   }
 
-  // set rise target
-  if (strcmp(param, "rise-target") == 0) {
-    rise_target = strtod(value, NULL);
+  // set rise height
+  if (strcmp(param, "rise-height") == 0) {
+    rise_height = strtod(value, NULL);
   }
 
-  // set max target
-  if (strcmp(param, "max-target") == 0) {
-    max_target = strtod(value, NULL);
+  // set max height
+  if (strcmp(param, "max-height") == 0) {
+    max_height = strtod(value, NULL);
   }
 }
 
@@ -182,13 +182,13 @@ static void loop() {
       }
 
       // constrain movement to 150cm to 250cm
-      if (new_target < rise_target) {
-        new_target = rise_target;
-      } else if (target > max_target) {
-        new_target = max_target;
+      if (new_target < rise_height) {
+        new_target = rise_height;
+      } else if (target > max_height) {
+        new_target = max_height;
       }
     } else {
-      new_target = idle_target;
+      new_target = idle_height;
     }
   }
 
