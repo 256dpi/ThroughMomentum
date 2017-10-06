@@ -87,5 +87,5 @@ double enc_get() {
     total += next;
   }
 
-  return total / ENC_RESOLUTION;
+  return total / ENC_RESOLUTION * -1;
 }

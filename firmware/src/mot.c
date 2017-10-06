@@ -22,7 +22,7 @@ void mot_init() {
 
   // prepare ledc channel config
   ledc_channel_config_t c = {.duty = 0,
-                             .intr_type = LEDC_INTR_FADE_END,
+                             .intr_type = LEDC_INTR_DISABLE,
                              .speed_mode = LEDC_HIGH_SPEED_MODE,
                              .timer_sel = LEDC_TIMER_0,
                              .gpio_num = GPIO_NUM_17,
@@ -42,12 +42,12 @@ void mot_set(int speed) {
     ESP_ERROR_CHECK(gpio_set_level(GPIO_NUM_16, 0));
   } else if (speed < 0) {
     // go backwards
-    ESP_ERROR_CHECK(gpio_set_level(GPIO_NUM_14, 1));
-    ESP_ERROR_CHECK(gpio_set_level(GPIO_NUM_16, 0));
-  } else if (speed > 0) {
-    // go forwards
     ESP_ERROR_CHECK(gpio_set_level(GPIO_NUM_14, 0));
     ESP_ERROR_CHECK(gpio_set_level(GPIO_NUM_16, 1));
+  } else if (speed > 0) {
+    // go forwards
+    ESP_ERROR_CHECK(gpio_set_level(GPIO_NUM_14, 1));
+    ESP_ERROR_CHECK(gpio_set_level(GPIO_NUM_16, 0));
   }
 
   // handle minus speeds
