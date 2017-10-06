@@ -248,9 +248,9 @@ static void loop() {
     if (motion) {
       // go up and down 1cm depending on current distance
       if (distance > target_distance + 1) {
-        new_target = position - 1;
+        new_target = position - (distance - target_distance);
       } else if (distance < target_distance - 1) {
-        new_target = position + 1;
+        new_target = position + (target_distance - distance);
       }
 
       // constrain movement to 150cm to 250cm
