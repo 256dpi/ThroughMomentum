@@ -19,7 +19,7 @@ bool automate = false;
 int idle_light = 0;
 int flash_intensity = 0;
 double save_threshold = 0;
-double saved_position = -10001;
+double saved_position = -9999;
 
 uint32_t flash_end = 0;
 int speed = 0;
@@ -60,7 +60,7 @@ static void online() {
   flash_intensity = a32_str2i(naos_get("flash-intensity"));
 
   // read position on first boot
-  if (saved_position <= -9999) {
+  if (saved_position == -9999) {
     saved_position = a32_str2d(naos_get("saved-position"));
   }
 
