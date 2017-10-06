@@ -12,9 +12,10 @@
 #include "mot.h"
 #include "pir.h"
 
+bool automate = false;
+
 uint32_t flash_end = 0;
 int speed = 0;
-bool automate = false;
 bool motion = false;
 int distance = 0;
 double position = 0;
@@ -34,13 +35,15 @@ static void online() {
   // enable idle light
   led_set(0, 0, 0, 127);
 
+  // read settings
+  automate = strcmp(naos_get("automate"), "on") == 0;
+
   // subscribe local topics
   naos_subscribe("flash", 0, NAOS_LOCAL);
   naos_subscribe("move", 0, NAOS_LOCAL);
   naos_subscribe("stop", 0, NAOS_LOCAL);
   naos_subscribe("speed", 0, NAOS_LOCAL);
   naos_subscribe("reset", 0, NAOS_LOCAL);
-  naos_subscribe("automate", 0, NAOS_LOCAL);
   naos_subscribe("disco", 0, NAOS_LOCAL);
 }
 
@@ -50,6 +53,13 @@ static void offline() {
 
   // disabled led
   led_set(0, 0, 0, 0);
+}
+
+static void update(const char *param, const char *value) {
+  // set automate
+  if (strcmp(param, "automate") == 0) {
+    automate = strcmp(value, "on") == 0;
+  }
 }
 
 static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_t scope) {
@@ -79,11 +89,6 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
   if (strcmp(topic, "reset") == 0 && scope == NAOS_LOCAL) {
     position = strtod((const char *)payload, NULL);
     target = strtod((const char *)payload, NULL);
-  }
-
-  // set automate
-  if (strcmp(topic, "automate") == 0 && scope == NAOS_LOCAL) {
-    automate = strcmp((const char *)payload, "on") == 0;
   }
 
   // perform disco
@@ -198,6 +203,7 @@ static naos_config_t config = {.device_type = "vas17",
                                .loop_interval = 0,
                                .online_callback = online,
                                .offline_callback = offline,
+                               .update_callback = update,
                                .message_callback = message};
 
 void app_main() {
