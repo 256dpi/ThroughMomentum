@@ -12,10 +12,10 @@
 #include "mot.h"
 #include "pir.h"
 
-bool automate = false;
 double idle_height = 0;
 double rise_height = 0;
 double max_height = 0;
+bool automate = false;
 
 uint32_t flash_end = 0;
 int speed = 0;
@@ -41,10 +41,10 @@ static void online() {
   // TODO: Default parameters.
 
   // read settings
-  automate = strcmp(naos_get("automate"), "on") == 0;
   idle_height = strtod(naos_get("idle-height"), NULL);
   rise_height = strtod(naos_get("rise-height"), NULL);
   max_height = strtod(naos_get("max-height"), NULL);
+  automate = strcmp(naos_get("automate"), "on") == 0;
 
   // subscribe local topics
   naos_subscribe("flash", 0, NAOS_LOCAL);
@@ -64,11 +64,6 @@ static void offline() {
 }
 
 static void update(const char *param, const char *value) {
-  // set automate
-  if (strcmp(param, "automate") == 0) {
-    automate = strcmp(value, "on") == 0;
-  }
-
   // set idle height
   if (strcmp(param, "idle-height") == 0) {
     idle_height = strtod(value, NULL);
@@ -82,6 +77,11 @@ static void update(const char *param, const char *value) {
   // set max height
   if (strcmp(param, "max-height") == 0) {
     max_height = strtod(value, NULL);
+  }
+
+  // set automate
+  if (strcmp(param, "automate") == 0) {
+    automate = strcmp(value, "on") == 0;
   }
 }
 
