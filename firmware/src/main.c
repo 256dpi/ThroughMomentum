@@ -14,6 +14,7 @@ double winding_length = 0;
 double idle_height = 0;
 double rise_height = 0;
 double max_height = 0;
+double target_distance = 0;
 bool automate = false;
 int idle_light = 0;
 int flash_intensity = 0;
@@ -43,6 +44,7 @@ static void online() {
   naos_ensure("idle-height", "100");
   naos_ensure("rise-height", "150");
   naos_ensure("max-height", "200");
+  naos_ensure("target-distance", "25");
   naos_ensure("automate", "off");
   naos_ensure("idle-light", "127");
   naos_ensure("flash-intensity", "1023");
@@ -55,6 +57,7 @@ static void online() {
   idle_height = a32_str2d(naos_get("idle-height"));
   rise_height = a32_str2d(naos_get("rise-height"));
   max_height = a32_str2d(naos_get("max-height"));
+  target_distance = a32_str2d(naos_get("target-distance"));
   automate = strcmp(naos_get("automate"), "on") == 0;
   idle_light = a32_str2i(naos_get("idle-light"));
   flash_intensity = a32_str2i(naos_get("flash-intensity"));
@@ -103,6 +106,11 @@ static void update(const char *param, const char *value) {
   // set max height
   if (strcmp(param, "max-height") == 0) {
     max_height = a32_str2d(value);
+  }
+
+  // set target distance
+  if (strcmp(param, "target-distance") == 0) {
+    target_distance = a32_str2d(value);
   }
 
   // set automate
@@ -212,9 +220,9 @@ static void loop() {
   if (automate) {
     if (motion) {
       // go up and down 1cm depending on current distance
-      if (distance > 25 + 1) {
+      if (distance > target_distance + 1) {
         new_target = position - 1;
-      } else if (distance < 25 - 1) {
+      } else if (distance < target_distance - 1) {
         new_target = position + 1;
       }
 
