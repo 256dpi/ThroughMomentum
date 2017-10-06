@@ -42,12 +42,12 @@ void mot_set(int speed) {
     ESP_ERROR_CHECK(gpio_set_level(GPIO_NUM_16, 0));
   } else if (speed < 0) {
     // go backwards
-    ESP_ERROR_CHECK(gpio_set_level(GPIO_NUM_14, 0));
-    ESP_ERROR_CHECK(gpio_set_level(GPIO_NUM_16, 1));
-  } else if (speed > 0) {
-    // go forwards
     ESP_ERROR_CHECK(gpio_set_level(GPIO_NUM_14, 1));
     ESP_ERROR_CHECK(gpio_set_level(GPIO_NUM_16, 0));
+  } else if (speed > 0) {
+    // go forwards
+    ESP_ERROR_CHECK(gpio_set_level(GPIO_NUM_14, 0));
+    ESP_ERROR_CHECK(gpio_set_level(GPIO_NUM_16, 1));
   }
 
   // handle minus speeds
