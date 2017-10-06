@@ -1,6 +1,12 @@
 {
   "version": "master",
   "broker": "mqtts://96c342e4:1724bcdee75a6f0b@broker.shiftr.io",
+  "components": {
+    "art32": {
+      "repository": "https://github.com/256dpi/art32.git",
+      "version": "master"
+    }
+  },
   "devices": {
     "vas17": {
       "base_topic": "vas17",
