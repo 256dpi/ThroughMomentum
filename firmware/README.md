@@ -23,3 +23,11 @@ The maximum height of the light object when motion is detected.
 ## `automate (off)`
 
 When automate is `on` the light will set its target position according to the sensor information.
+
+## `idle-ligth (127)`
+
+The intensity of the light in idle mode.
+
+## `flash-intensity (1023)`
+
+The intensity of the light flash.

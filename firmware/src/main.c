@@ -15,6 +15,8 @@ double idle_height = 0;
 double rise_height = 0;
 double max_height = 0;
 bool automate = false;
+int idle_light = 0;
+int flash_intensity = 0;
 
 uint32_t flash_end = 0;
 int speed = 0;
@@ -34,15 +36,14 @@ static void online() {
   // disable motor
   mot_set(0);
 
-  // enable idle light
-  led_set(0, 0, 0, 127);
-
   // ensure defaults
   naos_ensure("winding-length", "7.5");
   naos_ensure("idle-height", "100");
   naos_ensure("rise-height", "150");
   naos_ensure("max-height", "200");
   naos_ensure("automate", "off");
+  naos_ensure("idle-light", "127");
+  naos_ensure("flash-intensity", "1023");
 
   // read settings
   winding_length = strtod(naos_get("winding-length"), NULL);
@@ -50,6 +51,11 @@ static void online() {
   rise_height = strtod(naos_get("rise-height"), NULL);
   max_height = strtod(naos_get("max-height"), NULL);
   automate = strcmp(naos_get("automate"), "on") == 0;
+  idle_light = (int)strtol(naos_get("idle-light"), NULL, 10);
+  flash_intensity = (int)strtol(naos_get("flash-intensity"), NULL, 10);
+
+  // enable idle light
+  led_set(0, 0, 0, idle_light);
 
   // subscribe local topics
   naos_subscribe("flash", 0, NAOS_LOCAL);
@@ -93,13 +99,23 @@ static void update(const char *param, const char *value) {
   if (strcmp(param, "automate") == 0) {
     automate = strcmp(value, "on") == 0;
   }
+
+  // set idle light
+  if (strcmp(param, "idle-light") == 0) {
+    idle_light = (int)strtol(value, NULL, 10);
+  }
+
+  // set flash intensity
+  if (strcmp(param, "flash-intensity") == 0) {
+    flash_intensity = (int)strtol(value, NULL, 10);
+  }
 }
 
 static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_t scope) {
   // perform flash
   if (strcmp(topic, "flash") == 0 && scope == NAOS_LOCAL) {
     flash_end = naos_millis() + (uint32_t)strtol((const char *)payload, NULL, 10);
-    led_set(0, 0, 0, 1023);
+    led_set(0, 0, 0, flash_intensity);
   }
 
   // set target
@@ -224,7 +240,7 @@ static void loop() {
 
   // finish flash
   if (flash_end > 0 && flash_end < naos_millis()) {
-    led_set(0, 0, 0, 127);
+    led_set(0, 0, 0, idle_light);
     flash_end = 0;
   }
 }
