@@ -47,13 +47,13 @@ static void online() {
   naos_ensure("flash-intensity", "1023");
 
   // read settings
-  winding_length = strtod(naos_get("winding-length"), NULL);
-  idle_height = strtod(naos_get("idle-height"), NULL);
-  rise_height = strtod(naos_get("rise-height"), NULL);
-  max_height = strtod(naos_get("max-height"), NULL);
+  winding_length = a32_str2d(naos_get("winding-length"));
+  idle_height = a32_str2d(naos_get("idle-height"));
+  rise_height = a32_str2d(naos_get("rise-height"));
+  max_height = a32_str2d(naos_get("max-height"));
   automate = strcmp(naos_get("automate"), "on") == 0;
-  idle_light = (int)strtol(naos_get("idle-light"), NULL, 10);
-  flash_intensity = (int)strtol(naos_get("flash-intensity"), NULL, 10);
+  idle_light = a32_str2i(naos_get("idle-light"));
+  flash_intensity = a32_str2i(naos_get("flash-intensity"));
 
   // enable idle light
   led_set(0, 0, 0, idle_light);
