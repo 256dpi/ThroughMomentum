@@ -62,6 +62,7 @@ static void online() {
   automate = strcmp(naos_get("automate"), "on") == 0;
   idle_light = a32_str2i(naos_get("idle-light"));
   flash_intensity = a32_str2i(naos_get("flash-intensity"));
+  position = a32_str2d(naos_get("saved-position"));
   motor_speed = a32_str2i(naos_get("motor-speed"));
 
   // read position on first boot
