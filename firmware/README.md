@@ -4,18 +4,22 @@
 
 ## Parameters
 
-## `idle-height`
+## `winding-length (7.5)`
+
+The length of the cable needed for one average winding.
+
+## `idle-height (100)`
 
 The idle height of the light object.
 
-## `rise-height`
+## `rise-height (150)`
 
 The rise height of the light object when motion is detected.
 
-## `max-height`
+## `max-height (200)`
 
 The maximum height of the light object when motion is detected.
 
-## `automate`
+## `automate (off)`
 
 When automate is `on` the light will set its target position according to the sensor information.

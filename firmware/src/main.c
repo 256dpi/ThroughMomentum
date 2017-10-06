@@ -12,6 +12,7 @@
 #include "mot.h"
 #include "pir.h"
 
+double winding_length = 0;
 double idle_height = 0;
 double rise_height = 0;
 double max_height = 0;
@@ -38,9 +39,15 @@ static void online() {
   // enable idle light
   led_set(0, 0, 0, 127);
 
-  // TODO: Default parameters.
+  // ensure defaults
+  naos_ensure("winding-length", "7.5");
+  naos_ensure("idle-height", "100");
+  naos_ensure("rise-height", "150");
+  naos_ensure("max-height", "200");
+  naos_ensure("automate", "off");
 
   // read settings
+  winding_length = strtod(naos_get("winding-length"), NULL);
   idle_height = strtod(naos_get("idle-height"), NULL);
   rise_height = strtod(naos_get("rise-height"), NULL);
   max_height = strtod(naos_get("max-height"), NULL);
@@ -64,6 +71,11 @@ static void offline() {
 }
 
 static void update(const char *param, const char *value) {
+  // set winding length
+  if (strcmp(param, "winding-length") == 0) {
+    winding_length = strtod(value, NULL);
+  }
+
   // set idle height
   if (strcmp(param, "idle-height") == 0) {
     idle_height = strtod(value, NULL);
@@ -160,7 +172,7 @@ static void loop() {
 
   // apply rotation
   if (rotation_change != 0) {
-    position += rotation_change * 7.5;  // TODO: Calculate average length of wire per revolution.
+    position += rotation_change * winding_length;
 
     // publish update
     char position_str[10];
