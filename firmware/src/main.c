@@ -78,22 +78,22 @@ static void offline() {
 static void update(const char *param, const char *value) {
   // set winding length
   if (strcmp(param, "winding-length") == 0) {
-    winding_length = strtod(value, NULL);
+    winding_length = a32_str2d(value);
   }
 
   // set idle height
   if (strcmp(param, "idle-height") == 0) {
-    idle_height = strtod(value, NULL);
+    idle_height = a32_str2d(value);
   }
 
   // set rise height
   if (strcmp(param, "rise-height") == 0) {
-    rise_height = strtod(value, NULL);
+    rise_height = a32_str2d(value);
   }
 
   // set max height
   if (strcmp(param, "max-height") == 0) {
-    max_height = strtod(value, NULL);
+    max_height = a32_str2d(value);
   }
 
   // set automate
@@ -103,12 +103,12 @@ static void update(const char *param, const char *value) {
 
   // set idle light
   if (strcmp(param, "idle-light") == 0) {
-    idle_light = (int)strtol(value, NULL, 10);
+    idle_light = a32_str2i(value);
   }
 
   // set flash intensity
   if (strcmp(param, "flash-intensity") == 0) {
-    flash_intensity = (int)strtol(value, NULL, 10);
+    flash_intensity = a32_str2i(value);
   }
 }
 
