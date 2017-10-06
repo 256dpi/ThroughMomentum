@@ -2,6 +2,8 @@
 #include <freertos/FreeRTOS.h>
 #include <freertos/queue.h>
 
+#define ENC_RESOLUTION 20
+
 QueueHandle_t enc_rotation_queue;
 
 static uint8_t enc_rotation_state = 0;
@@ -75,9 +77,9 @@ void enc_init() {
   gpio_isr_handler_add(GPIO_NUM_25, enc_rotation_handler, NULL);
 }
 
-int enc_get() {
+double enc_get() {
   // prepare variables
-  int total = 0;
+  double total = 0;
   int next = 0;
 
   // get all relative changes
@@ -85,5 +87,5 @@ int enc_get() {
     total += next;
   }
 
-  return total;
+  return total / ENC_RESOLUTION;
 }

@@ -5,6 +5,6 @@
 
 void enc_init();
 
-int enc_get();
+double enc_get();
 
 #endif  // ENC_H

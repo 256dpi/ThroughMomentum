@@ -156,11 +156,11 @@ static void loop() {
   }
 
   // get encoder
-  int rotation_change = enc_get();
+  double rotation_change = enc_get();
 
   // apply rotation
   if (rotation_change != 0) {
-    position += (double)rotation_change / 20.0 * 7.5;  // TODO: Calculate average length of wire per revolution.
+    position += rotation_change * 7.5;  // TODO: Calculate average length of wire per revolution.
 
     // publish update
     char position_str[10];
