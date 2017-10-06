@@ -36,12 +36,12 @@ static void online() {
 
   // subscribe local topics
   naos_subscribe("flash", 0, NAOS_LOCAL);
-  naos_subscribe("disco", 0, NAOS_LOCAL);
   naos_subscribe("move", 0, NAOS_LOCAL);
   naos_subscribe("stop", 0, NAOS_LOCAL);
   naos_subscribe("speed", 0, NAOS_LOCAL);
   naos_subscribe("reset", 0, NAOS_LOCAL);
   naos_subscribe("automate", 0, NAOS_LOCAL);
+  naos_subscribe("disco", 0, NAOS_LOCAL);
 }
 
 static void offline() {
@@ -57,15 +57,6 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
   if (strcmp(topic, "flash") == 0 && scope == NAOS_LOCAL) {
     flash_end = naos_millis() + (uint32_t)strtol((const char *)payload, NULL, 10);
     led_set(0, 0, 0, 1023);
-  }
-
-  // perform disco
-  if (strcmp(topic, "disco") == 0 && scope == NAOS_LOCAL) {
-    int r = esp_random() / 4194304;
-    int g = esp_random() / 4194304;
-    int b = esp_random() / 4194304;
-    int w = esp_random() / 4194304;
-    led_set(r, g, b, w);
   }
 
   // set target
@@ -93,6 +84,15 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
   // set automate
   if (strcmp(topic, "automate") == 0 && scope == NAOS_LOCAL) {
     automate = strcmp((const char *)payload, "on") == 0;
+  }
+
+  // perform disco
+  if (strcmp(topic, "disco") == 0 && scope == NAOS_LOCAL) {
+    int r = esp_random() / 4194304;
+    int g = esp_random() / 4194304;
+    int b = esp_random() / 4194304;
+    int w = esp_random() / 4194304;
+    led_set(r, g, b, w);
   }
 }
 
