@@ -8,13 +8,18 @@
 
 Flashes the light for the specified amount of milliseconds.
 
+`> turn up/down`
+
+Puts the motor in manual mode and drives in the requested direction.
+
 `> move {POSITION}`
 
 Moves the object to the specified height/position.
 
 `> stop`
 
-Stop immediately stops any movement. The `automate` parameter should be set to `off` beforehand.
+Immediately stops any movement sets the current position as the target, cancels the manual turn mode and turns of the
+automate mode.
 
 `> reset {POSITION}`
 
