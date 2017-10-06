@@ -71,7 +71,7 @@ static void online() {
   }
 
   // enable idle light
-  led_set(0, 0, 0, idle_light);
+  led_set(idle_light, idle_light, idle_light, idle_light);
 
   // subscribe local topics
   naos_subscribe("flash", 0, NAOS_LOCAL);
@@ -145,7 +145,7 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
   // perform flash
   if (strcmp(topic, "flash") == 0 && scope == NAOS_LOCAL) {
     flash_end = naos_millis() + (uint32_t)strtol((const char *)payload, NULL, 10);
-    led_set(0, 0, 0, flash_intensity);
+    led_set(flash_intensity, flash_intensity, flash_intensity, flash_intensity);
   }
 
   // set target
@@ -213,6 +213,12 @@ static void loop() {
     saved_position = position;
   }
 
+  // finish flash
+  if (flash_end > 0 && flash_end < naos_millis()) {
+    led_set(idle_light, idle_light, idle_light, idle_light);
+    flash_end = 0;
+  }
+
   // prepare new target
   double new_target = target;
 
@@ -255,12 +261,6 @@ static void loop() {
   } else if (position > target) {
     // go up
     mot_set(motor_speed * -1);
-  }
-
-  // finish flash
-  if (flash_end > 0 && flash_end < naos_millis()) {
-    led_set(0, 0, 0, idle_light);
-    flash_end = 0;
   }
 }
 
