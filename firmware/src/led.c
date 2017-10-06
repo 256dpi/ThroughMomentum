@@ -41,18 +41,26 @@ void led_init() {
 
 void led_set(int r, int g, int b, int w) {
   // set red
-  ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_1, (uint32_t)r);
-  ledc_update_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_1);
+  //  ESP_ERROR_CHECK(ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_1, (uint32_t)r));
+  //  ESP_ERROR_CHECK(ledc_update_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_1));
+  ESP_ERROR_CHECK(ledc_set_fade_with_time(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_1, (uint32_t)r, 100));
+  ESP_ERROR_CHECK(ledc_fade_start(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_1, LEDC_FADE_NO_WAIT));
 
   // set green
-  ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_2, (uint32_t)g);
-  ledc_update_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_2);
+  //  ESP_ERROR_CHECK(ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_2, (uint32_t)g));
+  //  ESP_ERROR_CHECK(ledc_update_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_2));
+  ESP_ERROR_CHECK(ledc_set_fade_with_time(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_2, (uint32_t)g, 100));
+  ESP_ERROR_CHECK(ledc_fade_start(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_2, LEDC_FADE_NO_WAIT));
 
   // set blue
-  ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_3, (uint32_t)b);
-  ledc_update_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_3);
+  //  ESP_ERROR_CHECK(ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_3, (uint32_t)b));
+  //  ESP_ERROR_CHECK(ledc_update_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_3));
+  ESP_ERROR_CHECK(ledc_set_fade_with_time(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_3, (uint32_t)b, 100));
+  ESP_ERROR_CHECK(ledc_fade_start(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_3, LEDC_FADE_NO_WAIT));
 
   // set white
-  ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_4, (uint32_t)w);
-  ledc_update_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_4);
+  //  ESP_ERROR_CHECK(ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_4, (uint32_t)w));
+  //  ESP_ERROR_CHECK(ledc_update_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_4));
+  ESP_ERROR_CHECK(ledc_set_fade_with_time(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_4, (uint32_t)w, 100));
+  ESP_ERROR_CHECK(ledc_fade_start(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_4, LEDC_FADE_NO_WAIT));
 }
