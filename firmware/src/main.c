@@ -1,3 +1,4 @@
+#include <art32/strconv.h>
 #include <driver/adc.h>
 #include <esp_system.h>
 #include <math.h>
@@ -162,7 +163,7 @@ static void loop() {
     motion = new_motion;
 
     // publish update
-    naos_publish_int("motion", motion ? 1 : 0, 0, false, NAOS_LOCAL);
+    naos_publish("motion", a32_l2str(motion ? 1 : 0), 0, false, NAOS_LOCAL);
   }
 
   // read distance
@@ -178,7 +179,7 @@ static void loop() {
     distance = new_distance;
 
     // publish update
-    naos_publish_int("distance", distance, 0, false, NAOS_LOCAL);
+    naos_publish("distance", a32_l2str(distance), 0, false, NAOS_LOCAL);
   }
 
   // get encoder
@@ -189,9 +190,7 @@ static void loop() {
     position += rotation_change * winding_length;
 
     // publish update
-    char position_str[10];
-    snprintf(position_str, 10, "%.3f", position);
-    naos_publish_str("position", position_str, 0, false, NAOS_LOCAL);
+    naos_publish("position", a32_d2str(position), 0, false, NAOS_LOCAL);
   }
 
   // prepare new target
