@@ -14,7 +14,7 @@ Puts the motor in manual mode and drives in the requested direction.
 
 `> move {POSITION}`
 
-Moves the object to the specified height/position.
+Disables automate mode and moves the object to the specified height/position.
 
 `> stop`
 
@@ -67,18 +67,22 @@ The threshold to pass to trigger a position save.
 
 The last auto-saved position.
 
-## `min-down-speed (250)`
+## `min-down-speed (350)`
 
 The minimal downwards motor speed.
 
-## `min-up-speed (250)`
+## `min-up-speed (350)`
 
 The minimal upwards motor speed.
 
-## `max-down-speed (950)`
+## `max-down-speed (400)`
 
 The maximal downwards motor speed.
 
 ## `max-up-speed (950)`
 
 The maximal upwards motor speed.
+
+## `speed-map-range (20)`
+
+The range of the target mapped speed.

@@ -26,6 +26,7 @@ int min_down_speed = 0;
 int min_up_speed = 0;
 int max_down_speed = 0;
 int max_up_speed = 0;
+int speed_map_range = 0;
 
 bool motion = false;
 uint32_t last_distance = 0;
@@ -56,10 +57,11 @@ static void online() {
   naos_ensure("flash-intensity", "1023");
   naos_ensure("save-threshold", "2");
   naos_ensure("saved-position", "0");
-  naos_ensure("min-down-speed", "250");
-  naos_ensure("min-up-speed", "250");
-  naos_ensure("max-down-speed", "950");
+  naos_ensure("min-down-speed", "350");
+  naos_ensure("min-up-speed", "350");
+  naos_ensure("max-down-speed", "400");
   naos_ensure("max-up-speed", "950");
+  naos_ensure("speed-map-range", "20");
 
   // read settings
   automate = strcmp(naos_get("automate"), "on") == 0;
@@ -75,6 +77,10 @@ static void online() {
   min_up_speed = a32_str2i(naos_get("min-up-speed"));
   max_down_speed = a32_str2i(naos_get("max-down-speed"));
   max_up_speed = a32_str2i(naos_get("max-up-speed"));
+  speed_map_range = a32_str2i(naos_get("speed-map-range"));
+
+  // set target to current position
+  target = position;
 
   // read position on first boot
   if (saved_position == -9999) {
@@ -166,6 +172,11 @@ static void update(const char *param, const char *value) {
   else if (strcmp(param, "max-up-speed") == 0) {
     max_up_speed = a32_str2i(value);
   }
+
+  // set speed map range
+  else if (strcmp(param, "speed-map-range") == 0) {
+    speed_map_range = a32_str2i(value);
+  }
 }
 
 static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_t scope) {
@@ -189,6 +200,11 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
   // set target
   else if (strcmp(topic, "move") == 0 && scope == NAOS_LOCAL) {
     target = strtod((const char *)payload, NULL);
+
+    if (automate) {
+      automate = false;
+      naos_set("automate", "off");
+    }
   }
 
   // stop motor
@@ -196,8 +212,11 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
     mot_set(0);
     manual = false;
     target = position;
-    automate = false;
-    naos_set("automate", "off");
+
+    if (automate) {
+      automate = false;
+      naos_set("automate", "off");
+    }
   }
 
   // reset position
@@ -303,10 +322,10 @@ static void loop() {
     mot_set(0);
   } else if (position < target) {
     // go up
-    mot_set((int)a32_safe_map_d(target - position, 0, 50, min_up_speed, max_up_speed));
+    mot_set((int)a32_safe_map_d(target - position, 0, speed_map_range, min_up_speed, max_up_speed));
   } else if (position > target) {
     // go down
-    mot_set((int)a32_safe_map_d(position - target, 0, 50, min_down_speed * -1, max_down_speed * -1));
+    mot_set((int)a32_safe_map_d(position - target, 0, speed_map_range, min_down_speed * -1, max_down_speed * -1));
   }
 }
 
