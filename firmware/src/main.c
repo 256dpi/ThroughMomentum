@@ -22,6 +22,8 @@ int idle_light = 0;
 int flash_intensity = 0;
 double save_threshold = 0;
 double saved_position = -9999;
+int min_down_speed = 0;
+int min_up_speed = 0;
 int max_down_speed = 0;
 int max_up_speed = 0;
 
@@ -54,6 +56,8 @@ static void online() {
   naos_ensure("flash-intensity", "1023");
   naos_ensure("save-threshold", "2");
   naos_ensure("saved-position", "0");
+  naos_ensure("min-down-speed", "250");
+  naos_ensure("min-up-speed", "250");
   naos_ensure("max-down-speed", "950");
   naos_ensure("max-up-speed", "950");
 
@@ -67,6 +71,8 @@ static void online() {
   idle_light = a32_str2i(naos_get("idle-light"));
   flash_intensity = a32_str2i(naos_get("flash-intensity"));
   position = a32_str2d(naos_get("saved-position"));
+  min_down_speed = a32_str2i(naos_get("min-down-speed"));
+  min_up_speed = a32_str2i(naos_get("min-up-speed"));
   max_down_speed = a32_str2i(naos_get("max-down-speed"));
   max_up_speed = a32_str2i(naos_get("max-up-speed"));
 
@@ -139,6 +145,16 @@ static void update(const char *param, const char *value) {
   // set save threshold
   else if (strcmp(param, "save-threshold") == 0) {
     save_threshold = a32_str2i(value);
+  }
+
+  // set min down speed
+  else if (strcmp(param, "min-down-speed") == 0) {
+    min_down_speed = a32_str2i(value);
+  }
+
+  // set min up speed
+  else if (strcmp(param, "min-up-speed") == 0) {
+    min_up_speed = a32_str2i(value);
   }
 
   // set max down speed
@@ -287,10 +303,10 @@ static void loop() {
     mot_set(0);
   } else if (position < target) {
     // go up
-    mot_set((int)a32_safe_map_d(target - position, 0, 50, 250, max_up_speed));
+    mot_set((int)a32_safe_map_d(target - position, 0, 50, min_up_speed, max_up_speed));
   } else if (position > target) {
     // go down
-    mot_set((int)a32_safe_map_d(position - target, 0, 50, -250, max_down_speed * -1));
+    mot_set((int)a32_safe_map_d(position - target, 0, 50, min_down_speed * -1, max_down_speed * -1));
   }
 }
 
