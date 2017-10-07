@@ -176,7 +176,7 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
   }
 
   // set turn
-  if (strcmp(topic, "turn") == 0 && scope == NAOS_LOCAL) {
+  else if (strcmp(topic, "turn") == 0 && scope == NAOS_LOCAL) {
     if (strcmp((const char *)payload, "up") == 0) {
       manual = true;
       mot_set(512);
@@ -187,12 +187,12 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
   }
 
   // set target
-  if (strcmp(topic, "move") == 0 && scope == NAOS_LOCAL) {
+  else if (strcmp(topic, "move") == 0 && scope == NAOS_LOCAL) {
     target = strtod((const char *)payload, NULL);
   }
 
   // stop motor
-  if (strcmp(topic, "stop") == 0 && scope == NAOS_LOCAL) {
+  else if (strcmp(topic, "stop") == 0 && scope == NAOS_LOCAL) {
     mot_set(0);
     manual = false;
     target = position;
@@ -201,13 +201,13 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
   }
 
   // reset position
-  if (strcmp(topic, "reset") == 0 && scope == NAOS_LOCAL) {
+  else if (strcmp(topic, "reset") == 0 && scope == NAOS_LOCAL) {
     position = strtod((const char *)payload, NULL);
     target = strtod((const char *)payload, NULL);
   }
 
   // perform disco
-  if (strcmp(topic, "disco") == 0 && scope == NAOS_LOCAL) {
+  else if (strcmp(topic, "disco") == 0 && scope == NAOS_LOCAL) {
     int r = esp_random() / 4194304;
     int g = esp_random() / 4194304;
     int b = esp_random() / 4194304;
