@@ -13,6 +13,7 @@
 		524E46691F89831300F95429 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 524E46671F89831300F95429 /* LaunchScreen.storyboard */; };
 		524E46731F89875200F95429 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 524E46721F89875200F95429 /* MainViewController.swift */; };
 		524E46751F89887A00F95429 /* TestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 524E46741F89887A00F95429 /* TestViewController.swift */; };
+		524E46771F898EDF00F95429 /* CircleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 524E46761F898EDE00F95429 /* CircleView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		524E466A1F89831300F95429 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		524E46721F89875200F95429 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		524E46741F89887A00F95429 /* TestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestViewController.swift; sourceTree = "<group>"; };
+		524E46761F898EDE00F95429 /* CircleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircleView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,6 +61,7 @@
 				524E465A1F89831300F95429 /* AppDelegate.swift */,
 				524E46721F89875200F95429 /* MainViewController.swift */,
 				524E46741F89887A00F95429 /* TestViewController.swift */,
+				524E46761F898EDE00F95429 /* CircleView.swift */,
 				524E46621F89831300F95429 /* Main.storyboard */,
 				524E46651F89831300F95429 /* Assets.xcassets */,
 				524E46671F89831300F95429 /* LaunchScreen.storyboard */,
@@ -140,6 +143,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				524E465B1F89831300F95429 /* AppDelegate.swift in Sources */,
+				524E46771F898EDF00F95429 /* CircleView.swift in Sources */,
 				524E46751F89887A00F95429 /* TestViewController.swift in Sources */,
 				524E46731F89875200F95429 /* MainViewController.swift in Sources */,
 			);
