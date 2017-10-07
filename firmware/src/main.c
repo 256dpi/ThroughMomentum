@@ -1,3 +1,4 @@
+#include <art32/numbers.h>
 #include <art32/strconv.h>
 #include <driver/adc.h>
 #include <driver/ledc.h>
@@ -21,7 +22,8 @@ int idle_light = 0;
 int flash_intensity = 0;
 double save_threshold = 0;
 double saved_position = -9999;
-int motor_speed = 0;
+int max_down_speed = 0;
+int max_up_speed = 0;
 
 bool motion = false;
 uint32_t last_distance = 0;
@@ -52,7 +54,8 @@ static void online() {
   naos_ensure("flash-intensity", "1023");
   naos_ensure("save-threshold", "2");
   naos_ensure("saved-position", "0");
-  naos_ensure("motor-speed", "950");
+  naos_ensure("max-down-speed", "950");
+  naos_ensure("max-up-speed", "950");
 
   // read settings
   winding_length = a32_str2d(naos_get("winding-length"));
@@ -64,7 +67,8 @@ static void online() {
   idle_light = a32_str2i(naos_get("idle-light"));
   flash_intensity = a32_str2i(naos_get("flash-intensity"));
   position = a32_str2d(naos_get("saved-position"));
-  motor_speed = a32_str2i(naos_get("motor-speed"));
+  max_down_speed = a32_str2i(naos_get("max-down-speed"));
+  max_up_speed = a32_str2i(naos_get("max-up-speed"));
 
   // read position on first boot
   if (saved_position == -9999) {
@@ -137,9 +141,14 @@ static void update(const char *param, const char *value) {
     save_threshold = a32_str2i(value);
   }
 
-  // set motor speed
-  if (strcmp(param, "motor-speed") == 0) {
-    motor_speed = a32_str2i(value);
+  // set max down speed
+  if (strcmp(param, "max-down-speed") == 0) {
+    max_down_speed = a32_str2i(value);
+  }
+
+  // set max up speed
+  if (strcmp(param, "max-up-speed") == 0) {
+    max_up_speed = a32_str2i(value);
   }
 }
 
@@ -277,11 +286,11 @@ static void loop() {
     // break if target has been reached
     mot_set(0);
   } else if (position < target) {
-    // go down
-    mot_set(motor_speed);
-  } else if (position > target) {
     // go up
-    mot_set(motor_speed * -1);
+    mot_set((int)a32_safe_map_d(target - position, 0, 50, 250, max_up_speed));
+  } else if (position > target) {
+    // go down
+    mot_set((int)a32_safe_map_d(position - target, 0, 50, -250, max_down_speed * -1));
   }
 }
 
