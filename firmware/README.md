@@ -31,6 +31,10 @@ Disco randomly selects a color for the lights.
 
 ## Parameters
 
+## `automate (off)`
+
+When automate is `on` the light will set its target position according to the sensor information.
+
 ## `winding-length (7.5)`
 
 The length of the cable needed for one average winding.
@@ -46,10 +50,6 @@ The rise height of the light object when motion is detected.
 ## `max-height (200)`
 
 The maximum height of the light object when motion is detected.
-
-## `automate (off)`
-
-When automate is `on` the light will set its target position according to the sensor information.
 
 ## `idle-ligth (127)`
 
@@ -67,6 +67,18 @@ The threshold to pass to trigger a position save.
 
 The last auto-saved position.
 
-## `motor-speed (950)`
+## `min-down-speed (250)`
 
-The used motor speed.
+The minimal downwards motor speed.
+
+## `min-up-speed (250)`
+
+The minimal upwards motor speed.
+
+## `max-down-speed (950)`
+
+The maximal downwards motor speed.
+
+## `max-up-speed (950)`
+
+The maximal upwards motor speed.
