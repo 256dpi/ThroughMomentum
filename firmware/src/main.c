@@ -12,12 +12,12 @@
 #include "mot.h"
 #include "pir.h"
 
+bool automate = false;
 double winding_length = 0;
 double idle_height = 0;
 double rise_height = 0;
 double max_height = 0;
 double target_distance = 0;
-bool automate = false;
 int idle_light = 0;
 int flash_intensity = 0;
 double save_threshold = 0;
@@ -46,12 +46,12 @@ static void online() {
   mot_set(0);
 
   // ensure defaults
+  naos_ensure("automate", "off");
   naos_ensure("winding-length", "7.5");
   naos_ensure("idle-height", "100");
   naos_ensure("rise-height", "150");
   naos_ensure("max-height", "200");
   naos_ensure("target-distance", "25");
-  naos_ensure("automate", "off");
   naos_ensure("idle-light", "127");
   naos_ensure("flash-intensity", "1023");
   naos_ensure("save-threshold", "2");
@@ -62,12 +62,12 @@ static void online() {
   naos_ensure("max-up-speed", "950");
 
   // read settings
+  automate = strcmp(naos_get("automate"), "on") == 0;
   winding_length = a32_str2d(naos_get("winding-length"));
   idle_height = a32_str2d(naos_get("idle-height"));
   rise_height = a32_str2d(naos_get("rise-height"));
   max_height = a32_str2d(naos_get("max-height"));
   target_distance = a32_str2d(naos_get("target-distance"));
-  automate = strcmp(naos_get("automate"), "on") == 0;
   idle_light = a32_str2i(naos_get("idle-light"));
   flash_intensity = a32_str2i(naos_get("flash-intensity"));
   position = a32_str2d(naos_get("saved-position"));
@@ -102,8 +102,13 @@ static void offline() {
 }
 
 static void update(const char *param, const char *value) {
+  // set automate
+  if (strcmp(param, "automate") == 0) {
+    automate = strcmp(value, "on") == 0;
+  }
+
   // set winding length
-  if (strcmp(param, "winding-length") == 0) {
+  else if (strcmp(param, "winding-length") == 0) {
     winding_length = a32_str2d(value);
   }
 
@@ -125,11 +130,6 @@ static void update(const char *param, const char *value) {
   // set target distance
   else if (strcmp(param, "target-distance") == 0) {
     target_distance = a32_str2d(value);
-  }
-
-  // set automate
-  else if (strcmp(param, "automate") == 0) {
-    automate = strcmp(value, "on") == 0;
   }
 
   // set idle light
