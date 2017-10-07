@@ -102,52 +102,52 @@ static void update(const char *param, const char *value) {
   }
 
   // set idle height
-  if (strcmp(param, "idle-height") == 0) {
+  else if (strcmp(param, "idle-height") == 0) {
     idle_height = a32_str2d(value);
   }
 
   // set rise height
-  if (strcmp(param, "rise-height") == 0) {
+  else if (strcmp(param, "rise-height") == 0) {
     rise_height = a32_str2d(value);
   }
 
   // set max height
-  if (strcmp(param, "max-height") == 0) {
+  else if (strcmp(param, "max-height") == 0) {
     max_height = a32_str2d(value);
   }
 
   // set target distance
-  if (strcmp(param, "target-distance") == 0) {
+  else if (strcmp(param, "target-distance") == 0) {
     target_distance = a32_str2d(value);
   }
 
   // set automate
-  if (strcmp(param, "automate") == 0) {
+  else if (strcmp(param, "automate") == 0) {
     automate = strcmp(value, "on") == 0;
   }
 
   // set idle light
-  if (strcmp(param, "idle-light") == 0) {
+  else if (strcmp(param, "idle-light") == 0) {
     idle_light = a32_str2i(value);
   }
 
   // set flash intensity
-  if (strcmp(param, "flash-intensity") == 0) {
+  else if (strcmp(param, "flash-intensity") == 0) {
     flash_intensity = a32_str2i(value);
   }
 
   // set save threshold
-  if (strcmp(param, "save-threshold") == 0) {
+  else if (strcmp(param, "save-threshold") == 0) {
     save_threshold = a32_str2i(value);
   }
 
   // set max down speed
-  if (strcmp(param, "max-down-speed") == 0) {
+  else if (strcmp(param, "max-down-speed") == 0) {
     max_down_speed = a32_str2i(value);
   }
 
   // set max up speed
-  if (strcmp(param, "max-up-speed") == 0) {
+  else if (strcmp(param, "max-up-speed") == 0) {
     max_up_speed = a32_str2i(value);
   }
 }
