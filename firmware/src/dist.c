@@ -1,3 +1,4 @@
+#include <art32/smooth.h>
 #include <driver/gpio.h>
 #include <driver/rmt.h>
 #include <driver/timer.h>
@@ -6,6 +7,8 @@
 #define DIST_TIMER_GROUP TIMER_GROUP_0
 #define DIST_TIMER_NUM TIMER_0
 #define DIST_TRIGGER_RMT_CHANNEL RMT_CHANNEL_0
+
+static a32_smooth_t *dist_smooth;
 
 static double dist_value = 0;
 
@@ -30,12 +33,15 @@ static void dist_handler(void *_) {
 
     // calculate new distance if value is greater than zero
     if (real_distance > 0 && real_distance <= 400) {
-      dist_value = real_distance;
+      dist_value = a32_smooth_update(dist_smooth, real_distance);
     }
   }
 }
 
 void dist_init() {
+  // create smooth
+  dist_smooth = a32_smooth_new(5);
+
   // prepare trigger rmt channel
   rmt_config_t trig;
   trig.rmt_mode = RMT_MODE_TX;
