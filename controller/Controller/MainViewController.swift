@@ -17,10 +17,11 @@ let paddingTop: Double = 200
 let offColor = UIColor(white: 0.1, alpha: 1)
 let onColor = UIColor(white: 1, alpha: 1)
 
-class MainViewController: UIViewController, CocoaMQTTDelegate {
+class MainViewController: UIViewController, CircleViewDelegate, CocoaMQTTDelegate {
     var circleViews: [CircleView]?
     var client: CocoaMQTT?
     var connected = false
+    var detailViewController: DetailViewController?
     
     var fw: Double = 0
     var fh: Double = 0
@@ -53,7 +54,9 @@ class MainViewController: UIViewController, CocoaMQTTDelegate {
                 
                 // create view
                 let cv = CircleView(frame: CGRect(x: xx-50, y: yy-20, width: 100, height: 40))
-                cv.prepare(id: idx + 1)
+                cv.delegate = self
+                cv.prepare()
+                cv.id = idx + 1
                 
                 // add to view
                 view.addSubview(cv)
@@ -96,6 +99,12 @@ class MainViewController: UIViewController, CocoaMQTTDelegate {
         sendAll(topic: "disco", payload: "")
     }
     
+    @IBAction func openStaging() {
+        openDetail(id: 0)
+    }
+    
+    // Helpers
+    
     func sendAll(topic: String, payload: String) {
         // return immediately if not connected
         if !connected {
@@ -108,9 +117,36 @@ class MainViewController: UIViewController, CocoaMQTTDelegate {
         }
     }
     
+    func openDetail(id: Int) {
+        // kill old view controller
+        if detailViewController != nil {
+            detailViewController = nil
+        }
+        
+        // instantiate new view controller
+        let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+        detailViewController = (storyBoard.instantiateViewController(withIdentifier: "DetailViewController") as! DetailViewController)
+        
+        // set id
+        // ...
+        
+        // present new view controller
+        present(detailViewController!, animated: true, completion: nil)
+    }
+    
+    // UIViewController
+    
     override var prefersStatusBarHidden: Bool {
         return true
     }
+    
+    // CircleViewDelegate
+    
+    func didTapCircleView(sender: CircleView) {
+        openDetail(id: sender.id)
+    }
+    
+    // CocoaMQTTDelegate
     
     func mqtt(_ mqtt: CocoaMQTT, didConnectAck ack: CocoaMQTTConnAck) {
         // return immediately if connection has been rejected

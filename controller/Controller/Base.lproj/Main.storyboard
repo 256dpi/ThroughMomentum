@@ -59,7 +59,7 @@
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <segue destination="UJ0-D5-W48" kind="show" id="SUz-HU-IQy"/>
+                                    <action selector="openStaging" destination="703-4V-yAM" eventType="touchUpInside" id="j4q-bN-aar"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -74,6 +74,7 @@
                             <constraint firstItem="fxo-fG-6ku" firstAttribute="top" secondItem="iAZ-4m-2z3" secondAttribute="top" constant="100" id="jjN-fz-J4M"/>
                             <constraint firstItem="kKZ-iC-rZP" firstAttribute="top" secondItem="iAZ-4m-2z3" secondAttribute="top" constant="100" id="kyY-cU-IRD"/>
                             <constraint firstItem="WA8-Fk-Ril" firstAttribute="leading" secondItem="iAZ-4m-2z3" secondAttribute="leading" constant="100" id="lPO-RP-udC"/>
+                            <constraint firstItem="iAZ-4m-2z3" firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="fxo-fG-6ku" secondAttribute="trailing" constant="100" id="yWC-HK-Zy6"/>
                             <constraint firstItem="fxo-fG-6ku" firstAttribute="leading" secondItem="kKZ-iC-rZP" secondAttribute="trailing" constant="20" id="zaQ-dt-WrE"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="iAZ-4m-2z3"/>
@@ -83,18 +84,17 @@
             </objects>
             <point key="canvasLocation" x="-101" y="-243"/>
         </scene>
-        <!--Test View Controller-->
+        <!--Detail View Controller-->
         <scene sceneID="ODS-Mz-deU">
             <objects>
-                <viewController id="UJ0-D5-W48" customClass="TestViewController" customModule="Controller" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="DetailViewController" id="UJ0-D5-W48" customClass="DetailViewController" customModule="Controller" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="NQr-Ri-F0K">
                         <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kYF-y3-sVF">
-                                <rect key="frame" x="970" y="20" width="34" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Back">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kYF-y3-sVF">
+                                <rect key="frame" x="100" y="120" width="40" height="30"/>
+                                <state key="normal" title="BACK">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
@@ -102,13 +102,17 @@
                                 </connections>
                             </button>
                         </subviews>
-                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="0.18391758419689119" green="0.18391758419689119" blue="0.18391758419689119" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="kYF-y3-sVF" firstAttribute="top" secondItem="gPd-yB-e1I" secondAttribute="top" constant="100" id="JlA-ZR-BKA"/>
+                            <constraint firstItem="kYF-y3-sVF" firstAttribute="leading" secondItem="gPd-yB-e1I" secondAttribute="leading" constant="100" id="tWS-nT-8Rw"/>
+                        </constraints>
                         <viewLayoutGuide key="safeArea" id="gPd-yB-e1I"/>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Vop-0A-5HL" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="562.5" y="-244.53125"/>
+            <point key="canvasLocation" x="964" y="-243"/>
         </scene>
     </scenes>
 </document>

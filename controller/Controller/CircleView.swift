@@ -8,20 +8,30 @@
 
 import UIKit
 
+protocol CircleViewDelegate {
+    func didTapCircleView(sender: CircleView)
+}
+
 class CircleView: UIView {
+    var delegate: CircleViewDelegate?
     var circleView: UIView?
     var idLabel: UILabel?
     var positionLabel: UILabel?
     var distanceLabel: UILabel?
     
+    var id: Int {
+        get { return Int(idLabel?.text ?? "0") ?? 0 }
+        set { idLabel?.text = String(format: "%02d", newValue) }
+    }
+    
     var position: Double {
         get { return Double(positionLabel?.text ?? "0") ?? 0 }
-        set { positionLabel?.text = String(newValue) }
+        set { positionLabel?.text = String(format: "%.1f", newValue) }
     }
     
     var distance: Double {
         get { return Double(distanceLabel?.text ?? "0") ?? 0 }
-        set { distanceLabel?.text = String(newValue) }
+        set { distanceLabel?.text = String(format: "%.1f", newValue) }
     }
     
     var motion: Bool {
@@ -37,7 +47,7 @@ class CircleView: UIView {
         super.init(frame: frame)
     }
     
-    func prepare(id: Int) {
+    func prepare() {
         // set background color
         backgroundColor = UIColor.clear
     
@@ -53,7 +63,7 @@ class CircleView: UIView {
         idLabel!.textAlignment = .center
         idLabel!.font = idLabel!.font.withSize(14)
         idLabel!.textColor = .white
-        idLabel!.text = String(format: "%02d", id)
+        idLabel!.text = "00"
         addSubview(idLabel!)
         
         // add position label
@@ -61,7 +71,7 @@ class CircleView: UIView {
         positionLabel!.textAlignment = .left
         positionLabel!.font = positionLabel!.font.withSize(10)
         positionLabel!.textColor = .white
-        positionLabel!.text = "0"
+        positionLabel!.text = "0.0"
         addSubview(positionLabel!)
         
         // add distance label
@@ -69,7 +79,17 @@ class CircleView: UIView {
         distanceLabel!.textAlignment = .left
         distanceLabel!.font = distanceLabel!.font.withSize(10)
         distanceLabel!.textColor = .white
-        distanceLabel!.text = "0"
+        distanceLabel!.text = "0.0"
         addSubview(distanceLabel!)
+        
+        // add gesture recognizer
+        addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.didTap(_:))))
+    }
+    
+   @objc func didTap(_ sender: UITapGestureRecognizer) {
+        // call delegate if available
+        if let d = delegate {
+            d.didTapCircleView(sender: self)
+        }
     }
 }
