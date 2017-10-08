@@ -27,6 +27,7 @@ int min_up_speed = 0;
 int max_down_speed = 0;
 int max_up_speed = 0;
 int speed_map_range = 0;
+bool invert_encoder = false;
 
 bool motion = false;
 uint32_t last_distance = 0;
@@ -62,6 +63,7 @@ static void online() {
   naos_ensure("max-down-speed", "500");
   naos_ensure("max-up-speed", "950");
   naos_ensure("speed-map-range", "20");
+  naos_ensure("invert-encoder", "true");
 
   // read settings
   automate = strcmp(naos_get("automate"), "on") == 0;
@@ -78,6 +80,7 @@ static void online() {
   max_down_speed = a32_str2i(naos_get("max-down-speed"));
   max_up_speed = a32_str2i(naos_get("max-up-speed"));
   speed_map_range = a32_str2i(naos_get("speed-map-range"));
+  invert_encoder = strcmp(naos_get("invert-encoder"), "true") == 0;
 
   // set target to current position
   target = position;
@@ -177,6 +180,11 @@ static void update(const char *param, const char *value) {
   else if (strcmp(param, "speed-map-range") == 0) {
     speed_map_range = a32_str2i(value);
   }
+
+  // set invert encoder
+  if (strcmp(param, "invert-encoder") == 0) {
+    invert_encoder = strcmp(value, "true") == 0;
+  }
 }
 
 static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_t scope) {
@@ -263,6 +271,11 @@ static void loop() {
 
   // get encoder
   double rotation_change = enc_get();
+
+  // invert if requested
+  if (invert_encoder) {
+    rotation_change *= -1;
+  }
 
   // apply rotation
   if (rotation_change != 0) {
