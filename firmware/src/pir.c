@@ -1,6 +1,6 @@
+#include <driver/adc.h>
 #include <driver/gpio.h>
 #include <naos.h>
-#include <driver/adc.h>
 
 #include "pir.h"
 
@@ -34,6 +34,4 @@ bool pir_get() {
   return pir_last_trigger + 8000 > naos_millis();
 }
 
-int pir_read() {
-  return abs(590 - adc1_get_raw(ADC1_CHANNEL_6));
-}
+int pir_read() { return abs(590 - adc1_get_raw(ADC1_CHANNEL_6)); }
