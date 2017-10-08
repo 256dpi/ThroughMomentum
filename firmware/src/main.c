@@ -236,6 +236,11 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
 }
 
 static void loop() {
+//  int pir = pir_read();
+//  if(pir > 10) {
+//    naos_log("pir: %d", pir_read());
+//  }
+
   // read pir sensor
   bool new_motion = pir_get();
 

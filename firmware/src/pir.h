@@ -15,4 +15,11 @@ void pir_init();
  */
 bool pir_get();
 
+/**
+ * Read the analog PIR value.
+ *
+ * @return
+ */
+int pir_read();
+
 #endif  // PIR_H

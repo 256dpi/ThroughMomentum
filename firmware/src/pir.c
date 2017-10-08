@@ -1,5 +1,6 @@
 #include <driver/gpio.h>
 #include <naos.h>
+#include <driver/adc.h>
 
 #include "pir.h"
 
@@ -23,9 +24,16 @@ void pir_init() {
 
   // add interrupt handler
   ESP_ERROR_CHECK(gpio_isr_handler_add(GPIO_NUM_19, pir_handler, NULL));
+
+  // prepare analog pin config
+  ESP_ERROR_CHECK(adc1_config_channel_atten(ADC1_CHANNEL_6, ADC_ATTEN_11db));
 }
 
 bool pir_get() {
   // return true when pir triggered within the last 8 seconds
   return pir_last_trigger + 8000 > naos_millis();
+}
+
+int pir_read() {
+  return abs(590 - adc1_get_raw(ADC1_CHANNEL_6));
 }
