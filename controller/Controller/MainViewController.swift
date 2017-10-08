@@ -40,8 +40,20 @@ class MainViewController: UIViewController, CircleViewDelegate, CocoaMQTTDelegat
         fh = Double(view.frame.height)
         
         // calcuate gaps
-        gx = (fw-(padding+padding))/Double(lightsPerRow-1)
-        gy = (fh-(paddingTop+padding))/Double(lightsPerColumn-1)
+        gx = (fw-padding-padding)/Double(lightsPerRow-1)
+        gy = (fh-paddingTop-padding)/Double(lightsPerColumn-1)
+        
+        // create zero circle view
+        let zcv = CircleView(frame: CGRect(x: fw-200, y: 100, width: 100, height: 40))
+        zcv.delegate = self
+        zcv.prepare()
+        zcv.id = 0
+        
+        // add to view
+        view.addSubview(zcv)
+        
+        // add to array
+        circleViews!.append(zcv)
         
         // create all circles
         for y in 0..<lightsPerColumn {
@@ -100,10 +112,6 @@ class MainViewController: UIViewController, CircleViewDelegate, CocoaMQTTDelegat
         sendAll(topic: "disco", payload: "")
     }
     
-    @IBAction func openStaging() {
-        openDetail(id: 0)
-    }
-    
     // Helpers
     
     func send(id: Int, topic: String, payload: String) {
@@ -141,12 +149,10 @@ class MainViewController: UIViewController, CircleViewDelegate, CocoaMQTTDelegat
         detailVC!.id = id
         
         // copy values from circle view if available
-        if id > 0 {
-            let cv = circleViews![id-1]
-            detailVC!.position = cv.position
-            detailVC!.distance = cv.distance
-            detailVC!.motion = cv.motion
-        }
+        let cv = circleViews![id]
+        detailVC!.position = cv.position
+        detailVC!.distance = cv.distance
+        detailVC!.motion = cv.motion
         
         // present new view controller
         present(detailVC!, animated: true, completion: nil)
@@ -198,10 +204,7 @@ class MainViewController: UIViewController, CircleViewDelegate, CocoaMQTTDelegat
             }
             
             // get circle view
-            var cv: CircleView?
-            if id > 0 {
-                cv = circleViews![id - 1]
-            }
+            let cv = circleViews![id]
     
             // get detail view controller
             var dvc: DetailViewController?
@@ -212,17 +215,17 @@ class MainViewController: UIViewController, CircleViewDelegate, CocoaMQTTDelegat
             // update circle view and detail view controller based on the received information
             if segments.last == "position" {
                 let position = Double(String(data: Data(bytes: message.payload), encoding: .utf8) ?? "0") ?? 0
-                cv?.position = position
+                cv.position = position
                 dvc?.position = position
                 dvc?.recalculate()
             } else if segments.last == "distance" {
                 let distance = Double(String(data: Data(bytes: message.payload), encoding: .utf8) ?? "0") ?? 0
-                cv?.distance = distance
+                cv.distance = distance
                 dvc?.distance = distance
                 dvc?.recalculate()
             } else if segments.last == "motion" {
                 let motion = String(data: Data(bytes: message.payload), encoding: .utf8) == "1"
-                cv?.motion = motion
+                cv.motion = motion
                 dvc?.motion = motion
                 dvc?.recalculate()
             }

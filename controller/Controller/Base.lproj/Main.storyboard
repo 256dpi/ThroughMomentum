@@ -53,15 +53,6 @@
                                     <action selector="discoAll" destination="703-4V-yAM" eventType="touchUpInside" id="Ffr-5c-5gp"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fxo-fG-6ku">
-                                <rect key="frame" x="516" y="120" width="108" height="30"/>
-                                <state key="normal" title="OPEN STAGING">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="openStaging" destination="703-4V-yAM" eventType="touchUpInside" id="j4q-bN-aar"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
@@ -71,11 +62,8 @@
                             <constraint firstItem="4X5-Vw-BHk" firstAttribute="top" secondItem="iAZ-4m-2z3" secondAttribute="top" constant="100" id="P00-Bb-rZe"/>
                             <constraint firstItem="WA8-Fk-Ril" firstAttribute="top" secondItem="iAZ-4m-2z3" secondAttribute="top" constant="100" id="P8p-vZ-bga"/>
                             <constraint firstItem="kKZ-iC-rZP" firstAttribute="leading" secondItem="4X5-Vw-BHk" secondAttribute="trailing" constant="20" id="SgI-Gk-gZu"/>
-                            <constraint firstItem="fxo-fG-6ku" firstAttribute="top" secondItem="iAZ-4m-2z3" secondAttribute="top" constant="100" id="jjN-fz-J4M"/>
                             <constraint firstItem="kKZ-iC-rZP" firstAttribute="top" secondItem="iAZ-4m-2z3" secondAttribute="top" constant="100" id="kyY-cU-IRD"/>
                             <constraint firstItem="WA8-Fk-Ril" firstAttribute="leading" secondItem="iAZ-4m-2z3" secondAttribute="leading" constant="100" id="lPO-RP-udC"/>
-                            <constraint firstItem="iAZ-4m-2z3" firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="fxo-fG-6ku" secondAttribute="trailing" constant="100" id="yWC-HK-Zy6"/>
-                            <constraint firstItem="fxo-fG-6ku" firstAttribute="leading" secondItem="kKZ-iC-rZP" secondAttribute="trailing" constant="20" id="zaQ-dt-WrE"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="iAZ-4m-2z3"/>
                     </view>
