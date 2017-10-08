@@ -59,7 +59,7 @@ static void online() {
   naos_ensure("saved-position", "0");
   naos_ensure("min-down-speed", "350");
   naos_ensure("min-up-speed", "350");
-  naos_ensure("max-down-speed", "400");
+  naos_ensure("max-down-speed", "500");
   naos_ensure("max-up-speed", "950");
   naos_ensure("speed-map-range", "20");
 

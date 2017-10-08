@@ -87,7 +87,7 @@ The minimal downwards motor speed.
 
 The minimal upwards motor speed.
 
-### `max-down-speed (400)`
+### `max-down-speed (500)`
 
 The maximal downwards motor speed.
 
