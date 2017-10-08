@@ -105,6 +105,16 @@ class MainViewController: UIViewController, CircleViewDelegate, CocoaMQTTDelegat
     
     // Helpers
     
+    func send(id: Int, topic: String, payload: String) {
+        // return immediately if not connected
+        if !connected {
+            return
+        }
+        
+        // send message
+        client!.publish("lights/" + String(id) + "/" + topic, withString: payload)
+    }
+    
     func sendAll(topic: String, payload: String) {
         // return immediately if not connected
         if !connected {
@@ -113,7 +123,7 @@ class MainViewController: UIViewController, CircleViewDelegate, CocoaMQTTDelegat
         
         // send message to all lights
         for id in 1...48 {
-            client!.publish("lights/" + String(id) + "/" + topic, withString: payload)
+            send(id: id, topic: topic, payload: payload)
         }
     }
     
@@ -126,9 +136,8 @@ class MainViewController: UIViewController, CircleViewDelegate, CocoaMQTTDelegat
         // instantiate new view controller
         let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
         detailViewController = (storyBoard.instantiateViewController(withIdentifier: "DetailViewController") as! DetailViewController)
-        
-        // set id
-        // ...
+        detailViewController!.mainViewController = self
+        detailViewController!.id = id
         
         // present new view controller
         present(detailViewController!, animated: true, completion: nil)

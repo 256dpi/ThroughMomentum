@@ -16,17 +16,25 @@ let floorHeight: Double = 3
 let bottomPadding: Double = 50
 
 class DetailViewController: UIViewController {
+    var mainViewController: MainViewController?
+    
     var ropeView: UIView?
     var lightView: UIView?
     var floorView: UIView?
     var objectView: UIView?
     
+    @IBOutlet var idLabel: UILabel?
+    
+    var id = 0
     var position: Double = 250
     var distance: Double = 65
     var motion: Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // write id
+        idLabel!.text = String(format: "%02d", id)
         
         // create rope view
         ropeView = UIView()
@@ -68,9 +76,52 @@ class DetailViewController: UIViewController {
         objectView!.frame = CGRect(x: fw/2 - objectWidth/2, y: fh-bottomPadding-objectHeight, width: objectWidth, height: objectHeight)
     }
     
+    @IBAction func stop() {
+        send(topic: "stop", payload: "")
+    }
+    
+    @IBAction func automateOn() {
+        send(topic: "naos/set/automate", payload: "on")
+    }
+    
+    @IBAction func automateOff() {
+        send(topic: "naos/set/automate", payload: "off")
+    }
+    
+    @IBAction func turnUp() {
+        send(topic: "turn", payload: "up")
+    }
+    
+    @IBAction func turnDown() {
+        send(topic: "turn", payload: "down")
+    }
+    
+    @IBAction func reset100() {
+        send(topic: "reset", payload: "100")
+    }
+    
+    @IBAction func flash() {
+        send(topic: "flash", payload: "500")
+    }
+    
+    @IBAction func disco() {
+        send(topic: "disco", payload: "")
+    }
+    
     @IBAction func back(_ sender: Any) {
         dismiss(animated: true, completion: nil)
     }
+    
+    // Helpers
+    
+    func send(topic: String, payload: String) {
+        // send message using the main view controller
+        if let mvc = mainViewController {
+            mvc.send(id: id, topic: topic, payload: payload)
+        }
+    }
+    
+    // UIViewController
     
     override var prefersStatusBarHidden: Bool {
         return true
