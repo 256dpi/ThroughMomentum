@@ -20,8 +20,9 @@ let onColor = UIColor(white: 1, alpha: 1)
 class MainViewController: UIViewController, CircleViewDelegate, CocoaMQTTDelegate {
     var circleViews: [CircleView]?
     var client: CocoaMQTT?
+    var detailVC: DetailViewController?
+    
     var connected = false
-    var dvc: DetailViewController?
     
     var fw: Double = 0
     var fh: Double = 0
@@ -129,26 +130,26 @@ class MainViewController: UIViewController, CircleViewDelegate, CocoaMQTTDelegat
     
     func openDetail(id: Int) {
         // kill old view controller
-        if dvc != nil {
-            dvc = nil
+        if detailVC != nil {
+            detailVC = nil
         }
         
         // instantiate new view controller
         let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-        dvc = (storyBoard.instantiateViewController(withIdentifier: "DetailViewController") as! DetailViewController)
-        dvc!.mvc = self
-        dvc!.id = id
+        detailVC = (storyBoard.instantiateViewController(withIdentifier: "DetailViewController") as! DetailViewController)
+        detailVC!.mainVC = self
+        detailVC!.id = id
         
         // copy values from circle view if available
         if id > 0 {
             let cv = circleViews![id-1]
-            dvc!.position = cv.position
-            dvc!.distance = cv.distance
-            dvc!.motion = cv.motion
+            detailVC!.position = cv.position
+            detailVC!.distance = cv.distance
+            detailVC!.motion = cv.motion
         }
         
         // present new view controller
-        present(dvc!, animated: true, completion: nil)
+        present(detailVC!, animated: true, completion: nil)
     }
     
     // UIViewController
@@ -192,31 +193,38 @@ class MainViewController: UIViewController, CircleViewDelegate, CocoaMQTTDelegat
         if segments.count == 3 && segments.first == "lights" {
             // get and check id
             let id = Int(segments[1]) ?? 0
-            if id < 1 || id > 48 {
+            if id < 0 || id > 48 {
                 return
             }
             
-            // get circle
-            let cv = circleViews![id - 1]
+            // get circle view
+            var cv: CircleView?
+            if id > 0 {
+                cv = circleViews![id - 1]
+            }
+    
+            // get detail view controller
+            var dvc: DetailViewController?
+            if detailVC?.id == id {
+                dvc = detailVC
+            }
             
-            // update circle views based on the received information
+            // update circle view and detail view controller based on the received information
             if segments.last == "position" {
-                cv.position = Double(String(data: Data(bytes: message.payload), encoding: .utf8) ?? "0") ?? 0
-                if dvc?.id == id {
-                    dvc?.position = cv.position
-                }
+                let position = Double(String(data: Data(bytes: message.payload), encoding: .utf8) ?? "0") ?? 0
+                cv?.position = position
+                dvc?.position = position
+                dvc?.recalculate()
             } else if segments.last == "distance" {
-                cv.distance = Double(String(data: Data(bytes: message.payload), encoding: .utf8) ?? "0") ?? 0
-                
-                if dvc?.id == id {
-                    dvc?.distance = cv.distance
-                }
+                let distance = Double(String(data: Data(bytes: message.payload), encoding: .utf8) ?? "0") ?? 0
+                cv?.distance = distance
+                dvc?.distance = distance
+                dvc?.recalculate()
             } else if segments.last == "motion" {
-                cv.motion = String(data: Data(bytes: message.payload), encoding: .utf8) == "1"
-                
-                if dvc?.id == id {
-                    dvc?.motion = cv.motion
-                }
+                let motion = String(data: Data(bytes: message.payload), encoding: .utf8) == "1"
+                cv?.motion = motion
+                dvc?.motion = motion
+                dvc?.recalculate()
             }
         }
     }

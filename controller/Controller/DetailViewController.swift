@@ -16,7 +16,7 @@ let floorHeight: Double = 3
 let bottomPadding: Double = 50
 
 class DetailViewController: UIViewController {
-    var mvc: MainViewController?
+    var mainVC: MainViewController?
     
     var ropeView: UIView?
     var lightView: UIView?
@@ -26,8 +26,8 @@ class DetailViewController: UIViewController {
     @IBOutlet var idLabel: UILabel?
     
     var id = 0
-    var position: Double = 250
-    var distance: Double = 65
+    var position: Double = 100
+    var distance: Double = 100
     var motion: Bool = false
     
     override func viewDidLoad() {
@@ -116,7 +116,7 @@ class DetailViewController: UIViewController {
     
     func send(topic: String, payload: String) {
         // send message using the main view controller
-        if let mvc = mvc {
+        if let mvc = mainVC {
             mvc.send(id: id, topic: topic, payload: payload)
         }
     }
