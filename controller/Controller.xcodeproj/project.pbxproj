@@ -14,6 +14,10 @@
 		524E46731F89875200F95429 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 524E46721F89875200F95429 /* MainViewController.swift */; };
 		524E46751F89887A00F95429 /* TestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 524E46741F89887A00F95429 /* TestViewController.swift */; };
 		524E46771F898EDF00F95429 /* CircleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 524E46761F898EDE00F95429 /* CircleView.swift */; };
+		524E467D1F8A28C700F95429 /* CocoaMQTT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 524E467A1F8A28C700F95429 /* CocoaMQTT.framework */; };
+		524E467E1F8A28C700F95429 /* SwiftyTimer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 524E467B1F8A28C700F95429 /* SwiftyTimer.framework */; };
+		524E467F1F8A28C700F95429 /* CocoaAsyncSocket.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 524E467C1F8A28C700F95429 /* CocoaAsyncSocket.framework */; };
+		524E46811F8A2A2D00F95429 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 524E46781F8A231800F95429 /* Settings.bundle */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,6 +31,9 @@
 		524E46741F89887A00F95429 /* TestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestViewController.swift; sourceTree = "<group>"; };
 		524E46761F898EDE00F95429 /* CircleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircleView.swift; sourceTree = "<group>"; };
 		524E46781F8A231800F95429 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
+		524E467A1F8A28C700F95429 /* CocoaMQTT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaMQTT.framework; path = Carthage/Build/iOS/CocoaMQTT.framework; sourceTree = "<group>"; };
+		524E467B1F8A28C700F95429 /* SwiftyTimer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyTimer.framework; path = Carthage/Build/iOS/SwiftyTimer.framework; sourceTree = "<group>"; };
+		524E467C1F8A28C700F95429 /* CocoaAsyncSocket.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaAsyncSocket.framework; path = Carthage/Build/iOS/CocoaAsyncSocket.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -34,6 +41,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				524E467D1F8A28C700F95429 /* CocoaMQTT.framework in Frameworks */,
+				524E467E1F8A28C700F95429 /* SwiftyTimer.framework in Frameworks */,
+				524E467F1F8A28C700F95429 /* CocoaAsyncSocket.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -45,6 +55,7 @@
 			children = (
 				524E46591F89831300F95429 /* Controller */,
 				524E46581F89831300F95429 /* Products */,
+				524E46791F8A28C600F95429 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -72,6 +83,16 @@
 			path = Controller;
 			sourceTree = "<group>";
 		};
+		524E46791F8A28C600F95429 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				524E467C1F8A28C700F95429 /* CocoaAsyncSocket.framework */,
+				524E467A1F8A28C700F95429 /* CocoaMQTT.framework */,
+				524E467B1F8A28C700F95429 /* SwiftyTimer.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -82,6 +103,7 @@
 				524E46531F89831300F95429 /* Sources */,
 				524E46541F89831300F95429 /* Frameworks */,
 				524E46551F89831300F95429 /* Resources */,
+				524E46801F8A28E100F95429 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -131,6 +153,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				524E46811F8A2A2D00F95429 /* Settings.bundle in Resources */,
 				524E46691F89831300F95429 /* LaunchScreen.storyboard in Resources */,
 				524E46661F89831300F95429 /* Assets.xcassets in Resources */,
 				524E46641F89831300F95429 /* Main.storyboard in Resources */,
@@ -138,6 +161,28 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		524E46801F8A28E100F95429 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Carthage/Build/iOS/CocoaAsyncSocket.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/CocoaMQTT.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/SwiftyTimer.framework",
+			);
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/CocoaAsyncSocket.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/CocoaMQTT.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/SwiftyTimer.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/local/bin/carthage copy-frameworks";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		524E46531F89831300F95429 /* Sources */ = {
@@ -286,6 +331,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = R6TU3S9Z3Y;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = Controller/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.throughmomentum.Controller;
@@ -301,6 +350,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = R6TU3S9Z3Y;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = Controller/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.throughmomentum.Controller;

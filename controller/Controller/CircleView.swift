@@ -61,7 +61,7 @@ class CircleView: UIView {
         positionLabel!.textAlignment = .left
         positionLabel!.font = positionLabel!.font.withSize(10)
         positionLabel!.textColor = .white
-        positionLabel!.text = "120"
+        positionLabel!.text = "0"
         addSubview(positionLabel!)
         
         // add distance label
@@ -69,7 +69,7 @@ class CircleView: UIView {
         distanceLabel!.textAlignment = .left
         distanceLabel!.font = distanceLabel!.font.withSize(10)
         distanceLabel!.textColor = .white
-        distanceLabel!.text = "70"
+        distanceLabel!.text = "0"
         addSubview(distanceLabel!)
     }
 }
