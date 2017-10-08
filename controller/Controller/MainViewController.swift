@@ -217,17 +217,14 @@ class MainViewController: UIViewController, CircleViewDelegate, CocoaMQTTDelegat
                 let position = Double(String(data: Data(bytes: message.payload), encoding: .utf8) ?? "0") ?? 0
                 cv.position = position
                 dvc?.position = position
-                dvc?.recalculate()
             } else if segments.last == "distance" {
                 let distance = Double(String(data: Data(bytes: message.payload), encoding: .utf8) ?? "0") ?? 0
                 cv.distance = distance
                 dvc?.distance = distance
-                dvc?.recalculate()
             } else if segments.last == "motion" {
                 let motion = String(data: Data(bytes: message.payload), encoding: .utf8) == "1"
                 cv.motion = motion
                 dvc?.motion = motion
-                dvc?.recalculate()
             }
         }
     }
