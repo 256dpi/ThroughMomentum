@@ -28,6 +28,7 @@ int max_down_speed = 0;
 int max_up_speed = 0;
 int speed_map_range = 0;
 bool invert_encoder = false;
+double move_precision = 0;
 
 bool motion = false;
 uint32_t last_distance = 0;
@@ -64,6 +65,7 @@ static void online() {
   naos_ensure("max-up-speed", "950");
   naos_ensure("speed-map-range", "20");
   naos_ensure("invert-encoder", "true");
+  naos_ensure("move-precision", "1");
 
   // read settings
   automate = strcmp(naos_get("automate"), "on") == 0;
@@ -81,6 +83,7 @@ static void online() {
   max_up_speed = a32_str2i(naos_get("max-up-speed"));
   speed_map_range = a32_str2i(naos_get("speed-map-range"));
   invert_encoder = strcmp(naos_get("invert-encoder"), "true") == 0;
+  move_precision = a32_str2d(naos_get("move-precision"));
 
   // set target to current position
   target = position;
@@ -184,6 +187,11 @@ static void update(const char *param, const char *value) {
   // set invert encoder
   else if (strcmp(param, "invert-encoder") == 0) {
     invert_encoder = strcmp(value, "true") == 0;
+  }
+
+  // set move precision
+  else if (strcmp(param, "move-precision") == 0) {
+    move_precision = a32_str2d(value);
   }
 }
 
@@ -335,7 +343,7 @@ static void loop() {
   target = new_target;
 
   // set motor
-  if (position < target + 1 && position > target - 1) {
+  if (position < target + (move_precision / 2) && position > target - (move_precision / 2)) {
     // break if target has been reached
     mot_set(0);
   } else if (position < target) {

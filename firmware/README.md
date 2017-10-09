@@ -98,3 +98,7 @@ The maximal upwards motor speed.
 ### `speed-map-range (20)`
 
 The range of the target mapped speed.
+
+### `move-precision (1)`
+
+The precision of the movement.
