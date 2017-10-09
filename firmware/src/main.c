@@ -1,7 +1,6 @@
 #include <art32/numbers.h>
 #include <art32/strconv.h>
 #include <driver/adc.h>
-#include <driver/ledc.h>
 #include <esp_system.h>
 #include <naos.h>
 #include <string.h>
@@ -367,14 +366,8 @@ static naos_config_t config = {.device_type = "vas17",
                                .message_callback = message};
 
 void app_main() {
-  // set global adc width
-  ESP_ERROR_CHECK(adc1_config_width(ADC_WIDTH_10Bit));
-
   // install global interrupt service
   ESP_ERROR_CHECK(gpio_install_isr_service(0));
-
-  // install ledc fade service
-  ESP_ERROR_CHECK(ledc_fade_func_install(0));
 
   // initialize motion sensor
   pir_init();
