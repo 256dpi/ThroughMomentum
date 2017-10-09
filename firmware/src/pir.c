@@ -1,5 +1,4 @@
 #include <driver/adc.h>
-#include <driver/gpio.h>
 #include <naos.h>
 
 #include "pir.h"
