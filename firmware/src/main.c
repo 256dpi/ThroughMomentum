@@ -343,7 +343,7 @@ static void loop() {
     mot_set((int)a32_safe_map_d(target - position, 0, speed_map_range, min_up_speed, max_up_speed));
   } else if (position > target) {
     // go down
-    mot_set((int)a32_safe_map_d(position - target, 0, speed_map_range, min_down_speed * -1, max_down_speed * -1));
+    mot_set((int)a32_safe_map_d(position - target, 0, speed_map_range, min_down_speed, max_down_speed) * -1);
   }
 }
 
