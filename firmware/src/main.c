@@ -334,11 +334,6 @@ static void loop() {
     }
   }
 
-  // log target if changed
-  if (new_target != target) {
-    naos_log("updated target: %f", target);
-  }
-
   // apply new target
   target = new_target;
 
