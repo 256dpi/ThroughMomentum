@@ -31,6 +31,7 @@ bool invert_encoder = false;
 double move_precision = 0;
 
 bool motion = false;
+uint32_t last_motion = 0;
 uint32_t last_distance = 0;
 bool manual = false;
 double position = 0;
@@ -252,13 +253,18 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
 }
 
 static void loop() {
-  //  int pir = pir_read();
-  //  if(pir > 10) {
-  //    naos_log("pir: %d", pir_read());
-  //  }
+  // calculate dynamic pir threshold
+  // TODO: Make configurable
+  int threshold = a32_safe_map_i((int)position, 0, (int)max_height, 0, 400);
 
-  // read pir sensor
-  bool new_motion = pir_get();
+  // update timestamp if motion detected
+  if (pir_read() > threshold) {
+    last_motion = naos_millis();
+  }
+
+  // check if there was a motion in the last 8sec
+  // TODO: Make configurable
+  bool new_motion = last_motion > naos_millis() - 2000;
 
   // check motion
   if (motion != new_motion) {
