@@ -229,8 +229,8 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
 
   // reset position
   else if (strcmp(topic, "reset") == 0 && scope == NAOS_LOCAL) {
-    position = strtod((const char *)payload, NULL);
-    target = strtod((const char *)payload, NULL);
+    position = a32_str2d((const char *)payload);
+    target = position;
   }
 
   // perform disco
