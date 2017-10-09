@@ -1,16 +1,16 @@
 {
   "version": "master",
-  "broker": "mqtts://96c342e4:1724bcdee75a6f0b@broker.shiftr.io",
   "components": {
     "art32": {
       "repository": "https://github.com/256dpi/art32.git",
       "version": "master"
     }
   },
+  "broker": "mqtts://11112222:11112222@broker.shiftr.io",
   "devices": {
-    "vas17": {
-      "base_topic": "vas17",
-      "name": "vas17",
+    "tm-0": {
+      "base_topic": "lights/0",
+      "name": "tm-0",
       "type": "vas17",
       "firmware_version": "0.1.0",
       "parameters": {}
