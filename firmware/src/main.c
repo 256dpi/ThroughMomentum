@@ -308,10 +308,10 @@ static void loop() {
   // automate positioning
   if (automate) {
     if (motion) {
-      // go up and down 1cm depending on current distance
-      if (distance > target_distance + 1) {
+      // go up and down depending on current distance
+      if (distance > target_distance) {
         new_target = position - (distance - target_distance);
-      } else if (distance < target_distance - 1) {
+      } else if (distance < target_distance) {
         new_target = position + (target_distance - distance);
       }
 
