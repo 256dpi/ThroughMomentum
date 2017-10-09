@@ -102,3 +102,11 @@ The range of the target mapped speed.
 ### `move-precision (1)`
 
 The precision of the movement.
+
+### `pir-sensitivity (400)`
+
+The PIR sensitivity from 0 (high) to 400 (low).
+
+### `pir-interval (2000)`
+
+The interval between motion on off detection.

@@ -28,6 +28,8 @@ int max_up_speed = 0;
 int speed_map_range = 0;
 bool invert_encoder = false;
 double move_precision = 0;
+int pir_sensitivity = 0;
+int pir_interval = 0;
 
 bool motion = false;
 uint32_t last_motion = 0;
@@ -66,6 +68,8 @@ static void online() {
   naos_ensure("speed-map-range", "20");
   naos_ensure("invert-encoder", "true");
   naos_ensure("move-precision", "1");
+  naos_ensure("pir-sensitivity", "300");
+  naos_ensure("pir-interval", "2000");
 
   // read settings
   automate = strcmp(naos_get("automate"), "on") == 0;
@@ -84,6 +88,8 @@ static void online() {
   speed_map_range = a32_str2i(naos_get("speed-map-range"));
   invert_encoder = strcmp(naos_get("invert-encoder"), "true") == 0;
   move_precision = a32_str2d(naos_get("move-precision"));
+  pir_sensitivity = a32_str2i(naos_get("pir-sensitivity"));
+  pir_interval = a32_str2i(naos_get("pir-interval"));
 
   // set target to current position
   target = position;
@@ -193,6 +199,16 @@ static void update(const char *param, const char *value) {
   else if (strcmp(param, "move-precision") == 0) {
     move_precision = a32_str2d(value);
   }
+
+  // set pir sensitivity
+  else if (strcmp(param, "pir-sensitivity") == 0) {
+    pir_sensitivity = a32_str2i(value);
+  }
+
+  // set pir interval
+  else if (strcmp(param, "pir-interval") == 0) {
+    pir_interval = a32_str2i(value);
+  }
 }
 
 static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_t scope) {
@@ -253,8 +269,7 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
 
 static void loop() {
   // calculate dynamic pir threshold
-  // TODO: Make configurable
-  int threshold = a32_safe_map_i((int)position, 0, (int)max_height, 0, 400);
+  int threshold = a32_safe_map_i((int)position, 0, (int)max_height, 0, pir_sensitivity);
 
   // update timestamp if motion detected
   if (pir_read() > threshold) {
@@ -262,8 +277,7 @@ static void loop() {
   }
 
   // check if there was a motion in the last 8sec
-  // TODO: Make configurable
-  bool new_motion = last_motion > naos_millis() - 2000;
+  bool new_motion = last_motion > naos_millis() - pir_interval;
 
   // check motion
   if (motion != new_motion) {
