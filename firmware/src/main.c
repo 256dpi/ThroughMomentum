@@ -190,7 +190,7 @@ static void update(const char *param, const char *value) {
 static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_t scope) {
   // perform flash
   if (strcmp(topic, "flash") == 0 && scope == NAOS_LOCAL) {
-    flash_end = naos_millis() + (uint32_t)strtol((const char *)payload, NULL, 10);
+    flash_end = naos_millis() + (uint32_t)a32_str2l((const char *)payload);
     led_set(flash_intensity, flash_intensity, flash_intensity, flash_intensity);
   }
 
