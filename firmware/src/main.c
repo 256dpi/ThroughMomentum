@@ -182,7 +182,7 @@ static void update(const char *param, const char *value) {
   }
 
   // set invert encoder
-  if (strcmp(param, "invert-encoder") == 0) {
+  else if (strcmp(param, "invert-encoder") == 0) {
     invert_encoder = strcmp(value, "true") == 0;
   }
 }
