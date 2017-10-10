@@ -6,14 +6,6 @@
       "version": "master"
     }
   },
-  "broker": "mqtts://11112222:11112222@broker.shiftr.io",
-  "devices": {
-    "tm-0": {
-      "base_topic": "lights/0",
-      "name": "tm-0",
-      "type": "vas17",
-      "firmware_version": "0.1.0",
-      "parameters": {}
-    }
-  }
+  "broker": "mqtt://192.168.35.55",
+  "devices": {}
 }
