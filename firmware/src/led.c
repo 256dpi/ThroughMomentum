@@ -3,8 +3,6 @@
 
 #include "led.h"
 
-static uint32_t led_timeout = 0;
-
 void led_init() {
   // install ledc fade service
   ESP_ERROR_CHECK(ledc_fade_func_install(0));
@@ -42,31 +40,34 @@ void led_init() {
   ESP_ERROR_CHECK(ledc_channel_config(&ledc_channel));
 
   // reset led
-  led_set(0, 0, 0, 0);
+  led_set(0, 0, 0, 0, 100);
 }
 
-void led_set(int r, int g, int b, int w) {
+void led_set(int r, int g, int b, int w, int t) {
+  // track led timeout
+  static uint32_t led_timeout = 0;
+
   // return immediately if timeout has not been reached
   if (led_timeout > naos_millis()) {
     return;
   }
 
   // set red
-  ESP_ERROR_CHECK(ledc_set_fade_with_time(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_1, (uint32_t)r, 100));
+  ESP_ERROR_CHECK(ledc_set_fade_with_time(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_1, (uint32_t)r, t));
   ESP_ERROR_CHECK(ledc_fade_start(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_1, LEDC_FADE_NO_WAIT));
 
   // set green
-  ESP_ERROR_CHECK(ledc_set_fade_with_time(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_2, (uint32_t)g, 100));
+  ESP_ERROR_CHECK(ledc_set_fade_with_time(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_2, (uint32_t)g, t));
   ESP_ERROR_CHECK(ledc_fade_start(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_2, LEDC_FADE_NO_WAIT));
 
   // set blue
-  ESP_ERROR_CHECK(ledc_set_fade_with_time(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_3, (uint32_t)b, 100));
+  ESP_ERROR_CHECK(ledc_set_fade_with_time(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_3, (uint32_t)b, t));
   ESP_ERROR_CHECK(ledc_fade_start(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_3, LEDC_FADE_NO_WAIT));
 
   // set white
-  ESP_ERROR_CHECK(ledc_set_fade_with_time(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_4, (uint32_t)w, 100));
+  ESP_ERROR_CHECK(ledc_set_fade_with_time(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_4, (uint32_t)w, t));
   ESP_ERROR_CHECK(ledc_fade_start(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_4, LEDC_FADE_NO_WAIT));
 
   // set timeout
-  led_timeout = naos_millis() + 100;
+  led_timeout = naos_millis() + t;
 }

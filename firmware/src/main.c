@@ -37,13 +37,14 @@ uint32_t last_distance = 0;
 bool manual = false;
 double position = 0;
 double target = 0;
+int flash_time = 0;
 uint32_t flash_end = 0;
 
 static void ping() {
-  // flash white for 200ms
-  led_set(0, 0, 0, 512);
-  naos_delay(200);
-  led_set(0, 0, 0, 0);
+  // flash white for at least 100ms
+  led_set(0, 0, 0, 512, 100);
+  naos_delay(100);
+  led_set(0, 0, 0, 0, 100);
 }
 
 static void online() {
@@ -100,7 +101,7 @@ static void online() {
   }
 
   // enable idle light
-  led_set(idle_light, idle_light, idle_light, idle_light);
+  led_set(idle_light, idle_light, idle_light, idle_light, 100);
 
   // subscribe local topics
   naos_subscribe("flash", 0, NAOS_LOCAL);
@@ -116,7 +117,7 @@ static void offline() {
   mot_set(0);
 
   // disabled led
-  led_set(0, 0, 0, 0);
+  led_set(0, 0, 0, 0, 100);
 }
 
 static void update(const char *param, const char *value) {
@@ -214,8 +215,9 @@ static void update(const char *param, const char *value) {
 static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_t scope) {
   // perform flash
   if (strcmp(topic, "flash") == 0 && scope == NAOS_LOCAL) {
-    flash_end = naos_millis() + (uint32_t)a32_str2l((const char *)payload);
-    led_set(flash_intensity, flash_intensity, flash_intensity, flash_intensity);
+    flash_time = (uint32_t)a32_str2l((const char *)payload);
+    flash_end = naos_millis() + flash_time / 2;
+    led_set(flash_intensity, flash_intensity, flash_intensity, flash_intensity, flash_time / 2);
   }
 
   // set turn
@@ -263,7 +265,7 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
     int g = esp_random() / 4194304;
     int b = esp_random() / 4194304;
     int w = esp_random() / 4194304;
-    led_set(r, g, b, w);
+    led_set(r, g, b, w, 100);
   }
 }
 
@@ -320,7 +322,8 @@ static void loop() {
 
   // finish flash
   if (flash_end > 0 && flash_end < naos_millis()) {
-    led_set(idle_light, idle_light, idle_light, idle_light);
+    led_set(idle_light, idle_light, idle_light, idle_light, flash_time / 2);
+    flash_time = 0;
     flash_end = 0;
   }
 

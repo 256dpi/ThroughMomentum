@@ -13,7 +13,8 @@ void led_init();
  * @param g - Value from 0 to 1023.
  * @param b - Value from 0 to 1023.
  * @param w - Value from 0 to 1023.
+ * @param t - The time for the fade.
  */
-void led_set(int r, int g, int b, int w);
+void led_set(int r, int g, int b, int w, int t);
 
 #endif  // LED_H
