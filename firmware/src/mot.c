@@ -4,14 +4,14 @@
 
 void mot_init() {
   // prepare in a+b config
-  gpio_config_t inAB = {.pin_bit_mask = GPIO_SEL_14 | GPIO_SEL_16,
+  gpio_config_t in_ab = {.pin_bit_mask = GPIO_SEL_14 | GPIO_SEL_16,
                         .mode = GPIO_MODE_OUTPUT,
                         .pull_up_en = GPIO_PULLUP_DISABLE,
                         .pull_down_en = GPIO_PULLDOWN_ENABLE,
                         .intr_type = GPIO_INTR_DISABLE};
 
   // configure in a+b pins
-  ESP_ERROR_CHECK(gpio_config(&inAB));
+  ESP_ERROR_CHECK(gpio_config(&in_ab));
 
   // prepare ledc timer config
   ledc_timer_config_t t = {
@@ -36,6 +36,7 @@ void mot_init() {
 }
 
 void mot_set(int speed) {
+  // set motor state
   if (speed == 0) {
     // disable motor (brake to GND)
     ESP_ERROR_CHECK(gpio_set_level(GPIO_NUM_14, 0));
