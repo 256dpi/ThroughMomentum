@@ -53,17 +53,39 @@
                                     <action selector="discoAll" destination="703-4V-yAM" eventType="touchUpInside" id="Ffr-5c-5gp"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Lhp-hv-0UQ">
+                                <rect key="frame" x="516" y="120" width="103" height="30"/>
+                                <state key="normal" title="MOVE ALL 100">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="moveAll100" destination="703-4V-yAM" eventType="touchUpInside" id="k4x-2J-4Bf"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="X8n-RT-IOm">
+                                <rect key="frame" x="639" y="120" width="102" height="30"/>
+                                <state key="normal" title="MOVE ALL 150">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="moveAll150" destination="703-4V-yAM" eventType="touchUpInside" id="9eQ-hc-huR"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="Gyg-bm-Sr0" firstAttribute="leading" secondItem="WA8-Fk-Ril" secondAttribute="trailing" constant="20" id="22E-cs-EyO"/>
                             <constraint firstItem="Gyg-bm-Sr0" firstAttribute="top" secondItem="iAZ-4m-2z3" secondAttribute="top" constant="100" id="65q-li-Ldi"/>
+                            <constraint firstItem="X8n-RT-IOm" firstAttribute="leading" secondItem="Lhp-hv-0UQ" secondAttribute="trailing" constant="20" id="Cxi-0r-iz3"/>
                             <constraint firstItem="4X5-Vw-BHk" firstAttribute="leading" secondItem="Gyg-bm-Sr0" secondAttribute="trailing" constant="20" id="Doe-2M-jYX"/>
                             <constraint firstItem="4X5-Vw-BHk" firstAttribute="top" secondItem="iAZ-4m-2z3" secondAttribute="top" constant="100" id="P00-Bb-rZe"/>
                             <constraint firstItem="WA8-Fk-Ril" firstAttribute="top" secondItem="iAZ-4m-2z3" secondAttribute="top" constant="100" id="P8p-vZ-bga"/>
                             <constraint firstItem="kKZ-iC-rZP" firstAttribute="leading" secondItem="4X5-Vw-BHk" secondAttribute="trailing" constant="20" id="SgI-Gk-gZu"/>
+                            <constraint firstItem="X8n-RT-IOm" firstAttribute="top" secondItem="iAZ-4m-2z3" secondAttribute="top" constant="100" id="eam-aw-O5O"/>
                             <constraint firstItem="kKZ-iC-rZP" firstAttribute="top" secondItem="iAZ-4m-2z3" secondAttribute="top" constant="100" id="kyY-cU-IRD"/>
                             <constraint firstItem="WA8-Fk-Ril" firstAttribute="leading" secondItem="iAZ-4m-2z3" secondAttribute="leading" constant="100" id="lPO-RP-udC"/>
+                            <constraint firstItem="Lhp-hv-0UQ" firstAttribute="leading" secondItem="kKZ-iC-rZP" secondAttribute="trailing" constant="20" id="mop-Qv-7io"/>
+                            <constraint firstItem="Lhp-hv-0UQ" firstAttribute="top" secondItem="iAZ-4m-2z3" secondAttribute="top" constant="100" id="nJK-Rv-ZIx"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="iAZ-4m-2z3"/>
                     </view>
