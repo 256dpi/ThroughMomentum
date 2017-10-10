@@ -122,7 +122,7 @@ class ViewController: UIViewController, CocoaMQTTDelegate {
         
         // send message
         if connected {
-            client!.publish("activate", withString: String(yy*lightsPerRow+xx))
+            client!.publish("lights/" + String(yy*lightsPerRow+xx+1) + "/flash", withString: "500")
         }
         
         // set state
