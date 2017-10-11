@@ -57,7 +57,7 @@ static void enc_rotation_handler(void *_) {
 
 void enc_init() {
   // create queues
-  enc_rotation_queue = xQueueCreate(64, sizeof(int));
+  enc_rotation_queue = xQueueCreate(512, sizeof(int));
 
   // configure rotation pins
   gpio_config_t rc;
