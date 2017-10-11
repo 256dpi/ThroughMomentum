@@ -5,10 +5,10 @@
 void mot_init() {
   // prepare in a+b config
   gpio_config_t in_ab = {.pin_bit_mask = GPIO_SEL_14 | GPIO_SEL_16,
-                        .mode = GPIO_MODE_OUTPUT,
-                        .pull_up_en = GPIO_PULLUP_DISABLE,
-                        .pull_down_en = GPIO_PULLDOWN_ENABLE,
-                        .intr_type = GPIO_INTR_DISABLE};
+                         .mode = GPIO_MODE_OUTPUT,
+                         .pull_up_en = GPIO_PULLUP_DISABLE,
+                         .pull_down_en = GPIO_PULLDOWN_ENABLE,
+                         .intr_type = GPIO_INTR_DISABLE};
 
   // configure in a+b pins
   ESP_ERROR_CHECK(gpio_config(&in_ab));
