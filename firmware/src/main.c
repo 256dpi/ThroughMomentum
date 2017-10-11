@@ -31,6 +31,7 @@ double move_precision = 0;
 int pir_sensitivity = 0;
 int pir_interval = 0;
 
+bool first_boot = true;
 bool motion = false;
 uint32_t last_motion = 0;
 uint32_t last_distance = 0;
@@ -81,7 +82,6 @@ static void online() {
   target_distance = a32_str2d(naos_get("target-distance"));
   idle_light = a32_str2i(naos_get("idle-light"));
   flash_intensity = a32_str2i(naos_get("flash-intensity"));
-  position = a32_str2d(naos_get("saved-position"));
   min_down_speed = a32_str2i(naos_get("min-down-speed"));
   min_up_speed = a32_str2i(naos_get("min-up-speed"));
   max_down_speed = a32_str2i(naos_get("max-down-speed"));
@@ -96,8 +96,10 @@ static void online() {
   target = position;
 
   // read position on first boot
-  if (saved_position == -9999) {
+  if (first_boot) {
     saved_position = a32_str2d(naos_get("saved-position"));
+    position = saved_position;
+    first_boot = false;
   }
 
   // enable idle light
