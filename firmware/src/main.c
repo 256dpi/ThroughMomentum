@@ -92,15 +92,15 @@ static void online() {
   pir_sensitivity = a32_str2i(naos_get("pir-sensitivity"));
   pir_interval = a32_str2i(naos_get("pir-interval"));
 
-  // set target to current position
-  target = position;
-
   // read position on first boot
   if (first_boot) {
     saved_position = a32_str2d(naos_get("saved-position"));
     position = saved_position;
     first_boot = false;
   }
+
+  // set target to current position
+  target = position;
 
   // enable idle light
   led_set(idle_light, idle_light, idle_light, idle_light, 100);
