@@ -380,7 +380,8 @@ static naos_config_t config = {.device_type = "vas17",
                                .online_callback = online,
                                .offline_callback = offline,
                                .update_callback = update,
-                               .message_callback = message};
+                               .message_callback = message,
+                               .crash_on_mqtt_failures = true};
 
 void app_main() {
   // install global interrupt service
