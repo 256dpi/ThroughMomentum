@@ -94,11 +94,12 @@ class ViewController: UIViewController, CocoaMQTTDelegate {
         
         // get settings
         let host = UserDefaults.standard.string(forKey: "host") ?? ""
+        let clientID = UserDefaults.standard.string(forKey: "client-id") ?? ""
         let username = UserDefaults.standard.string(forKey: "username")
         let password = UserDefaults.standard.string(forKey: "password")
         
         // create client
-        client = CocoaMQTT(clientID: "interface", host: host, port: 1883)
+        client = CocoaMQTT(clientID: clientID, host: host, port: 1883)
         client!.username = username
         client!.password = password
         client!.delegate = self
