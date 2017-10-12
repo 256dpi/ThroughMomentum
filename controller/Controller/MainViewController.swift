@@ -100,12 +100,12 @@ class MainViewController: UIViewController, CircleViewDelegate, CocoaMQTTDelegat
         sendAll(topic: "stop", payload: "")
     }
     
-    @IBAction func moveAll100() {
-        sendAll(topic: "move", payload: "100")
+    @IBAction func moveAllDown() {
+        sendAll(topic: "move", payload: "80")
     }
     
-    @IBAction func moveAll150() {
-        sendAll(topic: "move", payload: "150")
+    @IBAction func moveAllUp() {
+        sendAll(topic: "move", payload: "140")
     }
     
     @IBAction func automateAll() {

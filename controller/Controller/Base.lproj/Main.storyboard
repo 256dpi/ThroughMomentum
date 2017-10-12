@@ -18,8 +18,8 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WA8-Fk-Ril">
-                                <rect key="frame" x="100" y="120" width="70" height="30"/>
-                                <state key="normal" title="STOP ALL">
+                                <rect key="frame" x="100" y="120" width="39" height="30"/>
+                                <state key="normal" title="STOP">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
@@ -27,8 +27,8 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Gyg-bm-Sr0">
-                                <rect key="frame" x="190" y="120" width="111" height="30"/>
-                                <state key="normal" title="AUTOMATE ALL">
+                                <rect key="frame" x="159" y="120" width="81" height="30"/>
+                                <state key="normal" title="AUTOMATE">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
@@ -36,8 +36,8 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4X5-Vw-BHk">
-                                <rect key="frame" x="321" y="120" width="78" height="30"/>
-                                <state key="normal" title="FLASH ALL">
+                                <rect key="frame" x="260" y="120" width="47" height="30"/>
+                                <state key="normal" title="FLASH">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
@@ -45,8 +45,8 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kKZ-iC-rZP">
-                                <rect key="frame" x="419" y="120" width="77" height="30"/>
-                                <state key="normal" title="DISCO ALL">
+                                <rect key="frame" x="327" y="120" width="46" height="30"/>
+                                <state key="normal" title="DISCO">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
@@ -54,21 +54,21 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Lhp-hv-0UQ">
-                                <rect key="frame" x="516" y="120" width="103" height="30"/>
-                                <state key="normal" title="MOVE ALL 100">
+                                <rect key="frame" x="393" y="120" width="127" height="30"/>
+                                <state key="normal" title="MOVE DOWN (80)">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <action selector="moveAll100" destination="703-4V-yAM" eventType="touchUpInside" id="k4x-2J-4Bf"/>
+                                    <action selector="moveAllDown" destination="703-4V-yAM" eventType="touchUpInside" id="Akn-Ce-dKx"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="X8n-RT-IOm">
-                                <rect key="frame" x="639" y="120" width="102" height="30"/>
-                                <state key="normal" title="MOVE ALL 150">
+                                <rect key="frame" x="540" y="120" width="108" height="30"/>
+                                <state key="normal" title="MOVE UP (140)">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <action selector="moveAll150" destination="703-4V-yAM" eventType="touchUpInside" id="9eQ-hc-huR"/>
+                                    <action selector="moveAllUp" destination="703-4V-yAM" eventType="touchUpInside" id="nuN-Cm-IhY"/>
                                 </connections>
                             </button>
                         </subviews>
