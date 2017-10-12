@@ -29,8 +29,19 @@ class ViewController: UIViewController, CocoaMQTTDelegate {
     var gx: Double = 0
     var gy: Double = 0
     
+    var red: String = "0"
+    var green: String = "0"
+    var blue: String = "0"
+    var white: String = "0"
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // load colors
+        red = UserDefaults.standard.string(forKey: "color-red") ?? "0"
+        green = UserDefaults.standard.string(forKey: "color-green") ?? "0"
+        blue = UserDefaults.standard.string(forKey: "color-blue") ?? "0"
+        white = UserDefaults.standard.string(forKey: "color-white") ?? "0"
         
         // create container
         container = UIView(frame: view.frame)
@@ -122,7 +133,9 @@ class ViewController: UIViewController, CocoaMQTTDelegate {
         
         // send message
         if connected {
-            client!.publish("lights/" + String(yy*lightsPerRow+xx+1) + "/flash", withString: "500")
+            // client!.publish("lights/" + String(yy*lightsPerRow+xx+1) + "/flash", withString: "500")
+            let payload = red + " " + green + " " + blue + " " + white + " 500"
+            client!.publish("lights/" + String(yy*lightsPerRow+xx+1) + "/flash-color", withString: payload)
         }
         
         // set state
