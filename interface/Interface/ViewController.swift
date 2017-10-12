@@ -14,9 +14,6 @@ let lightsPerColumn = 6
 let lightDotSize = 12
 let padding: Double = 150
 
-let offColor = UIColor(white: 0.1, alpha: 1)
-let onColor = UIColor(white: 1, alpha: 1)
-
 class ViewController: UIViewController, CocoaMQTTDelegate {
     var container: UIView?
     var circles: [[UIView]]?
@@ -34,6 +31,9 @@ class ViewController: UIViewController, CocoaMQTTDelegate {
     var blue: String = "0"
     var white: String = "0"
     
+    var offColor = UIColor(white: 0.1, alpha: 1)
+    var onColor = UIColor(white: 1, alpha: 1)
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -42,6 +42,13 @@ class ViewController: UIViewController, CocoaMQTTDelegate {
         green = UserDefaults.standard.string(forKey: "color-green") ?? "0"
         blue = UserDefaults.standard.string(forKey: "color-blue") ?? "0"
         white = UserDefaults.standard.string(forKey: "color-white") ?? "0"
+        
+        // save color
+        let _red = CGFloat(Float(red) ?? 0)
+        let _green = CGFloat(Float(green) ?? 0)
+        let _blue = CGFloat(Float(blue) ?? 0)
+        onColor = UIColor(red: _red/1023, green: _green/1023, blue: _blue/1023, alpha: 1.0)
+        offColor = UIColor(red: _red/1023, green: _green/1023, blue: _blue/1023, alpha: 0.25)
         
         // create container
         container = UIView(frame: view.frame)
@@ -144,11 +151,11 @@ class ViewController: UIViewController, CocoaMQTTDelegate {
         // animate circle
         UIView.animate(withDuration: 0.25, delay: 0.0, animations: {
             // increase intensity
-            v.backgroundColor = onColor
+            v.backgroundColor = self.onColor
         }, completion: { finished in
             UIView.animate(withDuration: 0.25, delay: 0.0, animations: {
                 // decrease intensity
-                v.backgroundColor = offColor
+                v.backgroundColor = self.offColor
             }, completion: { finished in
                 // reset state
                 self.states![yy][xx] = false
