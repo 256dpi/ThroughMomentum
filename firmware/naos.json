@@ -13,336 +13,432 @@
       "name": "tm-01",
       "type": "vas17",
       "firmware_version": "0.4.0",
-      "parameters": {}
+      "parameters": {
+        "idle-height": "80"
+      }
     },
     "tm-02": {
       "base_topic": "lights/2",
       "name": "tm-02",
       "type": "vas17",
       "firmware_version": "0.4.0",
-      "parameters": {}
+      "parameters": {
+        "idle-height": "80"
+      }
     },
     "tm-03": {
       "base_topic": "lights/3",
       "name": "tm-03",
       "type": "vas17",
       "firmware_version": "0.4.0",
-      "parameters": {}
+      "parameters": {
+        "idle-height": "80"
+      }
     },
     "tm-04": {
       "base_topic": "lights/4",
       "name": "tm-04",
       "type": "vas17",
       "firmware_version": "0.4.0",
-      "parameters": {}
+      "parameters": {
+        "idle-height": "80"
+      }
     },
     "tm-05": {
       "base_topic": "lights/5",
       "name": "tm-05",
       "type": "vas17",
       "firmware_version": "0.4.0",
-      "parameters": {}
+      "parameters": {
+        "idle-height": "80"
+      }
     },
     "tm-06": {
       "base_topic": "lights/6",
       "name": "tm-06",
       "type": "vas17",
       "firmware_version": "0.4.0",
-      "parameters": {}
+      "parameters": {
+        "idle-height": "80"
+      }
     },
     "tm-07": {
       "base_topic": "lights/7",
       "name": "tm-07",
       "type": "vas17",
       "firmware_version": "0.4.0",
-      "parameters": {}
+      "parameters": {
+        "idle-height": "80"
+      }
     },
     "tm-08": {
       "base_topic": "lights/8",
       "name": "tm-08",
       "type": "vas17",
       "firmware_version": "0.4.0",
-      "parameters": {}
+      "parameters": {
+        "idle-height": "80"
+      }
     },
     "tm-09": {
       "base_topic": "lights/9",
       "name": "tm-09",
       "type": "vas17",
       "firmware_version": "0.4.0",
-      "parameters": {}
+      "parameters": {
+        "idle-height": "80"
+      }
     },
     "tm-10": {
       "base_topic": "lights/10",
       "name": "tm-10",
       "type": "vas17",
       "firmware_version": "0.4.0",
-      "parameters": {}
+      "parameters": {
+        "idle-height": "80"
+      }
     },
     "tm-11": {
       "base_topic": "lights/11",
       "name": "tm-11",
       "type": "vas17",
       "firmware_version": "0.4.0",
-      "parameters": {}
+      "parameters": {
+        "idle-height": "80"
+      }
     },
     "tm-12": {
       "base_topic": "lights/12",
       "name": "tm-12",
       "type": "vas17",
       "firmware_version": "0.4.0",
-      "parameters": {}
+      "parameters": {
+        "idle-height": "80"
+      }
     },
     "tm-13": {
       "base_topic": "lights/13",
       "name": "tm-13",
       "type": "vas17",
       "firmware_version": "0.4.0",
-      "parameters": {}
+      "parameters": {
+        "idle-height": "80"
+      }
     },
     "tm-14": {
       "base_topic": "lights/14",
       "name": "tm-14",
       "type": "vas17",
       "firmware_version": "0.4.0",
-      "parameters": {}
+      "parameters": {
+        "idle-height": "80"
+      }
     },
     "tm-15": {
       "base_topic": "lights/15",
       "name": "tm-15",
       "type": "vas17",
       "firmware_version": "0.4.0",
-      "parameters": {}
+      "parameters": {
+        "idle-height": "80"
+      }
     },
     "tm-16": {
       "base_topic": "lights/16",
       "name": "tm-16",
       "type": "vas17",
       "firmware_version": "0.4.0",
-      "parameters": {}
+      "parameters": {
+        "idle-height": "80"
+      }
     },
     "tm-17": {
       "base_topic": "lights/17",
       "name": "tm-17",
       "type": "vas17",
       "firmware_version": "0.4.0",
-      "parameters": {}
+      "parameters": {
+        "idle-height": "80"
+      }
     },
     "tm-18": {
       "base_topic": "lights/18",
       "name": "tm-18",
       "type": "vas17",
       "firmware_version": "0.4.0",
-      "parameters": {}
+      "parameters": {
+        "idle-height": "80"
+      }
     },
     "tm-19": {
       "base_topic": "lights/19",
       "name": "tm-19",
       "type": "vas17",
       "firmware_version": "0.4.0",
-      "parameters": {}
+      "parameters": {
+        "idle-height": "80"
+      }
     },
     "tm-20": {
       "base_topic": "lights/20",
       "name": "tm-20",
       "type": "vas17",
       "firmware_version": "0.4.0",
-      "parameters": {}
+      "parameters": {
+        "idle-height": "80"
+      }
     },
     "tm-21": {
       "base_topic": "lights/21",
       "name": "tm-21",
       "type": "vas17",
       "firmware_version": "0.4.0",
-      "parameters": {}
+      "parameters": {
+        "idle-height": "80"
+      }
     },
     "tm-22": {
       "base_topic": "lights/22",
       "name": "tm-22",
       "type": "vas17",
       "firmware_version": "0.4.0",
-      "parameters": {}
+      "parameters": {
+        "idle-height": "80"
+      }
     },
     "tm-23": {
       "base_topic": "lights/23",
       "name": "tm-23",
       "type": "vas17",
       "firmware_version": "0.4.0",
-      "parameters": {}
+      "parameters": {
+        "idle-height": "80"
+      }
     },
     "tm-24": {
       "base_topic": "lights/24",
       "name": "tm-24",
       "type": "vas17",
       "firmware_version": "0.4.0",
-      "parameters": {}
+      "parameters": {
+        "idle-height": "80"
+      }
     },
     "tm-25": {
       "base_topic": "lights/25",
       "name": "tm-25",
       "type": "vas17",
       "firmware_version": "0.4.0",
-      "parameters": {}
+      "parameters": {
+        "idle-height": "80"
+      }
     },
     "tm-26": {
       "base_topic": "lights/26",
       "name": "tm-26",
       "type": "vas17",
       "firmware_version": "0.4.0",
-      "parameters": {}
+      "parameters": {
+        "idle-height": "80"
+      }
     },
     "tm-27": {
       "base_topic": "lights/27",
       "name": "tm-27",
       "type": "vas17",
       "firmware_version": "0.4.0",
-      "parameters": {}
+      "parameters": {
+        "idle-height": "80"
+      }
     },
     "tm-28": {
       "base_topic": "lights/28",
       "name": "tm-28",
       "type": "vas17",
       "firmware_version": "0.4.0",
-      "parameters": {}
+      "parameters": {
+        "idle-height": "80"
+      }
     },
     "tm-29": {
       "base_topic": "lights/29",
       "name": "tm-29",
       "type": "vas17",
       "firmware_version": "0.4.0",
-      "parameters": {}
+      "parameters": {
+        "idle-height": "80"
+      }
     },
     "tm-30": {
       "base_topic": "lights/30",
       "name": "tm-30",
       "type": "vas17",
       "firmware_version": "0.4.0",
-      "parameters": {}
+      "parameters": {
+        "idle-height": "80"
+      }
     },
     "tm-31": {
       "base_topic": "lights/31",
       "name": "tm-31",
       "type": "vas17",
       "firmware_version": "0.4.0",
-      "parameters": {}
+      "parameters": {
+        "idle-height": "80"
+      }
     },
     "tm-32": {
       "base_topic": "lights/32",
       "name": "tm-32",
       "type": "vas17",
       "firmware_version": "0.4.0",
-      "parameters": {}
+      "parameters": {
+        "idle-height": "80"
+      }
     },
     "tm-33": {
       "base_topic": "lights/33",
       "name": "tm-33",
       "type": "vas17",
       "firmware_version": "0.4.0",
-      "parameters": {}
+      "parameters": {
+        "idle-height": "80"
+      }
     },
     "tm-34": {
       "base_topic": "lights/34",
       "name": "tm-34",
       "type": "vas17",
       "firmware_version": "0.4.0",
-      "parameters": {}
+      "parameters": {
+        "idle-height": "80"
+      }
     },
     "tm-35": {
       "base_topic": "lights/35",
       "name": "tm-35",
       "type": "vas17",
       "firmware_version": "0.4.0",
-      "parameters": {}
+      "parameters": {
+        "idle-height": "80"
+      }
     },
     "tm-36": {
       "base_topic": "lights/36",
       "name": "tm-36",
       "type": "vas17",
       "firmware_version": "0.4.0",
-      "parameters": {}
+      "parameters": {
+        "idle-height": "80"
+      }
     },
     "tm-37": {
       "base_topic": "lights/37",
       "name": "tm-37",
       "type": "vas17",
       "firmware_version": "0.4.0",
-      "parameters": {}
+      "parameters": {
+        "idle-height": "80"
+      }
     },
     "tm-38": {
       "base_topic": "lights/38",
       "name": "tm-38",
       "type": "vas17",
       "firmware_version": "0.4.0",
-      "parameters": {}
+      "parameters": {
+        "idle-height": "80"
+      }
     },
     "tm-39": {
       "base_topic": "lights/39",
       "name": "tm-39",
       "type": "vas17",
       "firmware_version": "0.4.0",
-      "parameters": {}
+      "parameters": {
+        "idle-height": "80"
+      }
     },
     "tm-40": {
       "base_topic": "lights/40",
       "name": "tm-40",
       "type": "vas17",
       "firmware_version": "0.4.0",
-      "parameters": {}
+      "parameters": {
+        "idle-height": "80"
+      }
     },
     "tm-41": {
       "base_topic": "lights/41",
       "name": "tm-41",
       "type": "vas17",
       "firmware_version": "0.4.0",
-      "parameters": {}
+      "parameters": {
+        "idle-height": "80"
+      }
     },
     "tm-42": {
       "base_topic": "lights/42",
       "name": "tm-42",
       "type": "vas17",
       "firmware_version": "0.4.0",
-      "parameters": {}
+      "parameters": {
+        "idle-height": "80"
+      }
     },
     "tm-43": {
       "base_topic": "lights/43",
       "name": "tm-43",
       "type": "vas17",
       "firmware_version": "0.4.0",
-      "parameters": {}
+      "parameters": {
+        "idle-height": "80"
+      }
     },
     "tm-44": {
       "base_topic": "lights/44",
       "name": "tm-44",
       "type": "vas17",
       "firmware_version": "0.4.0",
-      "parameters": {}
+      "parameters": {
+        "idle-height": "80"
+      }
     },
     "tm-45": {
       "base_topic": "lights/45",
       "name": "tm-45",
       "type": "vas17",
       "firmware_version": "0.4.0",
-      "parameters": {}
+      "parameters": {
+        "idle-height": "80"
+      }
     },
     "tm-46": {
       "base_topic": "lights/46",
       "name": "tm-46",
       "type": "vas17",
       "firmware_version": "0.4.0",
-      "parameters": {}
+      "parameters": {
+        "idle-height": "80"
+      }
     },
     "tm-47": {
       "base_topic": "lights/47",
       "name": "tm-47",
       "type": "vas17",
       "firmware_version": "0.4.0",
-      "parameters": {}
+      "parameters": {
+        "idle-height": "80"
+      }
     },
     "tm-48": {
       "base_topic": "lights/48",
       "name": "tm-48",
       "type": "vas17",
       "firmware_version": "0.4.0",
-      "parameters": {}
+      "parameters": {
+        "idle-height": "80"
+      }
     }
   }
 }
