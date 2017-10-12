@@ -102,6 +102,7 @@ static void online() {
 
   // subscribe local topics
   naos_subscribe("flash", 0, NAOS_LOCAL);
+  naos_subscribe("flash-color", 0, NAOS_LOCAL);
   naos_subscribe("turn", 0, NAOS_LOCAL);
   naos_subscribe("move", 0, NAOS_LOCAL);
   naos_subscribe("stop", 0, NAOS_LOCAL);
@@ -210,6 +211,22 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
     flash_time = (uint32_t)a32_str2l((const char *)payload);
     flash_end = naos_millis() + flash_time / 2;
     led_set(flash_intensity, flash_intensity, flash_intensity, flash_intensity, flash_time / 2);
+  }
+
+  // perform flash
+  else if (strcmp(topic, "flash-color") == 0 && scope == NAOS_LOCAL) {
+    // read colors and time
+    int red = 0;
+    int green = 0;
+    int blue = 0;
+    int white = 0;
+    int time = 0;
+    sscanf((const char *)payload, "%d %d %d %d %d", &red, &green, &blue, &white, &time);
+
+    // set flash
+    flash_time = (uint32_t)time;
+    flash_end = naos_millis() + flash_time / 2;
+    led_set(red, green, blue, white, flash_time / 2);
   }
 
   // set turn

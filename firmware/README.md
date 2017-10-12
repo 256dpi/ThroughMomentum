@@ -8,6 +8,10 @@
 
 Flashes the light for the specified amount of milliseconds.
 
+### `> flash-color {RED GREEN BLUE WHITE TIME}`
+
+Flashes the light in colors for the specified amount of milliseconds.
+
 ### `> turn up/down`
 
 Puts the motor in manual mode and drives in the requested direction.
