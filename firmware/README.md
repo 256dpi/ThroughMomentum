@@ -33,10 +33,6 @@ Disco randomly selects a color for the lights.
 
 The current position of the object.
 
-### `< distance`
-
-The currently measured distance.
-
 ### `< motion`
 
 The currently measured motion.

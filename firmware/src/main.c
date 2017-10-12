@@ -5,7 +5,6 @@
 #include <naos.h>
 #include <string.h>
 
-#include "dist.h"
 #include "enc.h"
 #include "led.h"
 #include "mot.h"
@@ -16,7 +15,6 @@ double winding_length = 0;
 double idle_height = 0;
 double rise_height = 0;
 double max_height = 0;
-double target_distance = 0;
 int idle_light = 0;
 int flash_intensity = 0;
 double save_threshold = 0;
@@ -34,7 +32,6 @@ int pir_interval = 0;
 bool first_boot = true;
 bool motion = false;
 uint32_t last_motion = 0;
-uint32_t last_distance = 0;
 bool manual = false;
 double position = 0;
 double target = 0;
@@ -58,7 +55,6 @@ static void online() {
   naos_ensure("idle-height", "100");
   naos_ensure("rise-height", "150");
   naos_ensure("max-height", "200");
-  naos_ensure("target-distance", "25");
   naos_ensure("idle-light", "127");
   naos_ensure("flash-intensity", "1023");
   naos_ensure("save-threshold", "2");
@@ -79,7 +75,6 @@ static void online() {
   idle_height = a32_str2d(naos_get("idle-height"));
   rise_height = a32_str2d(naos_get("rise-height"));
   max_height = a32_str2d(naos_get("max-height"));
-  target_distance = a32_str2d(naos_get("target-distance"));
   idle_light = a32_str2i(naos_get("idle-light"));
   flash_intensity = a32_str2i(naos_get("flash-intensity"));
   min_down_speed = a32_str2i(naos_get("min-down-speed"));
@@ -146,11 +141,6 @@ static void update(const char *param, const char *value) {
   // set max height
   else if (strcmp(param, "max-height") == 0) {
     max_height = a32_str2d(value);
-  }
-
-  // set target distance
-  else if (strcmp(param, "target-distance") == 0) {
-    target_distance = a32_str2d(value);
   }
 
   // set idle light
@@ -291,15 +281,6 @@ static void loop() {
     naos_publish("motion", a32_l2str(motion ? 1 : 0), 0, false, NAOS_LOCAL);
   }
 
-  // read distance
-  double distance = dist_get();
-
-  // publish distance every second
-  if (last_distance + 1000 < naos_millis()) {
-    naos_publish("distance", a32_d2str(distance), 0, false, NAOS_LOCAL);
-    last_distance = naos_millis();
-  }
-
   // get encoder
   double rotation_change = enc_get();
 
@@ -340,20 +321,10 @@ static void loop() {
   // automate positioning
   if (automate) {
     if (motion) {
-      // go up and down depending on current distance
-      if (distance > target_distance) {
-        new_target = position - (distance - target_distance);
-      } else if (distance < target_distance) {
-        new_target = position + (target_distance - distance);
-      }
-
-      // constrain movement to 150cm to 250cm
-      if (new_target < rise_height) {
-        new_target = rise_height;
-      } else if (target > max_height) {
-        new_target = max_height;
-      }
+      // move to rise height on motion
+      new_target = rise_height;
     } else {
+      // move to idle height if no motion
       new_target = idle_height;
     }
   }
@@ -391,9 +362,6 @@ void app_main() {
 
   // initialize motion sensor
   pir_init();
-
-  // initialize distance sensor
-  dist_init();
 
   // initialize motor
   mot_init();

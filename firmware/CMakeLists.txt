@@ -9,8 +9,6 @@ set(CMAKE_C_STANDARD 99)
 
 # add your source files
 set(SOURCE_FILES
-        src/dist.c
-        src/dist.h
         src/enc.c
         src/enc.h
         src/led.c
