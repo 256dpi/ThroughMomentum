@@ -14,7 +14,6 @@ bool automate = false;
 double winding_length = 0;
 double idle_height = 0;
 double rise_height = 0;
-double max_height = 0;
 int idle_light = 0;
 int flash_intensity = 0;
 double save_threshold = 0;
@@ -74,7 +73,6 @@ static void online() {
   winding_length = a32_str2d(naos_get("winding-length"));
   idle_height = a32_str2d(naos_get("idle-height"));
   rise_height = a32_str2d(naos_get("rise-height"));
-  max_height = a32_str2d(naos_get("max-height"));
   idle_light = a32_str2i(naos_get("idle-light"));
   flash_intensity = a32_str2i(naos_get("flash-intensity"));
   min_down_speed = a32_str2i(naos_get("min-down-speed"));
@@ -137,11 +135,6 @@ static void update(const char *param, const char *value) {
   // set rise height
   else if (strcmp(param, "rise-height") == 0) {
     rise_height = a32_str2d(value);
-  }
-
-  // set max height
-  else if (strcmp(param, "max-height") == 0) {
-    max_height = a32_str2d(value);
   }
 
   // set idle light
@@ -280,7 +273,7 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
 
 static void loop() {
   // calculate dynamic pir threshold
-  int threshold = a32_safe_map_i((int)position, 0, (int)max_height, 0, pir_sensitivity);
+  int threshold = a32_safe_map_i((int)position, 0, (int)rise_height, 0, pir_sensitivity);
 
   // update timestamp if motion detected
   if (pir_read() > threshold) {
@@ -363,7 +356,7 @@ static void loop() {
 }
 
 static naos_config_t config = {.device_type = "vas17",
-                               .firmware_version = "0.4.0",
+                               .firmware_version = "0.5.0",
                                .ping_callback = ping,
                                .loop_callback = loop,
                                .loop_interval = 0,

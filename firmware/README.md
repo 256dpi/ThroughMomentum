@@ -59,10 +59,6 @@ The idle height of the light object.
 
 The rise height of the light object when motion is detected.
 
-### `max-height (200)`
-
-The maximum height of the light object when motion is detected.
-
 ### `idle-ligth (127)`
 
 The intensity of the light in idle mode.
