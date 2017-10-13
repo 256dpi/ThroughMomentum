@@ -15,6 +15,7 @@
       "firmware_version": "0.4.0",
       "parameters": {
         "idle-height": "80",
+        "max-height": "160",
         "max-up-speed": "500",
         "pir-sensitivity": "400",
         "rise-height": "160"
@@ -27,6 +28,7 @@
       "firmware_version": "0.4.0",
       "parameters": {
         "idle-height": "80",
+        "max-height": "160",
         "max-up-speed": "500",
         "pir-sensitivity": "400",
         "rise-height": "160"
@@ -39,6 +41,7 @@
       "firmware_version": "0.4.0",
       "parameters": {
         "idle-height": "80",
+        "max-height": "160",
         "max-up-speed": "500",
         "pir-sensitivity": "400",
         "rise-height": "160"
@@ -51,6 +54,7 @@
       "firmware_version": "0.4.0",
       "parameters": {
         "idle-height": "80",
+        "max-height": "160",
         "max-up-speed": "500",
         "pir-sensitivity": "400",
         "rise-height": "160"
@@ -63,6 +67,7 @@
       "firmware_version": "0.4.0",
       "parameters": {
         "idle-height": "80",
+        "max-height": "160",
         "max-up-speed": "500",
         "pir-sensitivity": "400",
         "rise-height": "160"
@@ -75,6 +80,7 @@
       "firmware_version": "0.4.0",
       "parameters": {
         "idle-height": "80",
+        "max-height": "160",
         "max-up-speed": "500",
         "pir-sensitivity": "400",
         "rise-height": "160"
@@ -87,6 +93,7 @@
       "firmware_version": "0.4.0",
       "parameters": {
         "idle-height": "80",
+        "max-height": "160",
         "max-up-speed": "500",
         "pir-sensitivity": "400",
         "rise-height": "160"
@@ -99,6 +106,7 @@
       "firmware_version": "0.4.0",
       "parameters": {
         "idle-height": "80",
+        "max-height": "160",
         "max-up-speed": "500",
         "pir-sensitivity": "400",
         "rise-height": "160"
@@ -111,6 +119,7 @@
       "firmware_version": "0.4.0",
       "parameters": {
         "idle-height": "80",
+        "max-height": "160",
         "max-up-speed": "500",
         "pir-sensitivity": "400",
         "rise-height": "160"
@@ -123,6 +132,7 @@
       "firmware_version": "0.4.0",
       "parameters": {
         "idle-height": "80",
+        "max-height": "160",
         "max-up-speed": "500",
         "pir-sensitivity": "400",
         "rise-height": "160"
@@ -135,6 +145,7 @@
       "firmware_version": "0.4.0",
       "parameters": {
         "idle-height": "80",
+        "max-height": "160",
         "max-up-speed": "500",
         "pir-sensitivity": "400",
         "rise-height": "160"
@@ -147,6 +158,7 @@
       "firmware_version": "0.4.0",
       "parameters": {
         "idle-height": "80",
+        "max-height": "160",
         "max-up-speed": "500",
         "pir-sensitivity": "400",
         "rise-height": "160"
@@ -159,6 +171,7 @@
       "firmware_version": "0.4.0",
       "parameters": {
         "idle-height": "80",
+        "max-height": "160",
         "max-up-speed": "500",
         "pir-sensitivity": "400",
         "rise-height": "160"
@@ -171,6 +184,7 @@
       "firmware_version": "0.4.0",
       "parameters": {
         "idle-height": "80",
+        "max-height": "160",
         "max-up-speed": "500",
         "pir-sensitivity": "400",
         "rise-height": "160"
@@ -183,6 +197,7 @@
       "firmware_version": "0.4.0",
       "parameters": {
         "idle-height": "80",
+        "max-height": "160",
         "max-up-speed": "500",
         "pir-sensitivity": "400",
         "rise-height": "160"
@@ -195,6 +210,7 @@
       "firmware_version": "0.4.0",
       "parameters": {
         "idle-height": "80",
+        "max-height": "160",
         "max-up-speed": "500",
         "pir-sensitivity": "400",
         "rise-height": "160"
@@ -207,6 +223,7 @@
       "firmware_version": "0.4.0",
       "parameters": {
         "idle-height": "80",
+        "max-height": "160",
         "max-up-speed": "500",
         "pir-sensitivity": "400",
         "rise-height": "160"
@@ -219,6 +236,7 @@
       "firmware_version": "0.4.0",
       "parameters": {
         "idle-height": "80",
+        "max-height": "160",
         "max-up-speed": "500",
         "pir-sensitivity": "400",
         "rise-height": "160"
@@ -231,6 +249,7 @@
       "firmware_version": "0.4.0",
       "parameters": {
         "idle-height": "80",
+        "max-height": "160",
         "max-up-speed": "500",
         "pir-sensitivity": "400",
         "rise-height": "160"
@@ -243,6 +262,7 @@
       "firmware_version": "0.4.0",
       "parameters": {
         "idle-height": "80",
+        "max-height": "160",
         "max-up-speed": "500",
         "pir-sensitivity": "400",
         "rise-height": "160"
@@ -255,6 +275,7 @@
       "firmware_version": "0.4.0",
       "parameters": {
         "idle-height": "80",
+        "max-height": "160",
         "max-up-speed": "500",
         "pir-sensitivity": "400",
         "rise-height": "160"
@@ -267,6 +288,7 @@
       "firmware_version": "0.4.0",
       "parameters": {
         "idle-height": "80",
+        "max-height": "160",
         "max-up-speed": "500",
         "pir-sensitivity": "400",
         "rise-height": "160"
@@ -279,6 +301,7 @@
       "firmware_version": "0.4.0",
       "parameters": {
         "idle-height": "80",
+        "max-height": "160",
         "max-up-speed": "500",
         "pir-sensitivity": "400",
         "rise-height": "160"
@@ -291,6 +314,7 @@
       "firmware_version": "0.4.0",
       "parameters": {
         "idle-height": "80",
+        "max-height": "160",
         "max-up-speed": "500",
         "pir-sensitivity": "400",
         "rise-height": "160"
@@ -303,6 +327,7 @@
       "firmware_version": "0.4.0",
       "parameters": {
         "idle-height": "80",
+        "max-height": "160",
         "max-up-speed": "500",
         "pir-sensitivity": "400",
         "rise-height": "160"
@@ -315,6 +340,7 @@
       "firmware_version": "0.4.0",
       "parameters": {
         "idle-height": "80",
+        "max-height": "160",
         "max-up-speed": "500",
         "pir-sensitivity": "400",
         "rise-height": "160"
@@ -327,6 +353,7 @@
       "firmware_version": "0.4.0",
       "parameters": {
         "idle-height": "80",
+        "max-height": "160",
         "max-up-speed": "500",
         "pir-sensitivity": "400",
         "rise-height": "160"
@@ -339,6 +366,7 @@
       "firmware_version": "0.4.0",
       "parameters": {
         "idle-height": "80",
+        "max-height": "160",
         "max-up-speed": "500",
         "pir-sensitivity": "400",
         "rise-height": "160"
@@ -351,6 +379,7 @@
       "firmware_version": "0.4.0",
       "parameters": {
         "idle-height": "80",
+        "max-height": "160",
         "max-up-speed": "500",
         "pir-sensitivity": "400",
         "rise-height": "160"
@@ -363,6 +392,7 @@
       "firmware_version": "0.4.0",
       "parameters": {
         "idle-height": "80",
+        "max-height": "160",
         "max-up-speed": "500",
         "pir-sensitivity": "400",
         "rise-height": "160"
@@ -375,6 +405,7 @@
       "firmware_version": "0.4.0",
       "parameters": {
         "idle-height": "80",
+        "max-height": "160",
         "max-up-speed": "500",
         "pir-sensitivity": "400",
         "rise-height": "160"
@@ -387,6 +418,7 @@
       "firmware_version": "0.4.0",
       "parameters": {
         "idle-height": "80",
+        "max-height": "160",
         "max-up-speed": "500",
         "pir-sensitivity": "400",
         "rise-height": "160"
@@ -399,6 +431,7 @@
       "firmware_version": "0.4.0",
       "parameters": {
         "idle-height": "80",
+        "max-height": "160",
         "max-up-speed": "500",
         "pir-sensitivity": "400",
         "rise-height": "160"
@@ -411,6 +444,7 @@
       "firmware_version": "0.4.0",
       "parameters": {
         "idle-height": "80",
+        "max-height": "160",
         "max-up-speed": "500",
         "pir-sensitivity": "400",
         "rise-height": "160"
@@ -423,6 +457,7 @@
       "firmware_version": "0.4.0",
       "parameters": {
         "idle-height": "80",
+        "max-height": "160",
         "max-up-speed": "500",
         "pir-sensitivity": "400",
         "rise-height": "160"
@@ -435,6 +470,7 @@
       "firmware_version": "0.4.0",
       "parameters": {
         "idle-height": "80",
+        "max-height": "160",
         "max-up-speed": "500",
         "pir-sensitivity": "400",
         "rise-height": "160"
@@ -447,6 +483,7 @@
       "firmware_version": "0.4.0",
       "parameters": {
         "idle-height": "80",
+        "max-height": "160",
         "max-up-speed": "500",
         "pir-sensitivity": "400",
         "rise-height": "160"
@@ -459,6 +496,7 @@
       "firmware_version": "0.4.0",
       "parameters": {
         "idle-height": "80",
+        "max-height": "160",
         "max-up-speed": "500",
         "pir-sensitivity": "400",
         "rise-height": "160"
@@ -471,6 +509,7 @@
       "firmware_version": "0.4.0",
       "parameters": {
         "idle-height": "80",
+        "max-height": "160",
         "max-up-speed": "500",
         "pir-sensitivity": "400",
         "rise-height": "160"
@@ -483,6 +522,7 @@
       "firmware_version": "0.4.0",
       "parameters": {
         "idle-height": "80",
+        "max-height": "160",
         "max-up-speed": "500",
         "pir-sensitivity": "400",
         "rise-height": "160"
@@ -495,6 +535,7 @@
       "firmware_version": "0.4.0",
       "parameters": {
         "idle-height": "80",
+        "max-height": "160",
         "max-up-speed": "500",
         "pir-sensitivity": "400",
         "rise-height": "160"
@@ -507,6 +548,7 @@
       "firmware_version": "0.4.0",
       "parameters": {
         "idle-height": "80",
+        "max-height": "160",
         "max-up-speed": "500",
         "pir-sensitivity": "400",
         "rise-height": "160"
@@ -519,6 +561,7 @@
       "firmware_version": "0.4.0",
       "parameters": {
         "idle-height": "80",
+        "max-height": "160",
         "max-up-speed": "500",
         "pir-sensitivity": "400",
         "rise-height": "160"
@@ -531,6 +574,7 @@
       "firmware_version": "0.4.0",
       "parameters": {
         "idle-height": "80",
+        "max-height": "160",
         "max-up-speed": "500",
         "pir-sensitivity": "400",
         "rise-height": "160"
@@ -543,6 +587,7 @@
       "firmware_version": "0.4.0",
       "parameters": {
         "idle-height": "80",
+        "max-height": "160",
         "max-up-speed": "500",
         "pir-sensitivity": "400",
         "rise-height": "160"
@@ -555,6 +600,7 @@
       "firmware_version": "0.4.0",
       "parameters": {
         "idle-height": "80",
+        "max-height": "160",
         "max-up-speed": "500",
         "pir-sensitivity": "400",
         "rise-height": "160"
@@ -567,6 +613,7 @@
       "firmware_version": "0.4.0",
       "parameters": {
         "idle-height": "80",
+        "max-height": "160",
         "max-up-speed": "500",
         "pir-sensitivity": "400",
         "rise-height": "160"
@@ -579,6 +626,7 @@
       "firmware_version": "0.4.0",
       "parameters": {
         "idle-height": "80",
+        "max-height": "160",
         "max-up-speed": "500",
         "pir-sensitivity": "400",
         "rise-height": "160"
