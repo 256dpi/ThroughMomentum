@@ -1,12 +1,11 @@
 #include <driver/gpio.h>
 #include <freertos/FreeRTOS.h>
-#include <freertos/queue.h>
 
 #define ENC_RESOLUTION 20
 
-QueueHandle_t enc_rotation_queue;
+static volatile uint8_t enc_state = 0;
 
-static uint8_t enc_rotation_state = 0;
+static volatile int16_t enc_total = 0;
 
 static void enc_rotation_handler(void *_) {
   // read GPIOs
@@ -14,40 +13,36 @@ static void enc_rotation_handler(void *_) {
   int p2 = gpio_get_level(GPIO_NUM_25);
 
   // calculate encoder change
-  uint8_t state = (uint8_t)(enc_rotation_state & 3);
+  uint8_t state = (uint8_t)(enc_state & 3);
   if (p1) state |= 4;
   if (p2) state |= 8;
-  enc_rotation_state = (state >> 2);
+  enc_state = (state >> 2);
 
-  // send relative change to queue
+  // save relative change
   switch (state) {
     case 1:
     case 7:
     case 8:
     case 14: {
-      int vp = 1;
-      xQueueSendFromISR(enc_rotation_queue, &vp, NULL);
-      return;
+      enc_total += 1;
+      break;
     }
     case 2:
     case 4:
     case 11:
     case 13: {
-      int vm = -1;
-      xQueueSendFromISR(enc_rotation_queue, &vm, NULL);
-      return;
+      enc_total -= 1;
+      break;
     }
     case 3:
     case 12: {
-      int vpp = 2;
-      xQueueSendFromISR(enc_rotation_queue, &vpp, NULL);
-      return;
+      enc_total += 2;
+      break;
     }
     case 6:
     case 9: {
-      int vmm = -2;
-      xQueueSendFromISR(enc_rotation_queue, &vmm, NULL);
-      return;
+      enc_total -= 2;
+      break;
     }
     default: {
       // do nothing
@@ -56,9 +51,6 @@ static void enc_rotation_handler(void *_) {
 }
 
 void enc_init() {
-  // create queues
-  enc_rotation_queue = xQueueCreate(512, sizeof(int));
-
   // configure rotation pins
   gpio_config_t rc;
   rc.pin_bit_mask = GPIO_SEL_23 | GPIO_SEL_25;
@@ -69,8 +61,8 @@ void enc_init() {
   gpio_config(&rc);
 
   // preset state
-  if (gpio_get_level(GPIO_NUM_23)) enc_rotation_state |= 1;
-  if (gpio_get_level(GPIO_NUM_25)) enc_rotation_state |= 2;
+  if (gpio_get_level(GPIO_NUM_23)) enc_state |= 1;
+  if (gpio_get_level(GPIO_NUM_25)) enc_state |= 2;
 
   // add interrupt handlers
   gpio_isr_handler_add(GPIO_NUM_23, enc_rotation_handler, NULL);
@@ -78,14 +70,15 @@ void enc_init() {
 }
 
 double enc_get() {
-  // prepare variables
-  double total = 0;
-  int next = 0;
+  // prepare mutex
+  static portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
 
-  // get all relative changes
-  while (xQueueReceive(enc_rotation_queue, &next, 0) == pdTRUE) {
-    total += next;
-  }
+  // get saved total
+  vTaskEnterCritical(&mux);
+  double total = enc_total;
+  enc_total = 0;
+  vTaskExitCritical(&mux);
 
+  // calculate and return real rotation
   return total / ENC_RESOLUTION;
 }
