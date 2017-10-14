@@ -33,6 +33,7 @@ bool motion = false;
 uint32_t last_motion = 0;
 bool manual = false;
 double position = 0;
+double sent_position = 0;
 double target = 0;
 int flash_time = 0;
 uint32_t flash_end = 0;
@@ -300,11 +301,12 @@ static void loop() {
   }
 
   // apply rotation
-  if (rotation_change != 0) {
-    position += rotation_change * winding_length;
+  position += rotation_change * winding_length;
 
-    // publish update
+  // publish update if position changed
+  if (position > sent_position + 1 || position < sent_position - 1) {
     naos_publish("position", a32_d2str(position), 0, false, NAOS_LOCAL);
+    sent_position = position;
   }
 
   // save position if threshold has been passed
