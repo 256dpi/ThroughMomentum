@@ -358,7 +358,7 @@ static void loop() {
 }
 
 static naos_config_t config = {.device_type = "vas17",
-                               .firmware_version = "0.5.0",
+                               .firmware_version = "0.6.0",
                                .ping_callback = ping,
                                .loop_callback = loop,
                                .loop_interval = 0,
