@@ -3,6 +3,8 @@
 
 #define ENC_RESOLUTION 20
 
+// https://github.com/PaulStoffregen/Encoder/blob/master/Encoder.h
+
 static volatile uint8_t enc_state = 0;
 
 static volatile int16_t enc_total = 0;
@@ -45,7 +47,7 @@ static void enc_rotation_handler(void *_) {
       break;
     }
     default: {
-      // do nothing
+      // no movement
     }
   }
 }
