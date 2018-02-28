@@ -1,3 +1,3 @@
 # Through Momentum
 
-**An interactive kinect light installation.**
+**An interactive kinetic light installation.**
