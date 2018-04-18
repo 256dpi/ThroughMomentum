@@ -4,6 +4,7 @@
 #include <esp_system.h>
 #include <naos.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "enc.h"
 #include "led.h"
