@@ -3,8 +3,8 @@
 #include <driver/adc.h>
 #include <esp_system.h>
 #include <naos.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "enc.h"
 #include "led.h"
@@ -29,7 +29,6 @@ double move_precision = 0;
 int pir_sensitivity = 0;
 int pir_interval = 0;
 
-bool first_boot = true;
 bool motion = false;
 uint32_t last_motion = 0;
 bool manual = false;
@@ -49,50 +48,6 @@ static void ping() {
 static void online() {
   // disable motor
   mot_set(0);
-
-  // ensure defaults
-  naos_ensure("automate", "off");
-  naos_ensure("winding-length", "7.5");
-  naos_ensure("idle-height", "100");
-  naos_ensure("rise-height", "150");
-  naos_ensure("max-height", "200");
-  naos_ensure("idle-light", "127");
-  naos_ensure("flash-intensity", "1023");
-  naos_ensure("save-threshold", "2");
-  naos_ensure("saved-position", "0");
-  naos_ensure("min-down-speed", "350");
-  naos_ensure("min-up-speed", "350");
-  naos_ensure("max-down-speed", "500");
-  naos_ensure("max-up-speed", "950");
-  naos_ensure("speed-map-range", "20");
-  naos_ensure("invert-encoder", "true");
-  naos_ensure("move-precision", "1");
-  naos_ensure("pir-sensitivity", "300");
-  naos_ensure("pir-interval", "2000");
-
-  // read settings
-  automate = strcmp(naos_get("automate"), "on") == 0;
-  winding_length = a32_str2d(naos_get("winding-length"));
-  idle_height = a32_str2d(naos_get("idle-height"));
-  rise_height = a32_str2d(naos_get("rise-height"));
-  idle_light = a32_str2i(naos_get("idle-light"));
-  flash_intensity = a32_str2i(naos_get("flash-intensity"));
-  min_down_speed = a32_str2i(naos_get("min-down-speed"));
-  min_up_speed = a32_str2i(naos_get("min-up-speed"));
-  max_down_speed = a32_str2i(naos_get("max-down-speed"));
-  max_up_speed = a32_str2i(naos_get("max-up-speed"));
-  speed_map_range = a32_str2i(naos_get("speed-map-range"));
-  invert_encoder = strcmp(naos_get("invert-encoder"), "true") == 0;
-  move_precision = a32_str2d(naos_get("move-precision"));
-  pir_sensitivity = a32_str2i(naos_get("pir-sensitivity"));
-  pir_interval = a32_str2i(naos_get("pir-interval"));
-
-  // read position on first boot
-  if (first_boot) {
-    saved_position = a32_str2d(naos_get("saved-position"));
-    position = saved_position;
-    first_boot = false;
-  }
 
   // set target to current position
   target = position;
@@ -118,87 +73,7 @@ static void offline() {
   led_set(0, 0, 0, 0, 100);
 }
 
-static void update(const char *param, const char *value) {
-  // set automate
-  if (strcmp(param, "automate") == 0) {
-    automate = strcmp(value, "on") == 0;
-  }
-
-  // set winding length
-  else if (strcmp(param, "winding-length") == 0) {
-    winding_length = a32_str2d(value);
-  }
-
-  // set idle height
-  else if (strcmp(param, "idle-height") == 0) {
-    idle_height = a32_str2d(value);
-  }
-
-  // set rise height
-  else if (strcmp(param, "rise-height") == 0) {
-    rise_height = a32_str2d(value);
-  }
-
-  // set idle light
-  else if (strcmp(param, "idle-light") == 0) {
-    idle_light = a32_str2i(value);
-  }
-
-  // set flash intensity
-  else if (strcmp(param, "flash-intensity") == 0) {
-    flash_intensity = a32_str2i(value);
-  }
-
-  // set save threshold
-  else if (strcmp(param, "save-threshold") == 0) {
-    save_threshold = a32_str2i(value);
-  }
-
-  // set min down speed
-  else if (strcmp(param, "min-down-speed") == 0) {
-    min_down_speed = a32_str2i(value);
-  }
-
-  // set min up speed
-  else if (strcmp(param, "min-up-speed") == 0) {
-    min_up_speed = a32_str2i(value);
-  }
-
-  // set max down speed
-  else if (strcmp(param, "max-down-speed") == 0) {
-    max_down_speed = a32_str2i(value);
-  }
-
-  // set max up speed
-  else if (strcmp(param, "max-up-speed") == 0) {
-    max_up_speed = a32_str2i(value);
-  }
-
-  // set speed map range
-  else if (strcmp(param, "speed-map-range") == 0) {
-    speed_map_range = a32_str2i(value);
-  }
-
-  // set invert encoder
-  else if (strcmp(param, "invert-encoder") == 0) {
-    invert_encoder = strcmp(value, "true") == 0;
-  }
-
-  // set move precision
-  else if (strcmp(param, "move-precision") == 0) {
-    move_precision = a32_str2d(value);
-  }
-
-  // set pir sensitivity
-  else if (strcmp(param, "pir-sensitivity") == 0) {
-    pir_sensitivity = a32_str2i(value);
-  }
-
-  // set pir interval
-  else if (strcmp(param, "pir-interval") == 0) {
-    pir_interval = a32_str2i(value);
-  }
-}
+static void update(const char *param, const char *value) {}
 
 static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_t scope) {
   // perform flash
@@ -241,7 +116,7 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
 
     if (automate) {
       automate = false;
-      naos_set("automate", "off");
+      naos_set_b("automate", false);
     }
   }
 
@@ -253,13 +128,15 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
 
     if (automate) {
       automate = false;
-      naos_set("automate", "off");
+      naos_set_b("automate", false);
     }
   }
 
   // reset position
   else if (strcmp(topic, "reset") == 0 && scope == NAOS_LOCAL) {
     position = a32_str2d((const char *)payload);
+    naos_set_d("saved-position", position);
+    saved_position = position;
     target = position;
   }
 
@@ -290,7 +167,7 @@ static void loop() {
     motion = new_motion;
 
     // publish update
-    naos_publish("motion", a32_l2str(motion ? 1 : 0), 0, false, NAOS_LOCAL);
+    naos_publish_b("motion", motion, 0, false, NAOS_LOCAL);
   }
 
   // get encoder
@@ -306,13 +183,13 @@ static void loop() {
 
   // publish update if position changed
   if (position > sent_position + 1 || position < sent_position - 1) {
-    naos_publish("position", a32_d2str(position), 0, false, NAOS_LOCAL);
+    naos_publish_d("position", position, 0, false, NAOS_LOCAL);
     sent_position = position;
   }
 
   // save position if threshold has been passed
   if (position > saved_position + save_threshold || position < saved_position - save_threshold) {
-    naos_set("saved-position", a32_d2str(position));
+    naos_set_d("saved-position", position);
     saved_position = position;
   }
 
@@ -358,8 +235,30 @@ static void loop() {
   }
 }
 
+static naos_param_t params[] = {
+    {.name = "automate", .type = NAOS_BOOL, .default_b = false, .shadow_b = &automate},
+    {.name = "winding-length", .type = NAOS_DOUBLE, .default_d = 7.5, .shadow_d = &winding_length},
+    {.name = "idle-height", .type = NAOS_DOUBLE, .default_d = 100, .shadow_d = &idle_height},
+    {.name = "rise-height", .type = NAOS_DOUBLE, .default_d = 150, .shadow_d = &rise_height},
+    {.name = "idle-light", .type = NAOS_LONG, .default_l = 127, .shadow_l = &idle_light},
+    {.name = "flash-intensity", .type = NAOS_LONG, .default_l = 1023, .shadow_l = &flash_intensity},
+    {.name = "save-threshold", .type = NAOS_DOUBLE, .default_d = 2, .shadow_d = &save_threshold},
+    {.name = "saved-position", .type = NAOS_DOUBLE, .default_d = 0, .shadow_d = &saved_position},
+    {.name = "min-down-speed", .type = NAOS_LONG, .default_l = 350, .shadow_l = &min_down_speed},
+    {.name = "min-up-speed", .type = NAOS_LONG, .default_l = 350, .shadow_l = &min_up_speed},
+    {.name = "max-down-speed", .type = NAOS_LONG, .default_l = 500, .shadow_l = &max_down_speed},
+    {.name = "max-up-speed", .type = NAOS_LONG, .default_l = 950, .shadow_l = &max_up_speed},
+    {.name = "speed-map-range", .type = NAOS_LONG, .default_l = 20, .shadow_l = &speed_map_range},
+    {.name = "invert-encoder", .type = NAOS_BOOL, .default_b = true, .shadow_b = &invert_encoder},
+    {.name = "move-precision", .type = NAOS_DOUBLE, .default_d = 1, .shadow_d = &move_precision},
+    {.name = "pir-sensitivity", .type = NAOS_LONG, .default_l = 300, .shadow_l = &pir_sensitivity},
+    {.name = "pir-interval", .type = NAOS_LONG, .default_l = 2000, .shadow_l = &pir_interval},
+};
+
 static naos_config_t config = {.device_type = "vas17",
                                .firmware_version = "0.6.0",
+                               .parameters = params,
+                               .num_parameters = 15,
                                .ping_callback = ping,
                                .loop_callback = loop,
                                .loop_interval = 0,
@@ -387,4 +286,7 @@ void app_main() {
 
   // initialize naos
   naos_init(&config);
+
+  // set position
+  position = saved_position;
 }

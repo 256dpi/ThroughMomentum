@@ -16,7 +16,10 @@ void led_init() {
 
   // prepare channel config
   ledc_channel_config_t ledc_channel = {
-      .duty = 0, .intr_type = LEDC_INTR_FADE_END, .speed_mode = LEDC_HIGH_SPEED_MODE, .timer_sel = LEDC_TIMER_1,
+      .duty = 0,
+      .intr_type = LEDC_INTR_FADE_END,
+      .speed_mode = LEDC_HIGH_SPEED_MODE,
+      .timer_sel = LEDC_TIMER_1,
   };
 
   // configure red channel
