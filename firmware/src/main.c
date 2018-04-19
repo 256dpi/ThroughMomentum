@@ -115,7 +115,6 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
     target = strtod((const char *)payload, NULL);
 
     if (automate) {
-      automate = false;
       naos_set_b("automate", false);
     }
   }
@@ -127,7 +126,6 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
     target = position;
 
     if (automate) {
-      automate = false;
       naos_set_b("automate", false);
     }
   }
@@ -136,7 +134,6 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
   else if (strcmp(topic, "reset") == 0 && scope == NAOS_LOCAL) {
     position = a32_str2d((const char *)payload);
     naos_set_d("saved-position", position);
-    saved_position = position;
     target = position;
   }
 
@@ -190,7 +187,6 @@ static void loop() {
   // save position if threshold has been passed
   if (position > saved_position + save_threshold || position < saved_position - save_threshold) {
     naos_set_d("saved-position", position);
-    saved_position = position;
   }
 
   // finish flash
@@ -236,23 +232,23 @@ static void loop() {
 }
 
 static naos_param_t params[] = {
-    {.name = "automate", .type = NAOS_BOOL, .default_b = false, .shadow_b = &automate},
-    {.name = "winding-length", .type = NAOS_DOUBLE, .default_d = 7.5, .shadow_d = &winding_length},
-    {.name = "idle-height", .type = NAOS_DOUBLE, .default_d = 100, .shadow_d = &idle_height},
-    {.name = "rise-height", .type = NAOS_DOUBLE, .default_d = 150, .shadow_d = &rise_height},
-    {.name = "idle-light", .type = NAOS_LONG, .default_l = 127, .shadow_l = &idle_light},
-    {.name = "flash-intensity", .type = NAOS_LONG, .default_l = 1023, .shadow_l = &flash_intensity},
-    {.name = "save-threshold", .type = NAOS_DOUBLE, .default_d = 2, .shadow_d = &save_threshold},
-    {.name = "saved-position", .type = NAOS_DOUBLE, .default_d = 0, .shadow_d = &saved_position},
-    {.name = "min-down-speed", .type = NAOS_LONG, .default_l = 350, .shadow_l = &min_down_speed},
-    {.name = "min-up-speed", .type = NAOS_LONG, .default_l = 350, .shadow_l = &min_up_speed},
-    {.name = "max-down-speed", .type = NAOS_LONG, .default_l = 500, .shadow_l = &max_down_speed},
-    {.name = "max-up-speed", .type = NAOS_LONG, .default_l = 950, .shadow_l = &max_up_speed},
-    {.name = "speed-map-range", .type = NAOS_LONG, .default_l = 20, .shadow_l = &speed_map_range},
-    {.name = "invert-encoder", .type = NAOS_BOOL, .default_b = true, .shadow_b = &invert_encoder},
-    {.name = "move-precision", .type = NAOS_DOUBLE, .default_d = 1, .shadow_d = &move_precision},
-    {.name = "pir-sensitivity", .type = NAOS_LONG, .default_l = 300, .shadow_l = &pir_sensitivity},
-    {.name = "pir-interval", .type = NAOS_LONG, .default_l = 2000, .shadow_l = &pir_interval},
+    {.name = "automate", .type = NAOS_BOOL, .default_b = false, .sync_b = &automate},
+    {.name = "winding-length", .type = NAOS_DOUBLE, .default_d = 7.5, .sync_d = &winding_length},
+    {.name = "idle-height", .type = NAOS_DOUBLE, .default_d = 100, .sync_d = &idle_height},
+    {.name = "rise-height", .type = NAOS_DOUBLE, .default_d = 150, .sync_d = &rise_height},
+    {.name = "idle-light", .type = NAOS_LONG, .default_l = 127, .sync_l = &idle_light},
+    {.name = "flash-intensity", .type = NAOS_LONG, .default_l = 1023, .sync_l = &flash_intensity},
+    {.name = "save-threshold", .type = NAOS_DOUBLE, .default_d = 2, .sync_d = &save_threshold},
+    {.name = "saved-position", .type = NAOS_DOUBLE, .default_d = 0, .sync_d = &saved_position},
+    {.name = "min-down-speed", .type = NAOS_LONG, .default_l = 350, .sync_l = &min_down_speed},
+    {.name = "min-up-speed", .type = NAOS_LONG, .default_l = 350, .sync_l = &min_up_speed},
+    {.name = "max-down-speed", .type = NAOS_LONG, .default_l = 500, .sync_l = &max_down_speed},
+    {.name = "max-up-speed", .type = NAOS_LONG, .default_l = 950, .sync_l = &max_up_speed},
+    {.name = "speed-map-range", .type = NAOS_LONG, .default_l = 20, .sync_l = &speed_map_range},
+    {.name = "invert-encoder", .type = NAOS_BOOL, .default_b = true, .sync_b = &invert_encoder},
+    {.name = "move-precision", .type = NAOS_DOUBLE, .default_d = 1, .sync_d = &move_precision},
+    {.name = "pir-sensitivity", .type = NAOS_LONG, .default_l = 300, .sync_l = &pir_sensitivity},
+    {.name = "pir-interval", .type = NAOS_LONG, .default_l = 2000, .sync_l = &pir_interval},
 };
 
 static naos_config_t config = {.device_type = "vas17",
@@ -265,8 +261,7 @@ static naos_config_t config = {.device_type = "vas17",
                                .online_callback = online,
                                .offline_callback = offline,
                                .update_callback = update,
-                               .message_callback = message,
-                               .crash_on_mqtt_failures = true};
+                               .message_callback = message};
 
 void app_main() {
   // install global interrupt service
