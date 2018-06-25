@@ -7,6 +7,7 @@
 #include <string.h>
 
 #include "enc.h"
+#include "end.h"
 #include "led.h"
 #include "mot.h"
 #include "pir.h"
@@ -231,6 +232,8 @@ static void loop() {
   }
 }
 
+static void end() { naos_log("end: triggered"); }
+
 static naos_param_t params[] = {
     {.name = "automate", .type = NAOS_BOOL, .default_b = false, .sync_b = &automate},
     {.name = "winding-length", .type = NAOS_DOUBLE, .default_d = 7.5, .sync_d = &winding_length},
@@ -252,9 +255,9 @@ static naos_param_t params[] = {
 };
 
 static naos_config_t config = {.device_type = "vas17",
-                               .firmware_version = "0.6.0",
+                               .firmware_version = "0.7.0",
                                .parameters = params,
-                               .num_parameters = 15,
+                               .num_parameters = 17,
                                .ping_callback = ping,
                                .loop_callback = loop,
                                .loop_interval = 0,
@@ -266,6 +269,9 @@ static naos_config_t config = {.device_type = "vas17",
 void app_main() {
   // install global interrupt service
   ESP_ERROR_CHECK(gpio_install_isr_service(0));
+
+  // initialize end stop
+  end_init(&end);
 
   // initialize motion sensor
   pir_init();

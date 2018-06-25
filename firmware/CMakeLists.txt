@@ -11,6 +11,8 @@ set(CMAKE_C_STANDARD 99)
 set(SOURCE_FILES
         src/enc.c
         src/enc.h
+        src/end.c
+        src/end.h
         src/led.c
         src/led.h
         src/main.c
