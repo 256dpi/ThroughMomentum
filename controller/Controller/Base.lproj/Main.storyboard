@@ -149,8 +149,8 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FgT-7P-tEa">
-                                <rect key="frame" x="100" y="276" width="65" height="30"/>
-                                <state key="normal" title="TURN UP">
+                                <rect key="frame" x="100" y="276" width="67" height="30"/>
+                                <state key="normal" title="MOVE UP">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
@@ -158,8 +158,8 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="a2m-gb-aPD">
-                                <rect key="frame" x="100" y="314" width="92" height="30"/>
-                                <state key="normal" title="TURN DOWN">
+                                <rect key="frame" x="100" y="314" width="94" height="30"/>
+                                <state key="normal" title="MOVE DOWN">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
