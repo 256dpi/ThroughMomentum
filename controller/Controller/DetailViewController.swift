@@ -121,12 +121,12 @@ class DetailViewController: UIViewController {
         send(topic: "naos/set/automate", payload: "off")
     }
     
-    @IBAction func turnUp() {
-        send(topic: "turn", payload: "up")
+    @IBAction func moveUp() {
+        send(topic: "move", payload: "up")
     }
     
-    @IBAction func turnDown() {
-        send(topic: "turn", payload: "down")
+    @IBAction func moveDown() {
+        send(topic: "move", payload: "down")
     }
     
     @IBAction func reset100() {
