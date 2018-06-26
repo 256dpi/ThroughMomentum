@@ -12,33 +12,33 @@
 #include "mot.h"
 #include "pir.h"
 
-bool automate = false;
-double winding_length = 0;
-double idle_height = 0;
-double rise_height = 0;
-int idle_light = 0;
-int flash_intensity = 0;
-double save_threshold = 0;
-double saved_position = -9999;
-int min_down_speed = 0;
-int min_up_speed = 0;
-int max_down_speed = 0;
-int max_up_speed = 0;
-int speed_map_range = 0;
-bool invert_encoder = false;
-double move_precision = 0;
-int pir_sensitivity = 0;
-int pir_interval = 0;
+static bool automate = false;
+static double winding_length = 0;
+static double idle_height = 0;
+static double rise_height = 0;
+static int idle_light = 0;
+static int flash_intensity = 0;
+static double save_threshold = 0;
+static double saved_position = -9999;
+static int min_down_speed = 0;
+static int min_up_speed = 0;
+static int max_down_speed = 0;
+static int max_up_speed = 0;
+static int speed_map_range = 0;
+static bool invert_encoder = false;
+static double move_precision = 0;
+static int pir_sensitivity = 0;
+static int pir_interval = 0;
 
-double rotation_change = 0;
-bool motion = false;
-uint32_t last_motion = 0;
-bool manual = false;
-double position = 0;
-double sent_position = 0;
-double target = 0;
-int flash_time = 0;
-uint32_t flash_end = 0;
+static double rotation_change = 0;
+static bool motion = false;
+static uint32_t last_motion = 0;
+static bool manual = false;
+static double position = 0;
+static double sent_position = 0;
+static double target = 0;
+static int flash_time = 0;
+static uint32_t flash_end = 0;
 
 static void ping() {
   // flash white for at least 100ms
