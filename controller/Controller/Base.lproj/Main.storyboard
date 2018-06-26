@@ -139,7 +139,7 @@
                                     <action selector="automateOff" destination="UJ0-D5-W48" eventType="touchUpInside" id="TUk-Tm-yzz"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MBZ-O0-Rwc">
+                            <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MBZ-O0-Rwc">
                                 <rect key="frame" x="100" y="432" width="47" height="30"/>
                                 <state key="normal" title="FLASH">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -166,16 +166,7 @@
                                     <action selector="moveDown" destination="UJ0-D5-W48" eventType="touchUpInside" id="oVZ-w9-jGr"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Iuv-qA-DdH">
-                                <rect key="frame" x="100" y="352" width="75" height="30"/>
-                                <state key="normal" title="RESET 100">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="reset100" destination="UJ0-D5-W48" eventType="touchUpInside" id="6Na-qC-L0W"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fBl-nX-G9U">
+                            <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fBl-nX-G9U">
                                 <rect key="frame" x="100" y="470" width="46" height="30"/>
                                 <state key="normal" title="DISCO">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -248,7 +239,6 @@
                             <constraint firstItem="0xO-N4-Gwv" firstAttribute="top" secondItem="Yiw-Xg-qNE" secondAttribute="bottom" constant="50" id="9yu-to-1Rk"/>
                             <constraint firstItem="gPd-yB-e1I" firstAttribute="trailing" secondItem="p29-QX-60C" secondAttribute="trailing" constant="100" id="A6W-y3-Mvf"/>
                             <constraint firstItem="6HH-Av-hdT" firstAttribute="top" secondItem="yxs-1g-XjV" secondAttribute="bottom" constant="8" id="BN8-Ju-ocK"/>
-                            <constraint firstItem="Iuv-qA-DdH" firstAttribute="top" secondItem="a2m-gb-aPD" secondAttribute="bottom" constant="8" id="Dih-64-nMC"/>
                             <constraint firstItem="fBl-nX-G9U" firstAttribute="top" secondItem="MBZ-O0-Rwc" secondAttribute="bottom" constant="8" id="EIJ-jd-7v8"/>
                             <constraint firstItem="esE-Dd-8t7" firstAttribute="top" secondItem="gPd-yB-e1I" secondAttribute="top" constant="100" id="IU9-w5-0JR"/>
                             <constraint firstItem="gPd-yB-e1I" firstAttribute="trailing" secondItem="lL8-Aa-Cg9" secondAttribute="trailing" constant="100" id="JH6-9s-vCM"/>
@@ -257,12 +247,10 @@
                             <constraint firstItem="2X7-Un-BEP" firstAttribute="top" secondItem="gPd-yB-e1I" secondAttribute="top" constant="100" id="NYh-cs-Ghr"/>
                             <constraint firstItem="a2m-gb-aPD" firstAttribute="leading" secondItem="gPd-yB-e1I" secondAttribute="leading" constant="100" id="Nre-YZ-OkD"/>
                             <constraint firstItem="Yiw-Xg-qNE" firstAttribute="top" secondItem="Veg-Fh-hSo" secondAttribute="bottom" constant="8" id="O2d-DD-3b2"/>
-                            <constraint firstItem="MBZ-O0-Rwc" firstAttribute="top" secondItem="Iuv-qA-DdH" secondAttribute="bottom" constant="50" id="O76-1W-Ifr"/>
                             <constraint firstItem="Veg-Fh-hSo" firstAttribute="top" secondItem="6HH-Av-hdT" secondAttribute="bottom" constant="50" id="OCC-nb-1Gl"/>
                             <constraint firstItem="kYF-y3-sVF" firstAttribute="leading" secondItem="gPd-yB-e1I" secondAttribute="leading" constant="100" id="RTd-O8-Pcr"/>
                             <constraint firstItem="gPd-yB-e1I" firstAttribute="trailing" secondItem="esE-Dd-8t7" secondAttribute="trailing" constant="100" id="UW8-y2-nz0"/>
                             <constraint firstItem="a2m-gb-aPD" firstAttribute="top" secondItem="FgT-7P-tEa" secondAttribute="bottom" constant="8" id="VUY-Aw-RJQ"/>
-                            <constraint firstItem="Iuv-qA-DdH" firstAttribute="leading" secondItem="gPd-yB-e1I" secondAttribute="leading" constant="100" id="Xvy-xD-FSL"/>
                             <constraint firstItem="Mkx-08-JSD" firstAttribute="top" secondItem="p29-QX-60C" secondAttribute="bottom" constant="50" id="bDd-29-TLO"/>
                             <constraint firstItem="gPd-yB-e1I" firstAttribute="trailing" secondItem="Yiw-Xg-qNE" secondAttribute="trailing" constant="100" id="ejF-P3-LDk"/>
                             <constraint firstItem="lL8-Aa-Cg9" firstAttribute="top" secondItem="Mkx-08-JSD" secondAttribute="bottom" constant="8" id="hfY-P6-thE"/>
