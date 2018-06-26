@@ -26,7 +26,9 @@ static void end_task(void *p) {
     }
 
     // call callback
+    naos_acquire();
     end_callback();
+    naos_release();
 
     // wait for 50ms
     naos_delay(50);
