@@ -60,3 +60,8 @@ void mot_set(int speed) {
   ESP_ERROR_CHECK(ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, (uint32_t)speed));
   ESP_ERROR_CHECK(ledc_update_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0));
 }
+
+void mot_stop() {
+  // set zero speed to stop motor
+  mot_set(0);
+}
