@@ -38,7 +38,7 @@ static double target = 0;
 
 static void ping() {
   // flash white for at least 100ms
-  led_flash((led_color_t){0, 0, 0, 512}, (led_color_t){0, 0, 0, 0}, 100);
+  led_flash(led_white(512), 100);
 }
 
 static void online() {
@@ -49,7 +49,7 @@ static void online() {
   target = position;
 
   // enable idle light
-  led_set((led_color_t){idle_light, idle_light, idle_light, idle_light}, 100);
+  led_set(led_mono(idle_light), 100);
 
   // subscribe local topics
   naos_subscribe("flash", 0, NAOS_LOCAL);
@@ -66,7 +66,7 @@ static void offline() {
   mot_set(0);
 
   // disabled led
-  led_set((led_color_t){0, 0, 0, 0}, 100);
+  led_set(led_mono(0), 100);
 }
 
 static void update(const char *param, const char *value) {}
@@ -74,9 +74,8 @@ static void update(const char *param, const char *value) {}
 static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_t scope) {
   // perform flash
   if (strcmp(topic, "flash") == 0 && scope == NAOS_LOCAL) {
-    int flash_time = (uint32_t)a32_str2i((const char *)payload);
-    led_flash((led_color_t){flash_intensity, flash_intensity, flash_intensity, flash_intensity},
-              (led_color_t){idle_light, idle_light, idle_light, idle_light}, flash_time);
+    int time = a32_str2i((const char *)payload);
+    led_flash(led_mono(flash_intensity), time);
   }
 
   // perform flash
@@ -90,8 +89,7 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
     sscanf((const char *)payload, "%d %d %d %d %d", &red, &green, &blue, &white, &time);
 
     // set flash
-    led_flash((led_color_t){red, green, blue, white}, (led_color_t){idle_light, idle_light, idle_light, idle_light},
-              time);
+    led_flash(led_color(red, green, blue, white), time);
   }
 
   // set turn
@@ -138,7 +136,7 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
     int g = esp_random() / 4194304;
     int b = esp_random() / 4194304;
     int w = esp_random() / 4194304;
-    led_set((led_color_t){r, g, b, w}, 100);
+    led_set(led_color(r, g, b, w), 100);
   }
 }
 

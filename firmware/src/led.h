@@ -14,19 +14,25 @@ typedef struct {
 void led_init();
 
 /**
- * Set LED brightness.
- * @param c The color.
- * @param t The total time of the fade.
+ * Set constant led color.
+ *
+ * @param c The constant color.
+ * @param t The fade time.
  */
 void led_set(led_color_t c, int t);
 
 /**
- * Perform LED flash.
+ * Perform brief led flash.
  *
- * @param c The fade in color.
- * @param c The fade out color.
- * @param tt The total time of the fade.
+ * @param c The flash color.
+ * @param tt The flash time.
  */
-void led_flash(led_color_t fic, led_color_t foc, int tt);
+void led_flash(led_color_t c, int t);
+
+led_color_t led_color(int r, int g, int b, int w);
+
+led_color_t led_mono(int b);
+
+led_color_t led_white(int w);
 
 #endif  // LED_H
