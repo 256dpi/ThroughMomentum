@@ -7,9 +7,9 @@
 
 #define END_BIT (1 << 0)
 
-static end_callback_t end_callback;
-
 static EventGroupHandle_t end_group;
+
+static end_callback_t end_callback;
 
 static void end_handler(void *args) {
   // send event
