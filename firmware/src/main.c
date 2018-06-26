@@ -32,6 +32,7 @@ state_t state = OFFLINE;
 static bool automate = false;
 static double reset_height = 0;
 static double winding_length = 0;
+static double base_height = 0;
 static double idle_height = 0;
 static double rise_height = 0;
 static int idle_light = 0;
@@ -205,7 +206,7 @@ static void state_feed() {
 
     case MOVE_DOWN: {
       // approach target and transition to standby if reached
-      if (approach_target(0)) {
+      if (approach_target(base_height)) {
         state_transition(STANDBY);
       }
 
@@ -302,7 +303,7 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
     } else if (strcmp((const char *)payload, "down") == 0) {
       state_transition(MOVE_DOWN);
     } else {
-      move_to = strtod((const char *)payload, NULL);
+      move_to = a32_constrain_d(strtod((const char *)payload, NULL), base_height, reset_height);
       state_transition(MOVE_TO);
     }
   }
@@ -376,9 +377,10 @@ static void enc(double rot) {
 static naos_param_t params[] = {
     {.name = "automate", .type = NAOS_BOOL, .default_b = false, .sync_b = &automate},
     {.name = "winding-length", .type = NAOS_DOUBLE, .default_d = 7.5, .sync_d = &winding_length},
-    {.name = "reset-height", .type = NAOS_DOUBLE, .default_d = 200, .sync_d = &reset_height},
+    {.name = "base-height", .type= NAOS_DOUBLE, .default_d = 50, .sync_d = &base_height},
     {.name = "idle-height", .type = NAOS_DOUBLE, .default_d = 100, .sync_d = &idle_height},
     {.name = "rise-height", .type = NAOS_DOUBLE, .default_d = 150, .sync_d = &rise_height},
+    {.name = "reset-height", .type = NAOS_DOUBLE, .default_d = 200, .sync_d = &reset_height},
     {.name = "idle-light", .type = NAOS_LONG, .default_l = 127, .sync_l = &idle_light},
     {.name = "flash-intensity", .type = NAOS_LONG, .default_l = 1023, .sync_l = &flash_intensity},
     {.name = "min-down-speed", .type = NAOS_LONG, .default_l = 350, .sync_l = &min_down_speed},
@@ -395,7 +397,7 @@ static naos_param_t params[] = {
 static naos_config_t config = {.device_type = "vas17",
                                .firmware_version = "0.7.0",
                                .parameters = params,
-                               .num_parameters = 16,
+                               .num_parameters = 17,
                                .ping_callback = ping,
                                .loop_callback = loop,
                                .loop_interval = 0,

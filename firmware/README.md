@@ -43,9 +43,9 @@ When automate is `on` the light will move according to the sensors.
 
 The length of the cable needed for one average winding.
 
-### `reset-height (200)`
+### `base-height (50)`
 
-The reset height of the light object.
+The base height of the light object.
 
 ### `idle-height (100)`
 
@@ -54,6 +54,10 @@ The idle height of the light object.
 ### `rise-height (150)`
 
 The rise height of the light object when motion is detected.
+
+### `reset-height (200)`
+
+The reset height of the light object.
 
 ### `idle-ligth (127)`
 
