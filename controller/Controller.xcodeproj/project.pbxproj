@@ -75,8 +75,8 @@
 				524E46821F8A356200F95429 /* DetailViewController.swift */,
 				524E46761F898EDE00F95429 /* CircleView.swift */,
 				524E46781F8A231800F95429 /* Settings.bundle */,
-				524E46621F89831300F95429 /* Main.storyboard */,
 				524E46651F89831300F95429 /* Assets.xcassets */,
+				524E46621F89831300F95429 /* Main.storyboard */,
 				524E46671F89831300F95429 /* LaunchScreen.storyboard */,
 				524E466A1F89831300F95429 /* Info.plist */,
 			);
