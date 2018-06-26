@@ -1,9 +1,19 @@
 #include <driver/gpio.h>
 #include <freertos/FreeRTOS.h>
+#include <freertos/event_groups.h>
+#include <naos.h>
+
+#include "enc.h"
+
+// https://github.com/PaulStoffregen/Encoder/blob/master/Encoder.h
 
 #define ENC_RESOLUTION 20
 
-// https://github.com/PaulStoffregen/Encoder/blob/master/Encoder.h
+#define END_BIT (1 << 0)
+
+static EventGroupHandle_t enc_group;
+
+static enc_callback_t enc_callback;
 
 static volatile uint8_t enc_state = 0;
 
@@ -50,9 +60,54 @@ static void enc_rotation_handler(void *_) {
       // no movement
     }
   }
+
+  // send event
+  xEventGroupSetBitsFromISR(enc_group, END_BIT, NULL);
 }
 
-void enc_init() {
+static double enc_get() {
+  // prepare mutex
+  static portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
+
+  // get saved total
+  vTaskEnterCritical(&mux);
+  double total = enc_total;
+  enc_total = 0;
+  vTaskExitCritical(&mux);
+
+  // calculate and return real rotation
+  return total / ENC_RESOLUTION;
+}
+
+static void enc_task(void *p) {
+  // loop forever
+  for (;;) {
+    // wait for bit
+    EventBits_t bits = xEventGroupWaitBits(enc_group, END_BIT, pdFALSE, pdFALSE, portMAX_DELAY);
+    if ((bits & END_BIT) != END_BIT) {
+      continue;
+    }
+
+    // call callback
+    naos_acquire();
+    enc_callback(enc_get());
+    naos_release();
+
+    // wait for 1ms
+    naos_delay(1);
+
+    // clear bit
+    xEventGroupClearBits(enc_group, END_BIT);
+  }
+}
+
+void enc_init(enc_callback_t cb) {
+  // save callback
+  enc_callback = cb;
+
+  // create mutex
+  enc_group = xEventGroupCreate();
+
   // configure rotation pins
   gpio_config_t rc;
   rc.pin_bit_mask = GPIO_SEL_23 | GPIO_SEL_25;
@@ -69,18 +124,7 @@ void enc_init() {
   // add interrupt handlers
   gpio_isr_handler_add(GPIO_NUM_23, enc_rotation_handler, NULL);
   gpio_isr_handler_add(GPIO_NUM_25, enc_rotation_handler, NULL);
-}
 
-double enc_get() {
-  // prepare mutex
-  static portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
-
-  // get saved total
-  vTaskEnterCritical(&mux);
-  double total = enc_total;
-  enc_total = 0;
-  vTaskExitCritical(&mux);
-
-  // calculate and return real rotation
-  return total / ENC_RESOLUTION;
+  // run async task
+  xTaskCreatePinnedToCore(&enc_task, "enc", 2048, NULL, 2, NULL, 1);
 }

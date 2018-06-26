@@ -3,8 +3,8 @@
 
 #include <stdbool.h>
 
-void enc_init();
+typedef void (*enc_callback_t)(double rot);
 
-double enc_get();
+void enc_init(enc_callback_t);
 
 #endif  // ENC_H

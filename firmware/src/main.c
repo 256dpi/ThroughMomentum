@@ -30,6 +30,7 @@ double move_precision = 0;
 int pir_sensitivity = 0;
 int pir_interval = 0;
 
+double rotation_change = 0;
 bool motion = false;
 uint32_t last_motion = 0;
 bool manual = false;
@@ -168,16 +169,11 @@ static void loop() {
     naos_publish_b("motion", motion, 0, false, NAOS_LOCAL);
   }
 
-  // get encoder
-  double rotation_change = enc_get();
-
-  // invert if requested
-  if (invert_encoder) {
-    rotation_change *= -1;
-  }
-
   // apply rotation
   position += rotation_change * winding_length;
+
+  // reset rotation change
+  rotation_change = 0;
 
   // publish update if position changed
   if (position > sent_position + 1 || position < sent_position - 1) {
@@ -232,7 +228,15 @@ static void loop() {
   }
 }
 
-static void end() { naos_log("end: triggered"); }
+static void end() {
+  // log event
+  naos_log("end: triggered");
+}
+
+static void enc(double rot) {
+  // update rotation change
+  rotation_change += invert_encoder ? rot * -1 : rot;
+}
 
 static naos_param_t params[] = {
     {.name = "automate", .type = NAOS_BOOL, .default_b = false, .sync_b = &automate},
@@ -283,7 +287,7 @@ void app_main() {
   led_init();
 
   // initialize encoder
-  enc_init();
+  enc_init(enc);
 
   // initialize naos
   naos_init(&config);
