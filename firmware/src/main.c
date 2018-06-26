@@ -12,6 +12,8 @@
 #include "mot.h"
 #include "pir.h"
 
+// TODO: Add distance sensor.
+
 /* state */
 
 typedef enum {
