@@ -1,9 +1,39 @@
 #include <driver/ledc.h>
+#include <freertos/FreeRTOS.h>
+#include <freertos/event_groups.h>
+#include <freertos/task.h>
 #include <naos.h>
 
 #include "led.h"
 
+#define LED_BIT (1 << 0)
+
+static EventGroupHandle_t led_group;
+
+static led_color_t led_fade_out_color;
+static int led_fade_total_time;
+
+static void led_task(void *p) {
+  // loop forever
+  for (;;) {
+    // wait for bit
+    EventBits_t bits = xEventGroupWaitBits(led_group, LED_BIT, pdTRUE, pdFALSE, portMAX_DELAY);
+    if ((bits & LED_BIT) != LED_BIT) {
+      continue;
+    }
+
+    // await half of the fade
+    naos_delay(led_fade_total_time / 2);
+
+    // fade out
+    led_set(led_fade_out_color, led_fade_total_time / 2);
+  }
+}
+
 void led_init() {
+  // create mutex
+  led_group = xEventGroupCreate();
+
   // install ledc fade service
   ESP_ERROR_CHECK(ledc_fade_func_install(0));
 
@@ -45,10 +75,13 @@ void led_init() {
   ESP_ERROR_CHECK(ledc_channel_config(&ledc_channel));
 
   // reset led
-  led_set(0, 0, 0, 0, 100);
+  led_set((led_color_t){0, 0, 0, 0}, 100);
+
+  // run async task
+  xTaskCreatePinnedToCore(&led_task, "led", 2048, NULL, 2, NULL, 1);
 }
 
-void led_set(int r, int g, int b, int w, int t) {
+void led_set(led_color_t fic, int tt) {
   // track led timeout
   static uint32_t led_timeout = 0;
 
@@ -58,21 +91,33 @@ void led_set(int r, int g, int b, int w, int t) {
   }
 
   // set red
-  ESP_ERROR_CHECK(ledc_set_fade_with_time(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_1, (uint32_t)r, t));
+  ESP_ERROR_CHECK(ledc_set_fade_with_time(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_1, (uint32_t)fic.r, tt));
   ESP_ERROR_CHECK(ledc_fade_start(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_1, LEDC_FADE_NO_WAIT));
 
   // set green
-  ESP_ERROR_CHECK(ledc_set_fade_with_time(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_2, (uint32_t)g, t));
+  ESP_ERROR_CHECK(ledc_set_fade_with_time(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_2, (uint32_t)fic.g, tt));
   ESP_ERROR_CHECK(ledc_fade_start(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_2, LEDC_FADE_NO_WAIT));
 
   // set blue
-  ESP_ERROR_CHECK(ledc_set_fade_with_time(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_3, (uint32_t)b, t));
+  ESP_ERROR_CHECK(ledc_set_fade_with_time(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_3, (uint32_t)fic.b, tt));
   ESP_ERROR_CHECK(ledc_fade_start(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_3, LEDC_FADE_NO_WAIT));
 
   // set white
-  ESP_ERROR_CHECK(ledc_set_fade_with_time(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_4, (uint32_t)w, t));
+  ESP_ERROR_CHECK(ledc_set_fade_with_time(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_4, (uint32_t)fic.w, tt));
   ESP_ERROR_CHECK(ledc_fade_start(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_4, LEDC_FADE_NO_WAIT));
 
   // set timeout
-  led_timeout = naos_millis() + t;
+  led_timeout = naos_millis() + tt;
+}
+
+void led_flash(led_color_t fic, led_color_t foc, int tt) {
+  // set variables
+  led_fade_out_color = foc;
+  led_fade_total_time = tt;
+
+  // fade in
+  led_set(fic, tt / 2);
+
+  // unlock led task
+  xEventGroupSetBits(led_group, LED_BIT);
 }

@@ -35,14 +35,10 @@ static bool manual = false;
 static double position = 0;
 static double sent_position = 0;
 static double target = 0;
-static int flash_time = 0;
-static uint32_t flash_end = 0;
 
 static void ping() {
   // flash white for at least 100ms
-  led_set(0, 0, 0, 512, 100);
-  naos_delay(100);
-  led_set(0, 0, 0, 0, 100);
+  led_flash((led_color_t){0, 0, 0, 512}, (led_color_t){0, 0, 0, 0}, 100);
 }
 
 static void online() {
@@ -53,7 +49,7 @@ static void online() {
   target = position;
 
   // enable idle light
-  led_set(idle_light, idle_light, idle_light, idle_light, 100);
+  led_set((led_color_t){idle_light, idle_light, idle_light, idle_light}, 100);
 
   // subscribe local topics
   naos_subscribe("flash", 0, NAOS_LOCAL);
@@ -70,7 +66,7 @@ static void offline() {
   mot_set(0);
 
   // disabled led
-  led_set(0, 0, 0, 0, 100);
+  led_set((led_color_t){0, 0, 0, 0}, 100);
 }
 
 static void update(const char *param, const char *value) {}
@@ -78,9 +74,9 @@ static void update(const char *param, const char *value) {}
 static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_t scope) {
   // perform flash
   if (strcmp(topic, "flash") == 0 && scope == NAOS_LOCAL) {
-    flash_time = (uint32_t)a32_str2l((const char *)payload);
-    flash_end = naos_millis() + flash_time / 2;
-    led_set(flash_intensity, flash_intensity, flash_intensity, flash_intensity, flash_time / 2);
+    int flash_time = (uint32_t)a32_str2i((const char *)payload);
+    led_flash((led_color_t){flash_intensity, flash_intensity, flash_intensity, flash_intensity},
+              (led_color_t){idle_light, idle_light, idle_light, idle_light}, flash_time);
   }
 
   // perform flash
@@ -94,9 +90,8 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
     sscanf((const char *)payload, "%d %d %d %d %d", &red, &green, &blue, &white, &time);
 
     // set flash
-    flash_time = (uint32_t)time;
-    flash_end = naos_millis() + flash_time / 2;
-    led_set(red, green, blue, white, flash_time / 2);
+    led_flash((led_color_t){red, green, blue, white}, (led_color_t){idle_light, idle_light, idle_light, idle_light},
+              time);
   }
 
   // set turn
@@ -143,7 +138,7 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
     int g = esp_random() / 4194304;
     int b = esp_random() / 4194304;
     int w = esp_random() / 4194304;
-    led_set(r, g, b, w, 100);
+    led_set((led_color_t){r, g, b, w}, 100);
   }
 }
 
@@ -177,13 +172,6 @@ static void loop() {
   if (position > sent_position + 1 || position < sent_position - 1) {
     naos_publish_d("position", position, 0, false, NAOS_LOCAL);
     sent_position = position;
-  }
-
-  // finish flash
-  if (flash_end > 0 && flash_end < naos_millis()) {
-    led_set(idle_light, idle_light, idle_light, idle_light, flash_time / 2);
-    flash_time = 0;
-    flash_end = 0;
   }
 
   // return immediately in manual mode
