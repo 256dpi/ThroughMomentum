@@ -12,6 +12,8 @@
 #include "mot.h"
 #include "pir.h"
 
+/* parameters */
+
 static bool automate = false;
 static double winding_length = 0;
 static double idle_height = 0;
@@ -28,6 +30,8 @@ static double move_precision = 0;
 static int pir_sensitivity = 0;
 static int pir_interval = 0;
 
+/* variables */
+
 static double rotation_change = 0;
 static bool motion = false;
 static uint32_t last_motion = 0;
@@ -35,6 +39,8 @@ static bool manual = false;
 static double position = 0;
 static double sent_position = 0;
 static double target = 0;
+
+/* naos callbacks */
 
 static void ping() {
   // flash white for at least 100ms
@@ -206,6 +212,8 @@ static void loop() {
     mot_set((int)a32_safe_map_d(position - target, 0, speed_map_range, min_down_speed, max_down_speed) * -1);
   }
 }
+
+/* custom callbacks */
 
 static void end() {
   // log event
