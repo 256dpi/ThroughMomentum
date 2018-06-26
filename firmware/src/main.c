@@ -23,6 +23,7 @@ typedef enum {
   MOVE_DOWN,  // moves down
   MOVE_TO,    // moved to position
   AUTOMATE,   // moves according to sensors
+  ZERO,       // zero position
   RESET,      // resets position
   REPOSITION  // reposition after a reset
 } state_t;
@@ -152,6 +153,16 @@ static void state_transition(state_t new_state) {
       break;
     }
 
+    case ZERO: {
+      // move slowly up
+      mot_set(300);
+
+      // set state
+      state = ZERO;
+
+      break;
+    }
+
     case RESET: {
       // stop motor
       mot_stop();
@@ -234,6 +245,12 @@ static void state_feed() {
       break;
     }
 
+    case ZERO: {
+      // wait for reset signal
+
+      break;
+    }
+
     case RESET: {
       // transition to reposition state
       state_transition(REPOSITION);
@@ -261,10 +278,11 @@ static void ping() {
 
 static void online() {
   // subscribe local topics
-  naos_subscribe("flash", 0, NAOS_LOCAL);
-  naos_subscribe("flash-color", 0, NAOS_LOCAL);
   naos_subscribe("move", 0, NAOS_LOCAL);
   naos_subscribe("stop", 0, NAOS_LOCAL);
+  naos_subscribe("zero", 0, NAOS_LOCAL);
+  naos_subscribe("flash", 0, NAOS_LOCAL);
+  naos_subscribe("flash-color", 0, NAOS_LOCAL);
   naos_subscribe("disco", 0, NAOS_LOCAL);
 
   // transition to standby state
@@ -277,8 +295,32 @@ static void offline() {
 }
 
 static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_t scope) {
+  // set target
+  if (strcmp(topic, "move") == 0 && scope == NAOS_LOCAL) {
+    // check for keywords
+    if (strcmp((const char *)payload, "up") == 0) {
+      state_transition(MOVE_UP);
+    } else if (strcmp((const char *)payload, "down") == 0) {
+      state_transition(MOVE_DOWN);
+    } else {
+      move_to = a32_constrain_d(strtod((const char *)payload, NULL), base_height, reset_height);
+      state_transition(MOVE_TO);
+    }
+  }
+
+  // stop motor
+  else if (strcmp(topic, "stop") == 0 && scope == NAOS_LOCAL) {
+    naos_set_b("automate", false);
+    state_transition(STANDBY);
+  }
+
+  // zero object
+  else if (strcmp(topic, "zero") == 0 && scope == NAOS_LOCAL) {
+    state_transition(ZERO);
+  }
+
   // perform flash
-  if (strcmp(topic, "flash") == 0 && scope == NAOS_LOCAL) {
+  else if (strcmp(topic, "flash") == 0 && scope == NAOS_LOCAL) {
     int time = a32_str2i((const char *)payload);
     led_flash(led_mono(flash_intensity), time);
   }
@@ -295,24 +337,6 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
 
     // set flash
     led_flash(led_color(red, green, blue, white), time);
-  }
-
-  // set target
-  else if (strcmp(topic, "move") == 0 && scope == NAOS_LOCAL) {
-    // check for keywords
-    if (strcmp((const char *)payload, "up") == 0) {
-      state_transition(MOVE_UP);
-    } else if (strcmp((const char *)payload, "down") == 0) {
-      state_transition(MOVE_DOWN);
-    } else {
-      move_to = a32_constrain_d(strtod((const char *)payload, NULL), base_height, reset_height);
-      state_transition(MOVE_TO);
-    }
-  }
-
-  // stop motor
-  else if (strcmp(topic, "stop") == 0 && scope == NAOS_LOCAL) {
-    state_transition(STANDBY);
   }
 
   // perform disco

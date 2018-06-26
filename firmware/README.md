@@ -4,34 +4,37 @@
 
 ## Topics
 
-### `> flash {TIME}`
-
-Flashes the light for the specified amount of milliseconds.
-
-### `> flash-color {RED GREEN BLUE WHITE TIME}`
-
-Flashes the light in colors for the specified amount of milliseconds.
-
-### `> move up; move down; move {POSITION}`
+### `-> move up; move down; move {POSITION}`
 
 Move up, down or to a specific position.
 
-### `> stop`
+### `-> stop`
 
-Immediately stops any movement sets the current position as the target, cancels the manual turn mode and turns of the
-automate mode.
+Immediately stop any movement.
 
-### `> disco`
+### `-> zero`
 
-Disco randomly selects a color for the lights.
+Zero light object using end stop.
 
-### `< position`
+### `-> flash {TIME}`
+
+Flashes the light for the specified amount of milliseconds.
+
+### `-> flash-color {RED GREEN BLUE WHITE TIME}`
+
+Flashes the light in colors for the specified amount of milliseconds.
+
+### `-> disco`
+
+Randomly selects a color for the lights.
+
+### `<- position`
 
 The current position of the object.
 
-### `< motion`
+### `<- motion`
 
-The currently measured motion.
+If motions is currently measured.
 
 ## Parameters
 
