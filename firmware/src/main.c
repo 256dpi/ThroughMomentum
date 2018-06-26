@@ -265,6 +265,11 @@ static void state_feed() {
     }
 
     case AUTOMATE: {
+      // transition to standby if disabled
+      if (!automate) {
+        state_transition(STANDBY);
+      }
+
       // calculate target
       double target = motion ? rise_height : idle_height;
 
@@ -321,6 +326,11 @@ static void online() {
 static void offline() {
   // transition into offline state
   state_transition(OFFLINE);
+}
+
+static void update(const char *param, const char *value) {
+  // feed state machine
+  state_feed();
 }
 
 static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_t scope) {
@@ -467,6 +477,7 @@ static naos_config_t config = {.device_type = "vas17",
                                .loop_interval = 0,
                                .online_callback = online,
                                .offline_callback = offline,
+                               .update_callback = update,
                                .message_callback = message};
 
 void app_main() {
