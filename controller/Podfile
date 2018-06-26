@@ -1,0 +1,8 @@
+project 'Controller.xcodeproj'
+
+platform :ios, '9.3'
+
+target 'Controller' do
+  use_frameworks!
+  pod 'CocoaMQTT'  
+end
