@@ -40,6 +40,30 @@ static double position = 0;
 static double sent_position = 0;
 static double target = 0;
 
+/* helpers */
+
+bool approach_target() {
+  // check if target has been reached
+  if (position < target + (move_precision / 2) && position > target - (move_precision / 2)) {
+    // stop motor
+    mot_set(0);
+
+    return true;
+  }
+
+  // move up if target is below position
+  if (position < target) {
+    mot_set((int)a32_safe_map_d(target - position, 0, speed_map_range, min_up_speed, max_up_speed));
+  }
+
+  // move down if target is above position
+  if (position > target) {
+    mot_set((int)a32_safe_map_d(position - target, 0, speed_map_range, min_down_speed, max_down_speed) * -1);
+  }
+
+  return false;
+}
+
 /* naos callbacks */
 
 static void ping() {
@@ -198,17 +222,8 @@ static void loop() {
   // apply new target
   target = new_target;
 
-  // set motor
-  if (position < target + (move_precision / 2) && position > target - (move_precision / 2)) {
-    // break if target has been reached
-    mot_set(0);
-  } else if (position < target) {
-    // go up
-    mot_set((int)a32_safe_map_d(target - position, 0, speed_map_range, min_up_speed, max_up_speed));
-  } else if (position > target) {
-    // go down
-    mot_set((int)a32_safe_map_d(position - target, 0, speed_map_range, min_down_speed, max_down_speed) * -1);
-  }
+  // approach new target
+  approach_target();
 }
 
 /* custom callbacks */
