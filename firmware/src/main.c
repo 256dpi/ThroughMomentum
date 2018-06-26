@@ -311,6 +311,8 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
 }
 
 static void loop() {
+  // TODO: Use separate task?
+
   // calculate dynamic pir threshold
   int threshold = a32_safe_map_i((int)position, 0, (int)rise_height, 0, pir_sensitivity);
 
@@ -324,6 +326,7 @@ static void loop() {
 
   // check motion
   if (motion != new_motion) {
+    // update motion
     motion = new_motion;
 
     // publish update
