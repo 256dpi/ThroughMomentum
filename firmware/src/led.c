@@ -8,8 +8,10 @@ void led_init() {
   ESP_ERROR_CHECK(ledc_fade_func_install(0));
 
   // prepare timer config
-  ledc_timer_config_t ledc_timer = {
-      .bit_num = LEDC_TIMER_10_BIT, .freq_hz = 5000, .speed_mode = LEDC_HIGH_SPEED_MODE, .timer_num = LEDC_TIMER_1};
+  ledc_timer_config_t ledc_timer = {.duty_resolution = LEDC_TIMER_10_BIT,
+                                    .freq_hz = 5000,
+                                    .speed_mode = LEDC_HIGH_SPEED_MODE,
+                                    .timer_num = LEDC_TIMER_1};
 
   // configure timer
   ESP_ERROR_CHECK(ledc_timer_config(&ledc_timer));
