@@ -45,6 +45,7 @@ static int min_up_speed = 0;
 static int max_down_speed = 0;
 static int max_up_speed = 0;
 static int speed_map_range = 0;
+static int zero_speed = 0;
 static bool invert_encoder = false;
 static double move_precision = 0;
 static int pir_sensitivity = 0;
@@ -179,8 +180,8 @@ static void state_transition(state_t new_state) {
     }
 
     case ZERO: {
-      // move slowly up
-      mot_set(300);
+      // move up
+      mot_set(zero_speed);
 
       // set state
       state = ZERO;
@@ -450,6 +451,7 @@ static naos_param_t params[] = {
     {.name = "max-down-speed", .type = NAOS_LONG, .default_l = 500, .sync_l = &max_down_speed},
     {.name = "max-up-speed", .type = NAOS_LONG, .default_l = 950, .sync_l = &max_up_speed},
     {.name = "speed-map-range", .type = NAOS_LONG, .default_l = 20, .sync_l = &speed_map_range},
+    {.name = "zero-speed", .type = NAOS_LONG, .default_l = 500, .sync_l = &zero_speed},
     {.name = "invert-encoder", .type = NAOS_BOOL, .default_b = true, .sync_b = &invert_encoder},
     {.name = "move-precision", .type = NAOS_DOUBLE, .default_d = 1, .sync_d = &move_precision},
     {.name = "pir-sensitivity", .type = NAOS_LONG, .default_l = 300, .sync_l = &pir_sensitivity},
@@ -459,7 +461,7 @@ static naos_param_t params[] = {
 static naos_config_t config = {.device_type = "vas17",
                                .firmware_version = "0.7.0",
                                .parameters = params,
-                               .num_parameters = 17,
+                               .num_parameters = 18,
                                .ping_callback = ping,
                                .loop_callback = loop,
                                .loop_interval = 0,
