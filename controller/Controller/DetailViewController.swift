@@ -29,6 +29,7 @@ class DetailViewController: UIViewController {
     @IBOutlet var distanceLabel: UILabel?
     @IBOutlet var motionLabel: UILabel?
     @IBOutlet var moveLabel: UILabel?
+    @IBOutlet var stateLabel: UILabel?
     
     var id = 0
     
@@ -54,6 +55,11 @@ class DetailViewController: UIViewController {
             motionLabel?.text = newValue ? "YES" : "NO"
             recalculate()
         }
+    }
+    
+    var state: String {
+        get { return stateLabel?.text ?? "" }
+        set { stateLabel?.text = newValue }
     }
     
     override func viewDidLoad() {

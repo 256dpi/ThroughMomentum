@@ -86,23 +86,23 @@ bool approach_target(double target) {
 const char *state_str(state_t s) {
   switch (s) {
     case OFFLINE:
-      return "offline";
+      return "OFFLINE";
     case STANDBY:
-      return "standby";
+      return "STANDBY";
     case MOVE_UP:
-      return "move-up";
+      return "MOVE_UP";
     case MOVE_DOWN:
-      return "move-down";
+      return "MOVE_DOWN";
     case MOVE_TO:
-      return "move-to";
+      return "MOVE_TO";
     case AUTOMATE:
-      return "automate";
+      return "AUTOMATE";
     case ZERO:
-      return "zero";
+      return "ZERO";
     case RESET:
-      return "reset";
+      return "RESET";
     case REPOSITION:
-      return "reposition";
+      return "REPOSITION";
   }
 
   return "";

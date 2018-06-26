@@ -193,6 +193,7 @@ class MainViewController: UIViewController, CircleViewDelegate, CocoaMQTTDelegat
         client!.subscribe("lights/+/position")
         client!.subscribe("lights/+/distance")
         client!.subscribe("lights/+/motion")
+        client!.subscribe("lights/+/state")
     }
     
     func mqtt(_ mqtt: CocoaMQTT, didPublishMessage message: CocoaMQTTMessage, id: UInt16) {}
@@ -233,6 +234,9 @@ class MainViewController: UIViewController, CircleViewDelegate, CocoaMQTTDelegat
                 let motion = String(data: Data(bytes: message.payload), encoding: .utf8) == "1"
                 cv.motion = motion
                 dvc?.motion = motion
+            } else if segments.last == "state" {
+                let state = String(data: Data(bytes: message.payload), encoding: .utf8)
+                dvc?.state = state ?? ""
             }
         }
     }
