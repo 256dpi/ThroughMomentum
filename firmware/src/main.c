@@ -240,7 +240,7 @@ static void state_feed() {
 
     case REPOSITION: {
       // approach target and transition to standby if reached
-      if (approach_target(reset_height - 10)) {
+      if (approach_target(reset_height - 5)) {
         state_transition(STANDBY);
       }
 
