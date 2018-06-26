@@ -186,17 +186,29 @@ static void state_feed() {
     }
 
     case STANDBY: {
-      // do nothing
+      // transition to automate if enabled
+      if(automate) {
+        state_transition(AUTOMATE);
+      }
+
       break;
     }
 
     case MOVE_UP: {
-      // do nothing
+      // approach target and transition to standby if reached
+      if (approach_target(reset_height - 5)) {
+        state_transition(STANDBY);
+      }
+
       break;
     }
 
     case MOVE_DOWN: {
-      // do nothing
+      // approach target and transition to standby if reached
+      if (approach_target(0)) {
+        state_transition(STANDBY);
+      }
+
       break;
     }
 
