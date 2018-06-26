@@ -52,7 +52,6 @@ static int pir_interval = 0;
 /* variables */
 
 static bool motion = false;
-static uint32_t last_motion = 0;
 static double position = 0;
 static double move_to = 0;
 
@@ -185,12 +184,13 @@ static void state_feed() {
   switch (state) {
     case OFFLINE: {
       // do nothing
+
       break;
     }
 
     case STANDBY: {
       // transition to automate if enabled
-      if(automate) {
+      if (automate) {
         state_transition(AUTOMATE);
       }
 
@@ -328,6 +328,9 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
 static void loop() {
   // TODO: Use separate task?
 
+  // track last motion
+  static uint32_t last_motion = 0;
+
   // calculate dynamic pir threshold
   int threshold = a32_safe_map_i((int)position, 0, (int)rise_height, 0, pir_sensitivity);
 
@@ -379,7 +382,7 @@ static void enc(double rot) {
 static naos_param_t params[] = {
     {.name = "automate", .type = NAOS_BOOL, .default_b = false, .sync_b = &automate},
     {.name = "winding-length", .type = NAOS_DOUBLE, .default_d = 7.5, .sync_d = &winding_length},
-    {.name = "base-height", .type= NAOS_DOUBLE, .default_d = 50, .sync_d = &base_height},
+    {.name = "base-height", .type = NAOS_DOUBLE, .default_d = 50, .sync_d = &base_height},
     {.name = "idle-height", .type = NAOS_DOUBLE, .default_d = 100, .sync_d = &idle_height},
     {.name = "rise-height", .type = NAOS_DOUBLE, .default_d = 150, .sync_d = &rise_height},
     {.name = "reset-height", .type = NAOS_DOUBLE, .default_d = 200, .sync_d = &reset_height},
