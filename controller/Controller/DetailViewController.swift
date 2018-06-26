@@ -120,11 +120,11 @@ class DetailViewController: UIViewController {
     }
     
     @IBAction func automateOn() {
-        send(topic: "naos/set/automate", payload: "on")
+        send(topic: "naos/set/automate", payload: "1")
     }
     
     @IBAction func automateOff() {
-        send(topic: "naos/set/automate", payload: "off")
+        send(topic: "naos/set/automate", payload: "0")
     }
     
     @IBAction func moveUp() {

@@ -38,9 +38,9 @@ If motions is currently measured.
 
 ## Parameters
 
-### `automate (off)`
+### `automate (0)`
 
-When automate is `on` the light will move according to the sensors.
+When automate is `1` the light will move according to the sensors.
 
 ### `winding-length (7.5)`
 
