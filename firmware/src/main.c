@@ -75,8 +75,6 @@ static void offline() {
   led_set(led_mono(0), 100);
 }
 
-static void update(const char *param, const char *value) {}
-
 static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_t scope) {
   // perform flash
   if (strcmp(topic, "flash") == 0 && scope == NAOS_LOCAL) {
@@ -252,7 +250,6 @@ static naos_config_t config = {.device_type = "vas17",
                                .loop_interval = 0,
                                .online_callback = online,
                                .offline_callback = offline,
-                               .update_callback = update,
                                .message_callback = message};
 
 void app_main() {
