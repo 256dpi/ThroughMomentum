@@ -129,6 +129,10 @@ class DetailViewController: UIViewController {
         send(topic: "move", payload: "down")
     }
     
+    @IBAction func zero() {
+        send(topic: "zero", payload: "")
+    }
+    
     @IBAction func flash() {
         send(topic: "flash", payload: "500")
     }
