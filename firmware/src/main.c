@@ -12,9 +12,25 @@
 #include "mot.h"
 #include "pir.h"
 
+/* state */
+
+typedef enum {
+  OFFLINE,    // offline state
+  STANDBY,    // waits for external commands
+  MOVE_UP,    // moves up
+  MOVE_DOWN,  // moves down
+  MOVE_TO,    // moved to position
+  AUTOMATE,   // moves according to sensors
+  RESET,      // resets position
+  REPOSITION  // reposition after a reset
+} state_t;
+
+state_t state = OFFLINE;
+
 /* parameters */
 
 static bool automate = false;
+static double reset_position = 0;
 static double winding_length = 0;
 static double idle_height = 0;
 static double rise_height = 0;
@@ -32,17 +48,14 @@ static int pir_interval = 0;
 
 /* variables */
 
-static double rotation_change = 0;
 static bool motion = false;
 static uint32_t last_motion = 0;
-static bool manual = false;
 static double position = 0;
-static double sent_position = 0;
-static double target = 0;
+static double move_to = 0;
 
 /* helpers */
 
-bool approach_target() {
+bool approach_target(double target) {
   // check if target has been reached
   if (position < target + (move_precision / 2) && position > target - (move_precision / 2)) {
     // stop motor
@@ -64,39 +77,188 @@ bool approach_target() {
   return false;
 }
 
+/* state machine */
+
+static void state_feed();
+
+static void state_transition(state_t new_state) {
+  // log state change
+  naos_log("transition: %d", new_state);
+
+  // transition state
+  switch (new_state) {
+    case OFFLINE: {
+      // stop motor
+      mot_set(0);
+
+      // turn of led
+      led_set(led_mono(0), 100);
+
+      // set state
+      state = OFFLINE;
+
+      break;
+    }
+
+    case STANDBY: {
+      // stop motor
+      mot_set(0);
+
+      // enable idle light
+      led_set(led_mono(idle_light), 100);
+
+      // set state
+      state = STANDBY;
+
+      break;
+    }
+
+    case MOVE_UP: {
+      // move up
+      mot_set(512);
+
+      // set state
+      state = MOVE_UP;
+
+      break;
+    }
+
+    case MOVE_DOWN: {
+      // move down
+      mot_set(-512);
+
+      // set state
+      state = MOVE_DOWN;
+
+      break;
+    }
+
+    case MOVE_TO: {
+      // stop motor
+      mot_set(0);
+
+      // set state
+      state = MOVE_TO;
+
+      break;
+    }
+
+    case AUTOMATE: {
+      // set state
+      state = AUTOMATE;
+
+      break;
+    }
+
+    case RESET: {
+      // stop motor
+      mot_set(0);
+
+      // reset position
+      position = reset_position;
+
+      // set state
+      state = RESET;
+
+      break;
+    }
+
+    case REPOSITION: {
+      // stop motor
+      mot_set(0);
+
+      // set state
+      state = REPOSITION;
+
+      break;
+    }
+  }
+
+  // feed state machine
+  state_feed();
+}
+
+static void state_feed() {
+  switch (state) {
+    case OFFLINE: {
+      // do nothing
+      break;
+    }
+
+    case STANDBY: {
+      // do nothing
+      break;
+    }
+
+    case MOVE_UP: {
+      // do nothing
+      break;
+    }
+
+    case MOVE_DOWN: {
+      // do nothing
+      break;
+    }
+
+    case MOVE_TO: {
+      // approach target and transition to standby if reached
+      if (approach_target(move_to)) {
+        state_transition(STANDBY);
+      }
+
+      break;
+    }
+
+    case AUTOMATE: {
+      // calculate target
+      double target = motion ? rise_height : idle_height;
+
+      // approach new target
+      approach_target(target);
+
+      break;
+    }
+
+    case RESET: {
+      // transition to reposition state
+      state_transition(REPOSITION);
+
+      break;
+    }
+
+    case REPOSITION: {
+      // approach target and transition to standby if reached
+      if (approach_target(reset_position - 10)) {
+        state_transition(STANDBY);
+      }
+
+      break;
+    }
+  }
+}
+
 /* naos callbacks */
 
 static void ping() {
-  // flash white for at least 100ms
+  // flash white for 100ms
   led_flash(led_white(512), 100);
 }
 
 static void online() {
-  // disable motor
-  mot_set(0);
-
-  // set target to current position
-  target = position;
-
-  // enable idle light
-  led_set(led_mono(idle_light), 100);
-
   // subscribe local topics
   naos_subscribe("flash", 0, NAOS_LOCAL);
   naos_subscribe("flash-color", 0, NAOS_LOCAL);
-  naos_subscribe("turn", 0, NAOS_LOCAL);
   naos_subscribe("move", 0, NAOS_LOCAL);
   naos_subscribe("stop", 0, NAOS_LOCAL);
-  naos_subscribe("reset", 0, NAOS_LOCAL);
   naos_subscribe("disco", 0, NAOS_LOCAL);
+
+  // transition to standby state
+  state_transition(STANDBY);
 }
 
 static void offline() {
-  // disable motor
-  mot_set(0);
-
-  // disabled led
-  led_set(led_mono(0), 100);
+  // transition into offline state
+  state_transition(OFFLINE);
 }
 
 static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_t scope) {
@@ -120,42 +282,22 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
     led_flash(led_color(red, green, blue, white), time);
   }
 
-  // set turn
-  else if (strcmp(topic, "turn") == 0 && scope == NAOS_LOCAL) {
-    if (strcmp((const char *)payload, "up") == 0) {
-      manual = true;
-      mot_set(512);
-    } else if (strcmp((const char *)payload, "down") == 0) {
-      manual = true;
-      mot_set(-512);
-    }
-  }
-
   // set target
   else if (strcmp(topic, "move") == 0 && scope == NAOS_LOCAL) {
-    target = strtod((const char *)payload, NULL);
-
-    if (automate) {
-      naos_set_b("automate", false);
+    // check for keywords
+    if (strcmp((const char *)payload, "up") == 0) {
+      state_transition(MOVE_UP);
+    } else if (strcmp((const char *)payload, "down") == 0) {
+      state_transition(MOVE_DOWN);
+    } else {
+      move_to = strtod((const char *)payload, NULL);
+      state_transition(MOVE_TO);
     }
   }
 
   // stop motor
   else if (strcmp(topic, "stop") == 0 && scope == NAOS_LOCAL) {
-    mot_set(0);
-    manual = false;
-    target = position;
-
-    if (automate) {
-      naos_set_b("automate", false);
-    }
-  }
-
-  // reset position
-  else if (strcmp(topic, "reset") == 0 && scope == NAOS_LOCAL) {
-    position = a32_str2d((const char *)payload);
-    naos_set_d("saved-position", position);
-    target = position;
+    state_transition(STANDBY);
   }
 
   // perform disco
@@ -188,58 +330,37 @@ static void loop() {
     naos_publish_b("motion", motion, 0, false, NAOS_LOCAL);
   }
 
-  // apply rotation
-  position += rotation_change * winding_length;
-
-  // reset rotation change
-  rotation_change = 0;
-
-  // publish update if position changed
-  if (position > sent_position + 1 || position < sent_position - 1) {
-    naos_publish_d("position", position, 0, false, NAOS_LOCAL);
-    sent_position = position;
-  }
-
-  // return immediately in manual mode
-  if (manual) {
-    return;
-  }
-
-  // prepare new target
-  double new_target = target;
-
-  // automate positioning
-  if (automate) {
-    if (motion) {
-      // move to rise height on motion
-      new_target = rise_height;
-    } else {
-      // move to idle height if no motion
-      new_target = idle_height;
-    }
-  }
-
-  // apply new target
-  target = new_target;
-
-  // approach new target
-  approach_target();
+  // feed state machine
+  state_feed();
 }
 
 /* custom callbacks */
 
 static void end() {
-  // log event
-  naos_log("end: triggered");
+  // transition in reset state
+  state_transition(RESET);
 }
 
 static void enc(double rot) {
-  // update rotation change
-  rotation_change += invert_encoder ? rot * -1 : rot;
+  // track last sent position
+  static double sent = 0;
+
+  // apply rotation
+  position += (invert_encoder ? rot * -1 : rot) * winding_length;
+
+  // publish update if position changed more than 1cm
+  if (position > sent + 1 || position < sent - 1) {
+    naos_publish_d("position", position, 0, false, NAOS_LOCAL);
+    sent = position;
+  }
+
+  // feed state machine
+  state_feed();
 }
 
 static naos_param_t params[] = {
     {.name = "automate", .type = NAOS_BOOL, .default_b = false, .sync_b = &automate},
+    {.name = "reset-position", .type = NAOS_DOUBLE, .default_d = 200, .sync_d = &reset_position},
     {.name = "winding-length", .type = NAOS_DOUBLE, .default_d = 7.5, .sync_d = &winding_length},
     {.name = "idle-height", .type = NAOS_DOUBLE, .default_d = 100, .sync_d = &idle_height},
     {.name = "rise-height", .type = NAOS_DOUBLE, .default_d = 150, .sync_d = &rise_height},
@@ -259,7 +380,7 @@ static naos_param_t params[] = {
 static naos_config_t config = {.device_type = "vas17",
                                .firmware_version = "0.7.0",
                                .parameters = params,
-                               .num_parameters = 15,
+                               .num_parameters = 16,
                                .ping_callback = ping,
                                .loop_callback = loop,
                                .loop_interval = 0,

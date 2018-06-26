@@ -12,22 +12,14 @@ Flashes the light for the specified amount of milliseconds.
 
 Flashes the light in colors for the specified amount of milliseconds.
 
-### `> turn up/down`
+### `> move up; move down; move {POSITION}`
 
-Puts the motor in manual mode and drives in the requested direction.
-
-### `> move {POSITION}`
-
-Disables automate mode and moves the object to the specified height/position.
+Move up, down or to a specific position.
 
 ### `> stop`
 
 Immediately stops any movement sets the current position as the target, cancels the manual turn mode and turns of the
 automate mode.
-  
-### `> reset {POSITION}`
-
-Reset will save the specified position as the current position.
 
 ### `> disco`
 
