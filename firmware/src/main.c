@@ -82,11 +82,36 @@ bool approach_target(double target) {
 
 /* state machine */
 
+const char *state_str(state_t s) {
+  switch (s) {
+    case OFFLINE:
+      return "offline";
+    case STANDBY:
+      return "standby";
+    case MOVE_UP:
+      return "move-up";
+    case MOVE_DOWN:
+      return "move-down";
+    case MOVE_TO:
+      return "move-to";
+    case AUTOMATE:
+      return "automate";
+    case ZERO:
+      return "zero";
+    case RESET:
+      return "reset";
+    case REPOSITION:
+      return "reposition";
+  }
+
+  return "";
+}
+
 static void state_feed();
 
 static void state_transition(state_t new_state) {
   // log state change
-  naos_log("transition: %d", new_state);
+  naos_log("transition: %s", state_str(new_state));
 
   // transition state
   switch (new_state) {
@@ -186,6 +211,9 @@ static void state_transition(state_t new_state) {
       break;
     }
   }
+
+  // publish new state
+  naos_publish("state", state_str(state), 0, false, NAOS_LOCAL);
 
   // feed state machine
   state_feed();
@@ -382,6 +410,11 @@ static void loop() {
 /* custom callbacks */
 
 static void end() {
+  // ignore when already in reset or zero state
+  if (state == RESET || state == REPOSITION) {
+    return;
+  }
+
   // transition in reset state
   state_transition(RESET);
 }
