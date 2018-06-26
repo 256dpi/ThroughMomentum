@@ -30,7 +30,7 @@ state_t state = OFFLINE;
 /* parameters */
 
 static bool automate = false;
-static double reset_position = 0;
+static double reset_height = 0;
 static double winding_length = 0;
 static double idle_height = 0;
 static double rise_height = 0;
@@ -155,7 +155,7 @@ static void state_transition(state_t new_state) {
       mot_set(0);
 
       // reset position
-      position = reset_position;
+      position = reset_height;
 
       // set state
       state = RESET;
@@ -228,7 +228,7 @@ static void state_feed() {
 
     case REPOSITION: {
       // approach target and transition to standby if reached
-      if (approach_target(reset_position - 10)) {
+      if (approach_target(reset_height - 10)) {
         state_transition(STANDBY);
       }
 
@@ -363,8 +363,8 @@ static void enc(double rot) {
 
 static naos_param_t params[] = {
     {.name = "automate", .type = NAOS_BOOL, .default_b = false, .sync_b = &automate},
-    {.name = "reset-position", .type = NAOS_DOUBLE, .default_d = 200, .sync_d = &reset_position},
     {.name = "winding-length", .type = NAOS_DOUBLE, .default_d = 7.5, .sync_d = &winding_length},
+    {.name = "reset-height", .type = NAOS_DOUBLE, .default_d = 200, .sync_d = &reset_height},
     {.name = "idle-height", .type = NAOS_DOUBLE, .default_d = 100, .sync_d = &idle_height},
     {.name = "rise-height", .type = NAOS_DOUBLE, .default_d = 150, .sync_d = &rise_height},
     {.name = "idle-light", .type = NAOS_LONG, .default_l = 127, .sync_l = &idle_light},

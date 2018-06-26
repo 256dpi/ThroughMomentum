@@ -37,11 +37,15 @@ The currently measured motion.
 
 ### `automate (off)`
 
-When automate is `on` the light will set its target position according to the sensor information.
+When automate is `on` the light will move according to the sensors.
 
 ### `winding-length (7.5)`
 
 The length of the cable needed for one average winding.
+
+### `reset-height (200)`
+
+The reset height of the light object.
 
 ### `idle-height (100)`
 
@@ -58,14 +62,6 @@ The intensity of the light in idle mode.
 ### `flash-intensity (1023)`
 
 The intensity of the light flash.
-
-### `save-threshold (2)`
-
-The threshold to pass to trigger a position save.
-
-### `saved-position (0)`
-
-The last auto-saved position.
 
 ### `min-down-speed (350)`
 
