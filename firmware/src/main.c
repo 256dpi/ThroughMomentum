@@ -18,8 +18,6 @@ static double idle_height = 0;
 static double rise_height = 0;
 static int idle_light = 0;
 static int flash_intensity = 0;
-static double save_threshold = 0;
-static double saved_position = -9999;
 static int min_down_speed = 0;
 static int min_up_speed = 0;
 static int max_down_speed = 0;
@@ -181,11 +179,6 @@ static void loop() {
     sent_position = position;
   }
 
-  // save position if threshold has been passed
-  if (position > saved_position + save_threshold || position < saved_position - save_threshold) {
-    naos_set_d("saved-position", position);
-  }
-
   // finish flash
   if (flash_end > 0 && flash_end < naos_millis()) {
     led_set(idle_light, idle_light, idle_light, idle_light, flash_time / 2);
@@ -245,8 +238,6 @@ static naos_param_t params[] = {
     {.name = "rise-height", .type = NAOS_DOUBLE, .default_d = 150, .sync_d = &rise_height},
     {.name = "idle-light", .type = NAOS_LONG, .default_l = 127, .sync_l = &idle_light},
     {.name = "flash-intensity", .type = NAOS_LONG, .default_l = 1023, .sync_l = &flash_intensity},
-    {.name = "save-threshold", .type = NAOS_DOUBLE, .default_d = 2, .sync_d = &save_threshold},
-    {.name = "saved-position", .type = NAOS_DOUBLE, .default_d = 0, .sync_d = &saved_position},
     {.name = "min-down-speed", .type = NAOS_LONG, .default_l = 350, .sync_l = &min_down_speed},
     {.name = "min-up-speed", .type = NAOS_LONG, .default_l = 350, .sync_l = &min_up_speed},
     {.name = "max-down-speed", .type = NAOS_LONG, .default_l = 500, .sync_l = &max_down_speed},
@@ -261,7 +252,7 @@ static naos_param_t params[] = {
 static naos_config_t config = {.device_type = "vas17",
                                .firmware_version = "0.7.0",
                                .parameters = params,
-                               .num_parameters = 17,
+                               .num_parameters = 15,
                                .ping_callback = ping,
                                .loop_callback = loop,
                                .loop_interval = 0,
@@ -291,7 +282,4 @@ void app_main() {
 
   // initialize naos
   naos_init(&config);
-
-  // set position
-  position = saved_position;
 }
