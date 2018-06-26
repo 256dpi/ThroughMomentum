@@ -11,4 +11,7 @@ void pir_init() {
   ESP_ERROR_CHECK(adc1_config_channel_atten(ADC1_CHANNEL_6, ADC_ATTEN_11db));
 }
 
-int pir_read() { return abs(590 - adc1_get_voltage(ADC1_CHANNEL_6)); }
+int pir_read() {
+  // read analog pir signal
+  return abs(590 - adc1_get_raw(ADC1_CHANNEL_6));
+}
