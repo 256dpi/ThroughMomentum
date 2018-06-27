@@ -6,13 +6,14 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "dst.h"
 #include "enc.h"
 #include "end.h"
 #include "led.h"
 #include "mot.h"
 #include "pir.h"
 
-// TODO: Add distance sensor.
+// TODO: Make pir async.
 
 /* state */
 
@@ -54,6 +55,7 @@ static int pir_interval = 0;
 /* variables */
 
 static bool motion = false;
+static double distance = 0;
 static double position = 0;
 static double move_to = 0;
 
@@ -414,6 +416,18 @@ static void loop() {
     naos_publish_b("motion", motion, 0, false, NAOS_LOCAL);
   }
 
+  // track last sent position
+  static double sent = 0;
+
+  // publish update if distance changed more than 2cm
+  if (distance > sent + 2 || distance < sent - 2) {
+    naos_publish_d("distance", distance, 0, false, NAOS_LOCAL);
+    sent = distance;
+  }
+
+  // feed state machine
+  state_feed();
+
   // feed state machine
   state_feed();
 }
@@ -445,6 +459,11 @@ static void enc(double rot) {
 
   // feed state machine
   state_feed();
+}
+
+static void dst(double d) {
+  // update distance
+  distance = d;
 }
 
 static naos_param_t params[] = {
@@ -501,4 +520,7 @@ void app_main() {
 
   // initialize naos
   naos_init(&config);
+
+  // initialize distance sensor
+  dst_init(dst);
 }

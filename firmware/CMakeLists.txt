@@ -9,6 +9,8 @@ set(CMAKE_C_STANDARD 99)
 
 # add your source files
 set(SOURCE_FILES
+        src/dst.c
+        src/dst.h
         src/enc.c
         src/enc.h
         src/end.c
