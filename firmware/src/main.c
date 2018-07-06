@@ -47,6 +47,7 @@ static int max_down_speed = 0;
 static int max_up_speed = 0;
 static int speed_map_range = 0;
 static int zero_speed = 0;
+static bool zero_switch = false;
 static bool invert_encoder = false;
 static double move_precision = 0;
 static int pir_sensitivity = 0;
@@ -146,7 +147,7 @@ static void state_transition(state_t new_state) {
 
     case MOVE_UP: {
       // stop motor
-      mot_stop();
+      mot_set(512);
 
       // set state
       state = MOVE_UP;
@@ -156,7 +157,7 @@ static void state_transition(state_t new_state) {
 
     case MOVE_DOWN: {
       // stop motor
-      mot_stop();
+      mot_set(-512);
 
       // set state
       state = MOVE_DOWN;
@@ -240,20 +241,7 @@ static void state_feed() {
     }
 
     case MOVE_UP: {
-      // approach target and transition to standby if reached
-      if (approach_target(reset_height - 5)) {
-        state_transition(STANDBY);
-      }
-
-      break;
-    }
-
     case MOVE_DOWN: {
-      // approach target and transition to standby if reached
-      if (approach_target(base_height)) {
-        state_transition(STANDBY);
-      }
-
       break;
     }
 
@@ -436,7 +424,7 @@ static void loop() {
 
 static void end() {
   // ignore when already in reset or zero state
-  if (state == RESET || state == REPOSITION) {
+  if (state == RESET || state == REPOSITION || !zero_switch) {
     return;
   }
 
@@ -481,6 +469,7 @@ static naos_param_t params[] = {
     {.name = "max-up-speed", .type = NAOS_LONG, .default_l = 950, .sync_l = &max_up_speed},
     {.name = "speed-map-range", .type = NAOS_LONG, .default_l = 20, .sync_l = &speed_map_range},
     {.name = "zero-speed", .type = NAOS_LONG, .default_l = 500, .sync_l = &zero_speed},
+    {.name = "zero-switch", .type = NAOS_BOOL, .default_b = true, .sync_b = &zero_switch},
     {.name = "invert-encoder", .type = NAOS_BOOL, .default_b = true, .sync_b = &invert_encoder},
     {.name = "move-precision", .type = NAOS_DOUBLE, .default_d = 1, .sync_d = &move_precision},
     {.name = "pir-sensitivity", .type = NAOS_LONG, .default_l = 300, .sync_l = &pir_sensitivity},
@@ -490,7 +479,7 @@ static naos_param_t params[] = {
 static naos_config_t config = {.device_type = "vas17",
                                .firmware_version = "0.7.0",
                                .parameters = params,
-                               .num_parameters = 18,
+                               .num_parameters = 19,
                                .ping_callback = ping,
                                .loop_callback = loop,
                                .loop_interval = 0,
