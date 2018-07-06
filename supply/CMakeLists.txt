@@ -8,7 +8,12 @@ project(naos-project)
 set(CMAKE_C_STANDARD 99)
 
 # add your source files
-set(SOURCE_FILES src/main.c)
+set(SOURCE_FILES
+        src/led.c
+        src/led.h
+        src/main.c
+        src/rls.c
+        src/rls.h)
 
 # create a fake library target
 add_library(${CMAKE_PROJECT_NAME} ${SOURCE_FILES})
