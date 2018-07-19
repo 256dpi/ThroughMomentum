@@ -5,6 +5,6 @@
 
 void rls_init();
 
-void rls_set(bool on);
+void rls_set(bool r1, bool r2, bool r3);
 
 #endif  // RLS_H

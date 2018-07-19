@@ -1,7 +1,7 @@
 #include <driver/ledc.h>
 
-#define LED_RED_PIN 25
-#define LED_GREEN_PIN 26
+#define LED_RED_PIN 26
+#define LED_GREEN_PIN 25
 
 void led_set(bool red, bool green) {
   // set duties
