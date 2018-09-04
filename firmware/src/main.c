@@ -476,8 +476,8 @@ static naos_param_t params[] = {
     {.name = "pir-interval", .type = NAOS_LONG, .default_l = 2000, .sync_l = &pir_interval},
 };
 
-static naos_config_t config = {.device_type = "vas17",
-                               .firmware_version = "0.7.0",
+static naos_config_t config = {.device_type = "tm-lo",
+                               .firmware_version = "1.0.0",
                                .parameters = params,
                                .num_parameters = 19,
                                .ping_callback = ping,
@@ -486,7 +486,8 @@ static naos_config_t config = {.device_type = "vas17",
                                .online_callback = online,
                                .offline_callback = offline,
                                .update_callback = update,
-                               .message_callback = message};
+                               .message_callback = message,
+                               .password = "tm2018"};
 
 void app_main() {
   // install global interrupt service
