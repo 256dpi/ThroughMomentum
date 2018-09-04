@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.7)
 
 # you can set your own project name
-project(ThroughMomentum)
+project(TM-LO)
 
 # this should not be changed
 set(CMAKE_C_STANDARD 99)
