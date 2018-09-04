@@ -240,7 +240,7 @@ static void state_feed() {
       break;
     }
 
-    case MOVE_UP: {
+    case MOVE_UP:
     case MOVE_DOWN: {
       break;
     }
