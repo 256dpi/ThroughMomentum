@@ -2,6 +2,8 @@
 
 #include "mot.h"
 
+// TODO: Add ramping.
+
 void mot_init() {
   // prepare in a+b config
   gpio_config_t in_ab = {.pin_bit_mask = GPIO_SEL_14 | GPIO_SEL_16,
@@ -31,8 +33,8 @@ void mot_init() {
   // configure ledc channel
   ESP_ERROR_CHECK(ledc_channel_config(&c));
 
-  // reset motor
-  mot_set(0);
+  // stop motor
+  mot_hard_stop();
 }
 
 void mot_set(int speed) {
@@ -61,7 +63,7 @@ void mot_set(int speed) {
   ESP_ERROR_CHECK(ledc_update_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0));
 }
 
-void mot_stop() {
+void mot_hard_stop() {
   // set zero speed to stop motor
   mot_set(0);
 }

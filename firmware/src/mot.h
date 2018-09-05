@@ -16,6 +16,6 @@ void mot_set(int speed);
 /**
  * Stop motor.
  */
-void mot_stop();
+void mot_hard_stop();
 
 #endif  // MOT_H

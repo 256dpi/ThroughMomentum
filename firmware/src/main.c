@@ -66,7 +66,7 @@ bool approach_target(double target) {
   // check if target has been reached
   if (position < target + (move_precision / 2) && position > target - (move_precision / 2)) {
     // stop motor
-    mot_stop();
+    mot_hard_stop();
 
     return true;
   }
@@ -121,7 +121,7 @@ static void state_transition(state_t new_state) {
   switch (new_state) {
     case OFFLINE: {
       // stop motor
-      mot_stop();
+      mot_hard_stop();
 
       // turn of led
       led_set(led_mono(0), 100);
@@ -134,7 +134,7 @@ static void state_transition(state_t new_state) {
 
     case STANDBY: {
       // stop motor
-      mot_stop();
+      mot_hard_stop();
 
       // enable idle light
       led_set(led_mono(idle_light), 100);
@@ -167,7 +167,7 @@ static void state_transition(state_t new_state) {
 
     case MOVE_TO: {
       // stop motor
-      mot_stop();
+      mot_hard_stop();
 
       // set state
       state = MOVE_TO;
@@ -194,7 +194,7 @@ static void state_transition(state_t new_state) {
 
     case RESET: {
       // stop motor
-      mot_stop();
+      mot_hard_stop();
 
       // reset position
       position = reset_height;
@@ -207,7 +207,7 @@ static void state_transition(state_t new_state) {
 
     case REPOSITION: {
       // stop motor
-      mot_stop();
+      mot_hard_stop();
 
       // set state
       state = REPOSITION;
