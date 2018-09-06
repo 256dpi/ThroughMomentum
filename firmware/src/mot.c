@@ -16,8 +16,10 @@ void mot_init() {
   ESP_ERROR_CHECK(gpio_config(&in_ab));
 
   // prepare ledc timer config
-  ledc_timer_config_t t = {
-      .bit_num = LEDC_TIMER_10_BIT, .freq_hz = 10000, .speed_mode = LEDC_HIGH_SPEED_MODE, .timer_num = LEDC_TIMER_0};
+  ledc_timer_config_t t = {.duty_resolution = LEDC_TIMER_10_BIT,
+                           .freq_hz = 10000,
+                           .speed_mode = LEDC_HIGH_SPEED_MODE,
+                           .timer_num = LEDC_TIMER_0};
 
   // configure ledc timer
   ESP_ERROR_CHECK(ledc_timer_config(&t));
