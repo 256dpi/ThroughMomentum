@@ -415,9 +415,6 @@ static void loop() {
 
   // feed state machine
   state_feed();
-
-  // feed state machine
-  state_feed();
 }
 
 /* custom callbacks */
