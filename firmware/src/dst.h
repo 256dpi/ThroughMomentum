@@ -1,5 +1,5 @@
-#ifndef DIST_H
-#define DIST_H
+#ifndef DST_H
+#define DST_H
 
 typedef void (*dst_callback_t)(double d);
 
@@ -8,4 +8,4 @@ typedef void (*dst_callback_t)(double d);
  */
 void dst_init(dst_callback_t);
 
-#endif  // DIST_H
+#endif  // DST_H
