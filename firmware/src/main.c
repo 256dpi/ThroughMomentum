@@ -24,7 +24,6 @@ typedef enum {
   STANDBY,    // waits for external commands
   MOVE,       // move up, down to position
   AUTOMATE,   // moves according to sensors
-  ZERO,       // zero position
   RESET,      // resets position
   REPOSITION  // reposition after a reset
 } state_t;
@@ -34,21 +33,17 @@ state_t state = OFFLINE;
 /* parameters */
 
 static bool automate = false;
-static double reset_height = 0;
-static double winding_length = 0;
 static double base_height = 0;
 static double idle_height = 0;
 static double rise_height = 0;
+static double reset_height = 0;
 static int idle_light = 0;
 static int flash_intensity = 0;
-static int move_up_speed = 0;
-static int move_down_speed = 0;
-static int zero_speed = 0;
 static bool zero_switch = false;
 static bool invert_encoder = false;
-static double move_precision = 0;
 static int pir_sensitivity = 0;
 static int pir_interval = 0;
+static double winding_length = 0;
 
 /* variables */
 
@@ -69,8 +64,6 @@ const char *state_str(state_t s) {
       return "MOVE";
     case AUTOMATE:
       return "AUTOMATE";
-    case ZERO:
-      return "ZERO";
     case RESET:
       return "RESET";
     case REPOSITION:
@@ -129,13 +122,6 @@ static void state_transition(state_t new_state) {
     case AUTOMATE: {
       // set state
       state = AUTOMATE;
-
-      break;
-    }
-
-    case ZERO: {
-      // set state
-      state = ZERO;
 
       break;
     }
@@ -209,13 +195,6 @@ static void state_feed() {
       break;
     }
 
-    case ZERO: {
-      // move up
-      mot_approach(0, 1000, 1);
-
-      break;
-    }
-
     case RESET: {
       // transition to reposition state
       state_transition(REPOSITION);
@@ -245,7 +224,6 @@ static void online() {
   // subscribe local topics
   naos_subscribe("move", 0, NAOS_LOCAL);
   naos_subscribe("stop", 0, NAOS_LOCAL);
-  naos_subscribe("zero", 0, NAOS_LOCAL);
   naos_subscribe("flash", 0, NAOS_LOCAL);
   naos_subscribe("flash-color", 0, NAOS_LOCAL);
   naos_subscribe("disco", 0, NAOS_LOCAL);
@@ -284,11 +262,6 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
   else if (strcmp(topic, "stop") == 0 && scope == NAOS_LOCAL) {
     naos_set_b("automate", false);
     state_transition(STANDBY);
-  }
-
-  // zero object
-  else if (strcmp(topic, "zero") == 0 && scope == NAOS_LOCAL) {
-    state_transition(ZERO);
   }
 
   // perform flash
@@ -363,7 +336,7 @@ static void loop() {
 /* custom callbacks */
 
 static void end() {
-  // ignore when already in reset or zero state
+  // ignore when already in reset or reposition state
   if (state == RESET || state == REPOSITION || !zero_switch) {
     return;
   }
@@ -396,27 +369,23 @@ static void dst(double d) {
 
 static naos_param_t params[] = {
     {.name = "automate", .type = NAOS_BOOL, .default_b = false, .sync_b = &automate},
-    {.name = "winding-length", .type = NAOS_DOUBLE, .default_d = 7.5, .sync_d = &winding_length},
     {.name = "base-height", .type = NAOS_DOUBLE, .default_d = 50, .sync_d = &base_height},
     {.name = "idle-height", .type = NAOS_DOUBLE, .default_d = 100, .sync_d = &idle_height},
     {.name = "rise-height", .type = NAOS_DOUBLE, .default_d = 150, .sync_d = &rise_height},
     {.name = "reset-height", .type = NAOS_DOUBLE, .default_d = 200, .sync_d = &reset_height},
     {.name = "idle-light", .type = NAOS_LONG, .default_l = 127, .sync_l = &idle_light},
     {.name = "flash-intensity", .type = NAOS_LONG, .default_l = 1023, .sync_l = &flash_intensity},
-    {.name = "move-up-speed", .type = NAOS_LONG, .default_l = 512, .sync_l = &move_up_speed},
-    {.name = "move-down-speed", .type = NAOS_LONG, .default_l = 512, .sync_l = &move_down_speed},
-    {.name = "zero-speed", .type = NAOS_LONG, .default_l = 500, .sync_l = &zero_speed},
     {.name = "zero-switch", .type = NAOS_BOOL, .default_b = true, .sync_b = &zero_switch},
     {.name = "invert-encoder", .type = NAOS_BOOL, .default_b = true, .sync_b = &invert_encoder},
-    {.name = "move-precision", .type = NAOS_DOUBLE, .default_d = 1, .sync_d = &move_precision},
     {.name = "pir-sensitivity", .type = NAOS_LONG, .default_l = 300, .sync_l = &pir_sensitivity},
     {.name = "pir-interval", .type = NAOS_LONG, .default_l = 2000, .sync_l = &pir_interval},
+    {.name = "winding-length", .type = NAOS_DOUBLE, .default_d = 7.5, .sync_d = &winding_length},
 };
 
 static naos_config_t config = {.device_type = "tm-lo",
-                               .firmware_version = "1.0.0",
+                               .firmware_version = "1.1.0",
                                .parameters = params,
-                               .num_parameters = 16,
+                               .num_parameters = 12,
                                .ping_callback = ping,
                                .loop_callback = loop,
                                .loop_interval = 1,
