@@ -33,8 +33,8 @@ state_t state = OFFLINE;
 /* parameters */
 
 static bool automate = false;
-static double base_height = 0;
 static double idle_height = 0;
+static double base_height = 0;
 static double rise_height = 0;
 static double reset_height = 0;
 static int idle_light = 0;
@@ -186,8 +186,14 @@ static void state_feed() {
         state_transition(STANDBY);
       }
 
-      // calculate target
-      double target = motion ? rise_height : idle_height;
+      // default target to idle height
+      double target = idle_height;
+
+      // check if we have motion or something below
+      if (motion || distance < idle_height) {
+        // approach object
+        target = a32_constrain_d(position + (-distance + 20), base_height, rise_height);
+      }
 
       // approach new target
       mot_approach(position, target, 1);
@@ -251,7 +257,7 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
     } else if (strcmp((const char *)payload, "down") == 0) {
       move_to = -1000;
     } else {
-      move_to = a32_constrain_d(strtod((const char *)payload, NULL), base_height, reset_height);
+      move_to = a32_constrain_d(strtod((const char *)payload, NULL), idle_height, reset_height);
     }
 
     // change state
@@ -369,8 +375,8 @@ static void dst(double d) {
 
 static naos_param_t params[] = {
     {.name = "automate", .type = NAOS_BOOL, .default_b = false, .sync_b = &automate},
-    {.name = "base-height", .type = NAOS_DOUBLE, .default_d = 50, .sync_d = &base_height},
-    {.name = "idle-height", .type = NAOS_DOUBLE, .default_d = 100, .sync_d = &idle_height},
+    {.name = "idle-height", .type = NAOS_DOUBLE, .default_d = 50, .sync_d = &idle_height},
+    {.name = "base-height", .type = NAOS_DOUBLE, .default_d = 100, .sync_d = &base_height},
     {.name = "rise-height", .type = NAOS_DOUBLE, .default_d = 150, .sync_d = &rise_height},
     {.name = "reset-height", .type = NAOS_DOUBLE, .default_d = 200, .sync_d = &reset_height},
     {.name = "idle-light", .type = NAOS_LONG, .default_l = 127, .sync_l = &idle_light},

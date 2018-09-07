@@ -92,7 +92,7 @@ void mot_move_down(double speed) {
 bool mot_approach(double position, double target, uint32_t time) {
   // configure motion profile
   mot_mp.max_velocity = 12.0 /* cm */ / 1000 /* s */ * 1.25;
-  mot_mp.max_acceleration = 0.005 /* cm */ / 1000 /* s */;
+  mot_mp.max_acceleration = 0.01 /* cm */ / 1000 /* s */;
 
   // provide measured position
   mot_mp.position = position;
