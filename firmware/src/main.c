@@ -242,6 +242,8 @@ static void state_feed() {
 
     case MOVE_UP:
     case MOVE_DOWN: {
+      // wait for stop command or reset
+
       break;
     }
 
