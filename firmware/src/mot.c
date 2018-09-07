@@ -1,8 +1,11 @@
+#include <art32/motion.h>
 #include <art32/numbers.h>
 #include <driver/ledc.h>
 #include <math.h>
 
 #include "mot.h"
+
+static a32_motion_t mot_mp;
 
 void mot_init() {
   // prepare in a+b config
@@ -86,7 +89,39 @@ void mot_move_down(double speed) {
   mot_set(-raw);
 }
 
+bool mot_approach(double position, double target, uint32_t time) {
+  // configure motion profile
+  mot_mp.max_velocity = 12.0 /* cm */ / 1000 /* s */ * 1.25;
+  mot_mp.max_acceleration = 0.005 /* cm */ / 1000 /* s */;
+
+  // provide measured position
+  mot_mp.position = position;
+
+  // update motion profile (for next ms)
+  a32_motion_update(&mot_mp, target, time);
+
+  // check if target has been reached (within 0.2cm and velocity < 2cm/s)
+  if (position < target + 0.2 && position > target - 0.2 && mot_mp.velocity < 0.002) {
+    // stop motor
+    mot_hard_stop();
+
+    return true;
+  }
+
+  // move depending on position
+  if (mot_mp.velocity > 0) {
+    mot_move_up(mot_mp.velocity * 1000 * 0.8);
+  } else {
+    mot_move_down(fabs(mot_mp.velocity) * 1000 * 0.8);
+  }
+
+  return false;
+}
+
 void mot_hard_stop() {
   // set zero speed to stop motor
   mot_set(0);
+
+  // reset motion profile
+  mot_mp = (a32_motion_t){0};
 }

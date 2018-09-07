@@ -22,9 +22,7 @@
 typedef enum {
   OFFLINE,    // offline state
   STANDBY,    // waits for external commands
-  MOVE_UP,    // moves up
-  MOVE_DOWN,  // moves down
-  MOVE_TO,    // moved to position
+  MOVE,       // move up, down to position
   AUTOMATE,   // moves according to sensors
   ZERO,       // zero position
   RESET,      // resets position
@@ -59,39 +57,6 @@ static double distance = 0;
 static double position = 0;
 static double move_to = 0;
 
-static a32_motion_t mp;
-
-/* helpers */
-
-bool approach(double target) {
-  // configure motion profile
-  mp.max_velocity = 12.0 /* cm */ / 1000 /* s */ * 1.2;
-  mp.max_acceleration = 0.005 /* cm */ / 1000 /* s */;
-
-  // provide measured position
-  mp.position = position;
-
-  // update motion profile (for next ms)
-  a32_motion_update(&mp, target, 1);
-
-  // check if target has been reached (within 0.2cm and velocity < 2cm/s)
-  if (position < target + 0.2 && position > target - 0.2 && mp.velocity < 0.002) {
-    // stop motor
-    mot_hard_stop();
-
-    return true;
-  }
-
-  // move depending on position
-  if (mp.velocity > 0) {
-    mot_move_up(mp.velocity * 1000 * 0.8);
-  } else {
-    mot_move_down(fabs(mp.velocity) * 1000 * 0.8);
-  }
-
-  return false;
-}
-
 /* state machine */
 
 const char *state_str(state_t s) {
@@ -100,12 +65,8 @@ const char *state_str(state_t s) {
       return "OFFLINE";
     case STANDBY:
       return "STANDBY";
-    case MOVE_UP:
-      return "MOVE_UP";
-    case MOVE_DOWN:
-      return "MOVE_DOWN";
-    case MOVE_TO:
-      return "MOVE_TO";
+    case MOVE:
+      return "MOVE";
     case AUTOMATE:
       return "AUTOMATE";
     case ZERO:
@@ -158,35 +119,9 @@ static void state_transition(state_t new_state) {
       break;
     }
 
-    case MOVE_UP: {
-      // stop motor
-      mot_set(move_up_speed);
-
+    case MOVE: {
       // set state
-      state = MOVE_UP;
-
-      break;
-    }
-
-    case MOVE_DOWN: {
-      // stop motor
-      mot_set(-move_down_speed);
-
-      // set state
-      state = MOVE_DOWN;
-
-      break;
-    }
-
-    case MOVE_TO: {
-      // stop motor
-      mot_hard_stop();
-
-      // reset motion profile
-      mp = (a32_motion_t){0};
-
-      // set state
-      state = MOVE_TO;
+      state = MOVE;
 
       break;
     }
@@ -195,16 +130,10 @@ static void state_transition(state_t new_state) {
       // set state
       state = AUTOMATE;
 
-      // reset motion profile
-      mp = (a32_motion_t){0};
-
       break;
     }
 
     case ZERO: {
-      // move up
-      mot_set(zero_speed);
-
       // set state
       state = ZERO;
 
@@ -225,12 +154,6 @@ static void state_transition(state_t new_state) {
     }
 
     case REPOSITION: {
-      // stop motor
-      mot_hard_stop();
-
-      // reset motion profile
-      mp = (a32_motion_t){0};
-
       // set state
       state = REPOSITION;
 
@@ -262,16 +185,9 @@ static void state_feed() {
       break;
     }
 
-    case MOVE_UP:
-    case MOVE_DOWN: {
-      // wait for stop command or reset
-
-      break;
-    }
-
-    case MOVE_TO: {
+    case MOVE: {
       // approach target and transition to standby if reached
-      if (approach(move_to)) {
+      if (mot_approach(position, move_to, 1)) {
         state_transition(STANDBY);
       }
 
@@ -288,13 +204,14 @@ static void state_feed() {
       double target = motion ? rise_height : idle_height;
 
       // approach new target
-      approach(target);
+      mot_approach(position, target, 1);
 
       break;
     }
 
     case ZERO: {
-      // wait for reset signal
+      // move up
+      mot_approach(0, 1000, 1);
 
       break;
     }
@@ -308,7 +225,7 @@ static void state_feed() {
 
     case REPOSITION: {
       // approach target and transition to standby if reached
-      if (approach(reset_height - 5)) {
+      if (mot_approach(position, reset_height - 5, 1)) {
         state_transition(STANDBY);
       }
 
@@ -350,18 +267,17 @@ static void update(const char *param, const char *value) {
 static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_t scope) {
   // set target
   if (strcmp(topic, "move") == 0 && scope == NAOS_LOCAL) {
-    // check for keywords
+    // set target
     if (strcmp((const char *)payload, "up") == 0) {
-      state_transition(MOVE_UP);
+      move_to = 1000;
     } else if (strcmp((const char *)payload, "down") == 0) {
-      state_transition(MOVE_DOWN);
+      move_to = -1000;
     } else {
-      // set new position
       move_to = a32_constrain_d(strtod((const char *)payload, NULL), base_height, reset_height);
-
-      // change state
-      state_transition(MOVE_TO);
     }
+
+    // change state
+    state_transition(MOVE);
   }
 
   // stop motor
