@@ -1,8 +1,8 @@
+#include <art32/numbers.h>
 #include <driver/ledc.h>
+#include <math.h>
 
 #include "mot.h"
-
-// TODO: Add ramping.
 
 void mot_init() {
   // prepare in a+b config
@@ -40,6 +40,9 @@ void mot_init() {
 }
 
 void mot_set(int speed) {
+  // cap speed
+  speed = a32_constrain_i(speed, -1023, 1023);
+
   // set motor state
   if (speed == 0) {
     // disable motor (brake to GND)
@@ -63,6 +66,24 @@ void mot_set(int speed) {
   // set duty
   ESP_ERROR_CHECK(ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, (uint32_t)speed));
   ESP_ERROR_CHECK(ledc_update_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0));
+}
+
+void mot_move_up(double speed) {
+  // cap speed
+  speed = a32_constrain_d(speed, 0, 12);
+
+  // calculate and set raw speed
+  int raw = (int)floor(69.88908 * speed + 142.488);
+  mot_set(raw);
+}
+
+void mot_move_down(double speed) {
+  // cap speed
+  speed = a32_constrain_d(speed, 0, 12);
+
+  // calculate and set raw speed
+  int raw = (int)floor(59.54553 * speed + 65.3359);
+  mot_set(-raw);
 }
 
 void mot_hard_stop() {

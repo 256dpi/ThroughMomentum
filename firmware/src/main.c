@@ -1,7 +1,9 @@
+#include <art32/motion.h>
 #include <art32/numbers.h>
 #include <art32/strconv.h>
 #include <driver/adc.h>
 #include <esp_system.h>
+#include <math.h>
 #include <naos.h>
 #include <stdlib.h>
 #include <string.h>
@@ -41,13 +43,8 @@ static double idle_height = 0;
 static double rise_height = 0;
 static int idle_light = 0;
 static int flash_intensity = 0;
-static int min_down_speed = 0;
-static int min_up_speed = 0;
-static int max_down_speed = 0;
-static int max_up_speed = 0;
 static int move_up_speed = 0;
 static int move_down_speed = 0;
-static int speed_map_range = 0;
 static int zero_speed = 0;
 static bool zero_switch = false;
 static bool invert_encoder = false;
@@ -62,25 +59,34 @@ static double distance = 0;
 static double position = 0;
 static double move_to = 0;
 
+static a32_motion_t mp;
+
 /* helpers */
 
-bool approach_target(double target) {
-  // check if target has been reached
-  if (position < target + (move_precision / 2) && position > target - (move_precision / 2)) {
+bool approach(double target) {
+  // configure motion profile
+  mp.max_velocity = 12.0 /* cm */ / 1000 /* s */ * 1.2;
+  mp.max_acceleration = 0.005 /* cm */ / 1000 /* s */;
+
+  // provide measured position
+  mp.position = position;
+
+  // update motion profile (for next ms)
+  a32_motion_update(&mp, target, 1);
+
+  // check if target has been reached (within 0.2cm and velocity < 2cm/s)
+  if (position < target + 0.2 && position > target - 0.2 && mp.velocity < 0.002) {
     // stop motor
     mot_hard_stop();
 
     return true;
   }
 
-  // move up if target is below position
-  if (position < target) {
-    mot_set((int)a32_safe_map_d(target - position, 0, speed_map_range, min_up_speed, max_up_speed));
-  }
-
-  // move down if target is above position
-  if (position > target) {
-    mot_set((int)a32_safe_map_d(position - target, 0, speed_map_range, min_down_speed, max_down_speed) * -1);
+  // move depending on position
+  if (mp.velocity > 0) {
+    mot_move_up(mp.velocity * 1000 * 0.8);
+  } else {
+    mot_move_down(fabs(mp.velocity) * 1000 * 0.8);
   }
 
   return false;
@@ -116,6 +122,11 @@ const char *state_str(state_t s) {
 static void state_feed();
 
 static void state_transition(state_t new_state) {
+  // return if already in state
+  if (new_state == state) {
+    return;
+  }
+
   // log state change
   naos_log("transition: %s", state_str(new_state));
 
@@ -171,6 +182,9 @@ static void state_transition(state_t new_state) {
       // stop motor
       mot_hard_stop();
 
+      // reset motion profile
+      mp = (a32_motion_t){0};
+
       // set state
       state = MOVE_TO;
 
@@ -180,6 +194,9 @@ static void state_transition(state_t new_state) {
     case AUTOMATE: {
       // set state
       state = AUTOMATE;
+
+      // reset motion profile
+      mp = (a32_motion_t){0};
 
       break;
     }
@@ -210,6 +227,9 @@ static void state_transition(state_t new_state) {
     case REPOSITION: {
       // stop motor
       mot_hard_stop();
+
+      // reset motion profile
+      mp = (a32_motion_t){0};
 
       // set state
       state = REPOSITION;
@@ -251,7 +271,7 @@ static void state_feed() {
 
     case MOVE_TO: {
       // approach target and transition to standby if reached
-      if (approach_target(move_to)) {
+      if (approach(move_to)) {
         state_transition(STANDBY);
       }
 
@@ -268,7 +288,7 @@ static void state_feed() {
       double target = motion ? rise_height : idle_height;
 
       // approach new target
-      approach_target(target);
+      approach(target);
 
       break;
     }
@@ -288,7 +308,7 @@ static void state_feed() {
 
     case REPOSITION: {
       // approach target and transition to standby if reached
-      if (approach_target(reset_height - 5)) {
+      if (approach(reset_height - 5)) {
         state_transition(STANDBY);
       }
 
@@ -336,7 +356,10 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
     } else if (strcmp((const char *)payload, "down") == 0) {
       state_transition(MOVE_DOWN);
     } else {
+      // set new position
       move_to = a32_constrain_d(strtod((const char *)payload, NULL), base_height, reset_height);
+
+      // change state
       state_transition(MOVE_TO);
     }
   }
@@ -464,13 +487,8 @@ static naos_param_t params[] = {
     {.name = "reset-height", .type = NAOS_DOUBLE, .default_d = 200, .sync_d = &reset_height},
     {.name = "idle-light", .type = NAOS_LONG, .default_l = 127, .sync_l = &idle_light},
     {.name = "flash-intensity", .type = NAOS_LONG, .default_l = 1023, .sync_l = &flash_intensity},
-    {.name = "min-down-speed", .type = NAOS_LONG, .default_l = 350, .sync_l = &min_down_speed},
-    {.name = "min-up-speed", .type = NAOS_LONG, .default_l = 350, .sync_l = &min_up_speed},
-    {.name = "max-down-speed", .type = NAOS_LONG, .default_l = 500, .sync_l = &max_down_speed},
-    {.name = "max-up-speed", .type = NAOS_LONG, .default_l = 950, .sync_l = &max_up_speed},
-    {.name = "move-up-speed", .type= NAOS_LONG, .default_l = 512, .sync_l = &move_up_speed},
-    {.name = "move-down-speed", .type= NAOS_LONG, .default_l = 512, .sync_l = &move_down_speed},
-    {.name = "speed-map-range", .type = NAOS_LONG, .default_l = 20, .sync_l = &speed_map_range},
+    {.name = "move-up-speed", .type = NAOS_LONG, .default_l = 512, .sync_l = &move_up_speed},
+    {.name = "move-down-speed", .type = NAOS_LONG, .default_l = 512, .sync_l = &move_down_speed},
     {.name = "zero-speed", .type = NAOS_LONG, .default_l = 500, .sync_l = &zero_speed},
     {.name = "zero-switch", .type = NAOS_BOOL, .default_b = true, .sync_b = &zero_switch},
     {.name = "invert-encoder", .type = NAOS_BOOL, .default_b = true, .sync_b = &invert_encoder},
@@ -482,10 +500,10 @@ static naos_param_t params[] = {
 static naos_config_t config = {.device_type = "tm-lo",
                                .firmware_version = "1.0.0",
                                .parameters = params,
-                               .num_parameters = 21,
+                               .num_parameters = 16,
                                .ping_callback = ping,
                                .loop_callback = loop,
-                               .loop_interval = 0,
+                               .loop_interval = 1,
                                .online_callback = online,
                                .offline_callback = offline,
                                .update_callback = update,
