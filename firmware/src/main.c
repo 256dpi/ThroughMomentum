@@ -45,6 +45,8 @@ static int min_down_speed = 0;
 static int min_up_speed = 0;
 static int max_down_speed = 0;
 static int max_up_speed = 0;
+static int move_up_speed = 0;
+static int move_down_speed = 0;
 static int speed_map_range = 0;
 static int zero_speed = 0;
 static bool zero_switch = false;
@@ -147,7 +149,7 @@ static void state_transition(state_t new_state) {
 
     case MOVE_UP: {
       // stop motor
-      mot_set(512);
+      mot_set(move_up_speed);
 
       // set state
       state = MOVE_UP;
@@ -157,7 +159,7 @@ static void state_transition(state_t new_state) {
 
     case MOVE_DOWN: {
       // stop motor
-      mot_set(-512);
+      mot_set(-move_down_speed);
 
       // set state
       state = MOVE_DOWN;
@@ -466,6 +468,8 @@ static naos_param_t params[] = {
     {.name = "min-up-speed", .type = NAOS_LONG, .default_l = 350, .sync_l = &min_up_speed},
     {.name = "max-down-speed", .type = NAOS_LONG, .default_l = 500, .sync_l = &max_down_speed},
     {.name = "max-up-speed", .type = NAOS_LONG, .default_l = 950, .sync_l = &max_up_speed},
+    {.name = "move-up-speed", .type= NAOS_LONG, .default_l = 512, .sync_l = &move_up_speed},
+    {.name = "move-down-speed", .type= NAOS_LONG, .default_l = 512, .sync_l = &move_down_speed},
     {.name = "speed-map-range", .type = NAOS_LONG, .default_l = 20, .sync_l = &speed_map_range},
     {.name = "zero-speed", .type = NAOS_LONG, .default_l = 500, .sync_l = &zero_speed},
     {.name = "zero-switch", .type = NAOS_BOOL, .default_b = true, .sync_b = &zero_switch},
@@ -478,7 +482,7 @@ static naos_param_t params[] = {
 static naos_config_t config = {.device_type = "tm-lo",
                                .firmware_version = "1.0.0",
                                .parameters = params,
-                               .num_parameters = 19,
+                               .num_parameters = 21,
                                .ping_callback = ping,
                                .loop_callback = loop,
                                .loop_interval = 0,
