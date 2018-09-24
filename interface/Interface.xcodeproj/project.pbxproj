@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2633A8DF8B0EC994D36BFF9A /* Pods_Interface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D11182E7AC7D24FF7777C877 /* Pods_Interface.framework */; };
 		52710F241F80F8CD00FBCDA2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52710F231F80F8CD00FBCDA2 /* AppDelegate.swift */; };
 		52710F261F80F8CD00FBCDA2 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52710F251F80F8CD00FBCDA2 /* ViewController.swift */; };
 		52710F291F80F8CD00FBCDA2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 52710F271F80F8CD00FBCDA2 /* Main.storyboard */; };
@@ -19,6 +20,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		36721216192096A2041C95A9 /* Pods-Interface.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Interface.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Interface/Pods-Interface.debug.xcconfig"; sourceTree = "<group>"; };
+		3FA2C3747D425ABDDCB58B3D /* Pods-Interface.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Interface.release.xcconfig"; path = "Pods/Target Support Files/Pods-Interface/Pods-Interface.release.xcconfig"; sourceTree = "<group>"; };
 		52710F201F80F8CD00FBCDA2 /* Interface.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Interface.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		52710F231F80F8CD00FBCDA2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		52710F251F80F8CD00FBCDA2 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -30,6 +33,7 @@
 		5280BF941F8121FB001A261F /* CocoaMQTT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaMQTT.framework; path = Carthage/Build/iOS/CocoaMQTT.framework; sourceTree = "<group>"; };
 		5280BF951F8121FB001A261F /* SwiftyTimer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyTimer.framework; path = Carthage/Build/iOS/SwiftyTimer.framework; sourceTree = "<group>"; };
 		5280BF9A1F81296F001A261F /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
+		D11182E7AC7D24FF7777C877 /* Pods_Interface.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Interface.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -40,18 +44,29 @@
 				5280BF961F8121FB001A261F /* CocoaAsyncSocket.framework in Frameworks */,
 				5280BF971F8121FB001A261F /* CocoaMQTT.framework in Frameworks */,
 				5280BF981F8121FB001A261F /* SwiftyTimer.framework in Frameworks */,
+				2633A8DF8B0EC994D36BFF9A /* Pods_Interface.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		383B7B97903D129B698F3941 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				36721216192096A2041C95A9 /* Pods-Interface.debug.xcconfig */,
+				3FA2C3747D425ABDDCB58B3D /* Pods-Interface.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 		52710F171F80F8CD00FBCDA2 = {
 			isa = PBXGroup;
 			children = (
 				52710F221F80F8CD00FBCDA2 /* Interface */,
 				52710F211F80F8CD00FBCDA2 /* Products */,
 				5280BF921F8121FB001A261F /* Frameworks */,
+				383B7B97903D129B698F3941 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -83,6 +98,7 @@
 				5280BF931F8121FB001A261F /* CocoaAsyncSocket.framework */,
 				5280BF941F8121FB001A261F /* CocoaMQTT.framework */,
 				5280BF951F8121FB001A261F /* SwiftyTimer.framework */,
+				D11182E7AC7D24FF7777C877 /* Pods_Interface.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -94,10 +110,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 52710F321F80F8CD00FBCDA2 /* Build configuration list for PBXNativeTarget "Interface" */;
 			buildPhases = (
+				8FA6ADDB13B7EEEE7048AFC1 /* [CP] Check Pods Manifest.lock */,
 				52710F1C1F80F8CD00FBCDA2 /* Sources */,
 				52710F1D1F80F8CD00FBCDA2 /* Frameworks */,
 				52710F1E1F80F8CD00FBCDA2 /* Resources */,
-				5280BF991F81221D001A261F /* ShellScript */,
+				E066C31CD51FE8E1E9FBED04 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -115,7 +132,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0900;
-				LastUpgradeCheck = 0900;
+				LastUpgradeCheck = 0940;
 				ORGANIZATIONNAME = "Through Momentum";
 				TargetAttributes = {
 					52710F1F1F80F8CD00FBCDA2 = {
@@ -157,24 +174,45 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		5280BF991F81221D001A261F /* ShellScript */ = {
+		8FA6ADDB13B7EEEE7048AFC1 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
-				"$(SRCROOT)/Carthage/Build/iOS/CocoaAsyncSocket.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/CocoaMQTT.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/SwiftyTimer.framework",
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
 			);
+			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/CocoaAsyncSocket.framework",
-				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/CocoaMQTT.framework",
-				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/SwiftyTimer.framework",
+				"$(DERIVED_FILE_DIR)/Pods-Interface-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "/usr/local/bin/carthage copy-frameworks";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		E066C31CD51FE8E1E9FBED04 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-Interface/Pods-Interface-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/CocoaAsyncSocket/CocoaAsyncSocket.framework",
+				"${BUILT_PRODUCTS_DIR}/CocoaMQTT/CocoaMQTT.framework",
+				"${BUILT_PRODUCTS_DIR}/SwiftyTimer/SwiftyTimer.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CocoaAsyncSocket.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CocoaMQTT.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyTimer.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Interface/Pods-Interface-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -224,6 +262,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -231,6 +270,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -281,6 +321,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -288,6 +329,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -319,14 +361,12 @@
 		};
 		52710F331F80F8CD00FBCDA2 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 36721216192096A2041C95A9 /* Pods-Interface.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = R6TU3S9Z3Y;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = Interface/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.throughmomentum.Interface;
@@ -338,14 +378,12 @@
 		};
 		52710F341F80F8CD00FBCDA2 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3FA2C3747D425ABDDCB58B3D /* Pods-Interface.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = R6TU3S9Z3Y;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = Interface/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.throughmomentum.Interface;

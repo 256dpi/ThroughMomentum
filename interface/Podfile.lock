@@ -1,0 +1,24 @@
+PODS:
+  - CocoaAsyncSocket (7.6.2)
+  - CocoaMQTT (1.1.1):
+    - CocoaAsyncSocket (~> 7.6.1)
+    - SwiftyTimer (~> 2.0.0)
+  - SwiftyTimer (2.0.0)
+
+DEPENDENCIES:
+  - CocoaMQTT
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - CocoaAsyncSocket
+    - CocoaMQTT
+    - SwiftyTimer
+
+SPEC CHECKSUMS:
+  CocoaAsyncSocket: 3541e024f48c54b251638ef72d51dd42808de932
+  CocoaMQTT: 3a01a51d534e0419b950d32236d4da389f074de8
+  SwiftyTimer: 2efd74b060d69ad4f1496baf5bbedbe132125fcf
+
+PODFILE CHECKSUM: 62951075b06878b053360e26ba9617218ed0ecc8
+
+COCOAPODS: 1.5.2

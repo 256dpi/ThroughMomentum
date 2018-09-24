@@ -1,0 +1,8 @@
+project 'Interface.xcodeproj'
+
+platform :ios, '9.3'
+
+target 'Interface' do
+  use_frameworks!
+  pod 'CocoaMQTT'
+end
