@@ -9,10 +9,23 @@
 import UIKit
 import CocoaMQTT
 
-let lightsPerRow = 8
-let lightsPerColumn = 6
-let lightDotSize = 12
-let padding: Double = 150
+let grid = [
+    [ 1,  0,  2,  0,  3,  0],
+    [ 0,  4,  0,  5,  0,  6],
+    [ 7,  0,  8,  0,  9,  0],
+    [ 0,  10, 0, 11,  0, 12],
+    [13,  0, 14,  0, 15,  0],
+    [ 0, 16,  0, 17,  0, 18],
+    [19,  0, 20,  0, 21,  0],
+    [ 0, 22,  0, 23,  0, 24],
+]
+
+let columns = grid.count
+let rows = grid[0].count
+
+let dotSize = 12
+
+let margin: Double = 150
 
 class ViewController: UIViewController, CocoaMQTTDelegate {
     var container: UIView?
@@ -64,24 +77,29 @@ class ViewController: UIViewController, CocoaMQTTDelegate {
         fh = Double(container!.frame.height)
         
         // calcuate gaps
-        gx = (fw-(2.0*padding))/Double(lightsPerRow-1)
-        gy = (fh-(2.0*padding))/Double(lightsPerColumn-1)
+        gx = (fw-(2.0*margin))/Double(rows-1)
+        gy = (fh-(2.0*margin))/Double(columns-1)
         
         // create all circles
-        for y in 0..<lightsPerColumn {
+        for y in 0..<columns {
             // add rows
             circles!.insert([UIView](), at: y)
             states!.insert([Bool](), at: y)
             
-            for x in 0..<lightsPerRow {
+            for x in 0..<rows {
                 // calculate position
-                let xx = padding+Double(x)*gx
-                let yy = padding+Double(y)*gy
+                let xx = margin+Double(x)*gx
+                let yy = margin+Double(y)*gy
                 
                 // create view
-                let v = UIView(frame: CGRect(x: xx, y: yy, width: Double(lightDotSize), height: Double(lightDotSize)))
+                let v = UIView(frame: CGRect(x: xx, y: yy, width: Double(dotSize), height: Double(dotSize)))
                 v.backgroundColor = offColor
-                v.layer.cornerRadius = CGFloat(lightDotSize) / 2.0
+                v.layer.cornerRadius = CGFloat(dotSize) / 2.0
+                
+                // check if in grid
+                if grid[y][x] == 0 {
+                    v.isHidden = true
+                }
                 
                 // add to view
                 container!.addSubview(v)
@@ -119,15 +137,21 @@ class ViewController: UIViewController, CocoaMQTTDelegate {
     
     func handleTouch(touch: UITouch) {
         // get location
-        let x = Double(touch.location(in: container).x) - Double(padding)
-        let y = Double(touch.location(in: container).y) - Double(padding)
+        let x = Double(touch.location(in: container).x) - Double(margin)
+        let y = Double(touch.location(in: container).y) - Double(margin)
         
         // calculate row and column number
         let xx = Int(round(x / gx))
         let yy = Int(round(y / gy))
         
         // check bounds
-        if xx < 0 || xx >= lightsPerRow || yy < 0 || yy >= lightsPerColumn {
+        if xx < 0 || xx >= rows || yy < 0 || yy >= columns {
+            return
+        }
+        
+        // get id from grid
+        let id = grid[yy][xx]
+        if id == 0 {
             return
         }
         
@@ -143,7 +167,7 @@ class ViewController: UIViewController, CocoaMQTTDelegate {
         if connected {
             // client!.publish("lights/" + String(yy*lightsPerRow+xx+1) + "/flash", withString: "500")
             let payload = red + " " + green + " " + blue + " " + white + " 500"
-            client!.publish("lights/" + String(yy*lightsPerRow+xx+1) + "/flash-color", withString: payload)
+            client!.publish("lights/" + String(id) + "/flash-color", withString: payload)
         }
         
         // set state
