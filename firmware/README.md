@@ -16,11 +16,15 @@ Immediately stop any movement.
 
 Zero light object using end stop.
 
+### `-> color {RED} {GREEN} {BLUE} {WHITE}`
+
+Sets the color of the lights.
+
 ### `-> flash {TIME}`
 
 Flashes the light for the specified amount of milliseconds.
 
-### `-> flash-color {RED GREEN BLUE WHITE TIME}`
+### `-> flash-color {RED} {GREEN} {BLUE} {WHITE} {TIME}`
 
 Flashes the light in colors for the specified amount of milliseconds.
 

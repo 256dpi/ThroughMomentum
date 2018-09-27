@@ -270,6 +270,20 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
     state_transition(STANDBY);
   }
 
+  // set color
+  else if (strcmp(topic, "color") == 0 && scope == NAOS_LOCAL) {
+    // read colors and time
+    int red = 0;
+    int green = 0;
+    int blue = 0;
+    int white = 0;
+    int time = 0;
+    sscanf((const char *)payload, "%d %d %d %d %d", &red, &green, &blue, &white, &time);
+
+    // set flash
+    led_set(led_color(red, green, blue, white), time);
+  }
+
   // perform flash
   else if (strcmp(topic, "flash") == 0 && scope == NAOS_LOCAL) {
     int time = a32_str2i((const char *)payload);
@@ -389,7 +403,7 @@ static naos_param_t params[] = {
 };
 
 static naos_config_t config = {.device_type = "tm-lo",
-                               .firmware_version = "1.1.0",
+                               .firmware_version = "1.1.1",
                                .parameters = params,
                                .num_parameters = 12,
                                .ping_callback = ping,
