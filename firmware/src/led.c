@@ -47,16 +47,19 @@ static void led_task(void *p) {
     // perform fade in
     led_write(led_fade_in_color, led_fade_time);
 
+    // await fade in
+    naos_delay(led_fade_time);
+
     // skip fade out if not needed
     if (!led_fade_out) {
       continue;
     }
 
-    // await half of the fade
-    naos_delay(led_fade_time);
-
     // fade out
     led_write(led_fade_out_color, led_fade_time);
+
+    // await fade out
+    naos_delay(led_fade_time);
   }
 }
 

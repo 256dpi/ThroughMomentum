@@ -97,6 +97,9 @@ static void state_transition(state_t new_state) {
     }
 
     case INITIALIZE: {
+      // turn of led
+      led_fade(led_color(127, 0, 0, 0), 100);
+
       break;
     }
 
