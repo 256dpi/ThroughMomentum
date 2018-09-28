@@ -322,8 +322,6 @@ static void pir(int m) {
   // check if there was a motion in the last interval
   bool new_motion = last_motion > naos_millis() - pir_interval;
 
-  naos_log("pir: %d -> %d", m, new_motion);
-
   // check motion
   if (motion != new_motion) {
     // update motion
