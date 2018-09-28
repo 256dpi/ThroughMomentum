@@ -165,9 +165,8 @@ class ViewController: UIViewController, CocoaMQTTDelegate {
         
         // send message
         if connected {
-            // client!.publish("lights/" + String(yy*lightsPerRow+xx+1) + "/flash", withString: "500")
             let payload = red + " " + green + " " + blue + " " + white + " 500"
-            client!.publish("lights/" + String(id) + "/flash-color", withString: payload)
+            client!.publish("lights/" + String(id) + "/flash", withString: payload)
         }
         
         // set state
