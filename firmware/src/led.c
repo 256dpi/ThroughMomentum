@@ -18,21 +18,26 @@ static int led_fade_time;
 static bool led_fade_out = false;
 
 static void led_write(led_color_t c, int t) {
-  // set red
+  // set colors
   ESP_ERROR_CHECK(ledc_set_fade_with_time(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_1, (uint32_t)c.r, t));
-  ESP_ERROR_CHECK(ledc_fade_start(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_1, LEDC_FADE_NO_WAIT));
-
-  // set green
   ESP_ERROR_CHECK(ledc_set_fade_with_time(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_2, (uint32_t)c.g, t));
-  ESP_ERROR_CHECK(ledc_fade_start(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_2, LEDC_FADE_NO_WAIT));
-
-  // set blue
   ESP_ERROR_CHECK(ledc_set_fade_with_time(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_3, (uint32_t)c.b, t));
-  ESP_ERROR_CHECK(ledc_fade_start(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_3, LEDC_FADE_NO_WAIT));
-
-  // set white
   ESP_ERROR_CHECK(ledc_set_fade_with_time(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_4, (uint32_t)c.w, t));
+
+  // trigger fades
+  ESP_ERROR_CHECK(ledc_fade_start(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_1, LEDC_FADE_NO_WAIT));
+  ESP_ERROR_CHECK(ledc_fade_start(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_2, LEDC_FADE_NO_WAIT));
+  ESP_ERROR_CHECK(ledc_fade_start(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_3, LEDC_FADE_NO_WAIT));
   ESP_ERROR_CHECK(ledc_fade_start(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_4, LEDC_FADE_NO_WAIT));
+
+  // await fade
+  naos_delay((uint32_t)t + 10);
+
+  // set colors
+  ESP_ERROR_CHECK(ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_1, (uint32_t)c.r));
+  ESP_ERROR_CHECK(ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_2, (uint32_t)c.g));
+  ESP_ERROR_CHECK(ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_3, (uint32_t)c.b));
+  ESP_ERROR_CHECK(ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_4, (uint32_t)c.w));
 }
 
 static void led_task(void *p) {
@@ -47,9 +52,6 @@ static void led_task(void *p) {
     // perform fade in
     led_write(led_fade_in_color, led_fade_time);
 
-    // await fade in
-    naos_delay(led_fade_time + 10);
-
     // skip fade out if not needed
     if (!led_fade_out) {
       continue;
@@ -57,9 +59,6 @@ static void led_task(void *p) {
 
     // fade out
     led_write(led_fade_out_color, led_fade_time);
-
-    // await fade out
-    naos_delay(led_fade_time + 10);
   }
 }
 
