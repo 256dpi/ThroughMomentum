@@ -19,7 +19,7 @@ void led_init();
  * @param c The constant color.
  * @param t The fade time.
  */
-void led_set(led_color_t c, int t);
+void led_fade(led_color_t c, int t);
 
 /**
  * Perform brief led flash.

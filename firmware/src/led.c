@@ -105,13 +105,13 @@ void led_init() {
   ESP_ERROR_CHECK(ledc_channel_config(&ledc_channel));
 
   // reset led
-  led_set(led_mono(0), 100);
+  led_fade(led_mono(0), 100);
 
   // run async task
   xTaskCreatePinnedToCore(&led_task, "led", 2048, NULL, 2, NULL, 1);
 }
 
-void led_set(led_color_t c, int t) {
+void led_fade(led_color_t c, int t) {
   // save constant color
   led_constant_color = c;
   led_fade_in_color = c;

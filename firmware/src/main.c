@@ -38,7 +38,6 @@ static double base_height = 0;
 static double rise_height = 0;
 static double reset_height = 0;
 static int idle_light = 0;
-static int flash_intensity = 0;
 static bool zero_switch = false;
 static bool invert_encoder = false;
 static int pir_sensitivity = 0;
@@ -91,7 +90,7 @@ static void state_transition(state_t new_state) {
       mot_hard_stop();
 
       // turn of led
-      led_set(led_mono(0), 100);
+      led_fade(led_mono(0), 100);
 
       // set state
       state = OFFLINE;
@@ -104,7 +103,7 @@ static void state_transition(state_t new_state) {
       mot_hard_stop();
 
       // enable idle light
-      led_set(led_mono(idle_light), 100);
+      led_fade(led_mono(idle_light), 100);
 
       // set state
       state = STANDBY;
@@ -270,8 +269,8 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
     state_transition(STANDBY);
   }
 
-  // set color
-  else if (strcmp(topic, "color") == 0 && scope == NAOS_LOCAL) {
+  // fade color
+  else if (strcmp(topic, "fade") == 0 && scope == NAOS_LOCAL) {
     // read colors and time
     int red = 0;
     int green = 0;
@@ -280,18 +279,12 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
     int time = 0;
     sscanf((const char *)payload, "%d %d %d %d %d", &red, &green, &blue, &white, &time);
 
-    // set flash
-    led_set(led_color(red, green, blue, white), time);
+    // fade color
+    led_fade(led_color(red, green, blue, white), time);
   }
 
   // perform flash
   else if (strcmp(topic, "flash") == 0 && scope == NAOS_LOCAL) {
-    int time = a32_str2i((const char *)payload);
-    led_flash(led_mono(flash_intensity), time);
-  }
-
-  // perform flash
-  else if (strcmp(topic, "flash-color") == 0 && scope == NAOS_LOCAL) {
     // read colors and time
     int red = 0;
     int green = 0;
@@ -300,17 +293,8 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
     int time = 0;
     sscanf((const char *)payload, "%d %d %d %d %d", &red, &green, &blue, &white, &time);
 
-    // set flash
+    // flash color
     led_flash(led_color(red, green, blue, white), time);
-  }
-
-  // perform disco
-  else if (strcmp(topic, "disco") == 0 && scope == NAOS_LOCAL) {
-    int r = esp_random() / 4194304;
-    int g = esp_random() / 4194304;
-    int b = esp_random() / 4194304;
-    int w = esp_random() / 4194304;
-    led_set(led_color(r, g, b, w), 100);
   }
 }
 
@@ -394,7 +378,6 @@ static naos_param_t params[] = {
     {.name = "rise-height", .type = NAOS_DOUBLE, .default_d = 150, .sync_d = &rise_height},
     {.name = "reset-height", .type = NAOS_DOUBLE, .default_d = 200, .sync_d = &reset_height},
     {.name = "idle-light", .type = NAOS_LONG, .default_l = 127, .sync_l = &idle_light},
-    {.name = "flash-intensity", .type = NAOS_LONG, .default_l = 1023, .sync_l = &flash_intensity},
     {.name = "zero-switch", .type = NAOS_BOOL, .default_b = true, .sync_b = &zero_switch},
     {.name = "invert-encoder", .type = NAOS_BOOL, .default_b = true, .sync_b = &invert_encoder},
     {.name = "pir-sensitivity", .type = NAOS_LONG, .default_l = 300, .sync_l = &pir_sensitivity},
@@ -403,9 +386,9 @@ static naos_param_t params[] = {
 };
 
 static naos_config_t config = {.device_type = "tm-lo",
-                               .firmware_version = "1.1.1",
+                               .firmware_version = "1.2.0",
                                .parameters = params,
-                               .num_parameters = 12,
+                               .num_parameters = 11,
                                .ping_callback = ping,
                                .loop_callback = loop,
                                .loop_interval = 1,

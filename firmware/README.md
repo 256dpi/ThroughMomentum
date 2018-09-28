@@ -16,21 +16,13 @@ Immediately stop any movement.
 
 Zero light object using end stop.
 
-### `-> color {RED} {GREEN} {BLUE} {WHITE}`
+### `-> fade {RED} {GREEN} {BLUE} {WHITE} {TIME}`
 
-Sets the color of the lights.
+Fades the color of the lights for the specified amount of milliseconds.
 
-### `-> flash {TIME}`
-
-Flashes the light for the specified amount of milliseconds.
-
-### `-> flash-color {RED} {GREEN} {BLUE} {WHITE} {TIME}`
+### `-> flash {RED} {GREEN} {BLUE} {WHITE} {TIME}`
 
 Flashes the light in colors for the specified amount of milliseconds.
-
-### `-> disco`
-
-Randomly selects a color for the lights.
 
 ### `<- position`
 
@@ -46,17 +38,13 @@ If motions is currently measured.
 
 When automate is `1` the light will move according to the sensors.
 
-### `winding-length (7.5)`
-
-The length of the cable needed for one average winding.
-
-### `base-height (50)`
-
-The base height of the light object.
-
-### `idle-height (100)`
+### `idle-height (50)`
 
 The idle height of the light object.
+
+### `base-height (100)`
+
+The base height of the light object.
 
 ### `rise-height (150)`
 
@@ -70,33 +58,13 @@ The reset height of the light object.
 
 The intensity of the light in idle mode.
 
-### `flash-intensity (1023)`
+### `zero-switch (1)`
 
-The intensity of the light flash.
+If the zero switch should be enabled.
 
-### `min-down-speed (350)`
+### `invert-encoder`
 
-The minimal downwards motor speed.
-
-### `min-up-speed (350)`
-
-The minimal upwards motor speed.
-
-### `max-down-speed (500)`
-
-The maximal downwards motor speed.
-
-### `max-up-speed (950)`
-
-The maximal upwards motor speed.
-
-### `speed-map-range (20)`
-
-The range of the target mapped speed.
-
-### `move-precision (1)`
-
-The precision of the movement.
+If the encoder value should be inverted.
 
 ### `pir-sensitivity (400)`
 
@@ -105,3 +73,7 @@ The PIR sensitivity from 0 (high) to 400 (low).
 ### `pir-interval (2000)`
 
 The interval between motion on off detection.
+
+### `winding-length (7.5)`
+
+The length of the cable needed for one average winding.
