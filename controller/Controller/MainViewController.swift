@@ -128,7 +128,11 @@ class MainViewController: UIViewController, CircleViewDelegate, CocoaMQTTDelegat
     }
     
     @IBAction func discoAll() {
-        sendAll(topic: "disco", payload: "")
+        let red = String(Int(arc4random_uniform(1023)))
+        let green = String(Int(arc4random_uniform(1023)))
+        let blue = String(Int(arc4random_uniform(1023)))
+        
+        sendAll(topic: "fade", payload: String(format: "%@ %@ %@ 0 500", red, green, blue))
     }
     
     // Helpers

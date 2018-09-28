@@ -144,7 +144,11 @@ class DetailViewController: UIViewController {
     }
     
     @IBAction func disco() {
-        send(topic: "disco", payload: "")
+        let red = String(Int(arc4random_uniform(1023)))
+        let green = String(Int(arc4random_uniform(1023)))
+        let blue = String(Int(arc4random_uniform(1023)))
+        
+        send(topic: "fade", payload: String(format: "%@ %@ %@ 0 500", red, green, blue))
     }
     
     @IBAction func back(_ sender: Any) {
