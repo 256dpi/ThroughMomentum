@@ -48,7 +48,7 @@ static void led_task(void *p) {
     led_write(led_fade_in_color, led_fade_time);
 
     // await fade in
-    naos_delay(led_fade_time);
+    naos_delay(led_fade_time + 10);
 
     // skip fade out if not needed
     if (!led_fade_out) {
@@ -59,7 +59,7 @@ static void led_task(void *p) {
     led_write(led_fade_out_color, led_fade_time);
 
     // await fade out
-    naos_delay(led_fade_time);
+    naos_delay(led_fade_time + 10);
   }
 }
 
@@ -118,7 +118,6 @@ void led_fade(led_color_t c, int t) {
   // save constant color
   led_constant_color = c;
   led_fade_in_color = c;
-  led_fade_out_color = c;
   led_fade_time = t;
   led_fade_out = false;
 
