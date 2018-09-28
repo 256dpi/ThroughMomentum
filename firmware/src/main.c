@@ -406,23 +406,23 @@ void app_main() {
   // install global interrupt service
   ESP_ERROR_CHECK(gpio_install_isr_service(0));
 
-  // initialize end stop
-  end_init(&end);
-
-  // initialize motion sensor
-  pir_init();
-
   // initialize motor
   mot_init();
 
   // initialize led
   led_init();
 
-  // initialize encoder
-  enc_init(enc);
+  // initialize motion sensor
+  pir_init();
 
   // initialize naos
   naos_init(&config);
+
+  // initialize end stop
+  end_init(&end);
+
+  // initialize encoder
+  enc_init(enc);
 
   // initialize distance sensor
   dst_init(dst);
