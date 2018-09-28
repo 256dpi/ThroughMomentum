@@ -20,12 +20,12 @@
 /* state */
 
 typedef enum {
-  OFFLINE,    // offline state
-  STANDBY,    // waits for external commands
-  MOVE,       // move up, down to position
-  AUTOMATE,   // moves according to sensors
-  RESET,      // resets position
-  REPOSITION  // reposition after a reset
+  OFFLINE,     // offline state
+  INITIALIZE,  // initialize position system
+  STANDBY,     // waits for external commands
+  MOVE,        // move up, down to position
+  AUTOMATE,    // moves according to sensors
+  RESET,       // resets position
 } state_t;
 
 state_t state = OFFLINE;
@@ -46,6 +46,7 @@ static double winding_length = 0;
 
 /* variables */
 
+static bool initialized = false;
 static bool motion = false;
 static double distance = 0;
 static double position = 0;
@@ -57,6 +58,8 @@ const char *state_str(state_t s) {
   switch (s) {
     case OFFLINE:
       return "OFFLINE";
+    case INITIALIZE:
+      return "INITIALIZE";
     case STANDBY:
       return "STANDBY";
     case MOVE:
@@ -65,8 +68,6 @@ const char *state_str(state_t s) {
       return "AUTOMATE";
     case RESET:
       return "RESET";
-    case REPOSITION:
-      return "REPOSITION";
   }
 
   return "";
@@ -92,9 +93,10 @@ static void state_transition(state_t new_state) {
       // turn of led
       led_fade(led_mono(0), 100);
 
-      // set state
-      state = OFFLINE;
+      break;
+    }
 
+    case INITIALIZE: {
       break;
     }
 
@@ -105,23 +107,14 @@ static void state_transition(state_t new_state) {
       // enable idle light
       led_fade(led_mono(idle_light), 100);
 
-      // set state
-      state = STANDBY;
-
       break;
     }
 
     case MOVE: {
-      // set state
-      state = MOVE;
-
       break;
     }
 
     case AUTOMATE: {
-      // set state
-      state = AUTOMATE;
-
       break;
     }
 
@@ -132,19 +125,12 @@ static void state_transition(state_t new_state) {
       // reset position
       position = reset_height;
 
-      // set state
-      state = RESET;
-
-      break;
-    }
-
-    case REPOSITION: {
-      // set state
-      state = REPOSITION;
-
       break;
     }
   }
+
+  // set new state
+  state = new_state;
 
   // publish new state
   naos_publish("state", state_str(state), 0, false, NAOS_LOCAL);
@@ -157,6 +143,15 @@ static void state_feed() {
   switch (state) {
     case OFFLINE: {
       // do nothing
+
+      break;
+    }
+
+    case INITIALIZE: {
+      // move up to trigger reset if automate is on
+      if (automate) {
+        mot_approach(position, 1000, 1);
+      }
 
       break;
     }
@@ -201,15 +196,9 @@ static void state_feed() {
     }
 
     case RESET: {
-      // transition to reposition state
-      state_transition(REPOSITION);
-
-      break;
-    }
-
-    case REPOSITION: {
-      // approach target and transition to standby if reached
+      // approach target, set initialized flag and transition to standby if reached
       if (mot_approach(position, reset_height - 10, 1)) {
+        initialized = true;
         state_transition(STANDBY);
       }
 
@@ -221,7 +210,7 @@ static void state_feed() {
 /* naos callbacks */
 
 static void ping() {
-  // flash white for 100ms
+  // flash white
   led_flash(led_white(512), 100);
 }
 
@@ -232,7 +221,13 @@ static void online() {
   naos_subscribe("fade", 0, NAOS_LOCAL);
   naos_subscribe("flash", 0, NAOS_LOCAL);
 
-  // transition to standby state
+  // transition to initialize if not yet initialized
+  if (!initialized) {
+    state_transition(INITIALIZE);
+    return;
+  }
+
+  // otherwise transition to standby state
   state_transition(STANDBY);
 }
 
@@ -258,8 +253,10 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
       move_to = a32_constrain_d(strtod((const char *)payload, NULL), idle_height, reset_height);
     }
 
-    // change state
-    state_transition(MOVE);
+    // change state if safe
+    if (state != RESET) {
+      state_transition(MOVE);
+    }
   }
 
   // check for "stop" command
@@ -267,8 +264,10 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
     // disable automate
     naos_set_b("automate", false);
 
-    // change state
-    state_transition(STANDBY);
+    // change state if safe
+    if (state != RESET) {
+      state_transition(STANDBY);
+    }
   }
 
   // check for "fade" command
@@ -342,13 +341,10 @@ static void loop() {
 /* custom callbacks */
 
 static void end() {
-  // ignore when already in reset or reposition state
-  if (state == RESET || state == REPOSITION || !zero_switch) {
-    return;
+  // transition to reset if zero switch is enabled
+  if (zero_switch) {
+    state_transition(RESET);
   }
-
-  // transition in reset state
-  state_transition(RESET);
 }
 
 static void enc(double rot) {
@@ -388,7 +384,7 @@ static naos_param_t params[] = {
 };
 
 static naos_config_t config = {.device_type = "tm-lo",
-                               .firmware_version = "1.2.0",
+                               .firmware_version = "1.2.1",
                                .parameters = params,
                                .num_parameters = 11,
                                .ping_callback = ping,
