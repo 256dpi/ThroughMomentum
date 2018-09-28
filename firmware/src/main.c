@@ -328,15 +328,6 @@ static void loop() {
     naos_publish_b("motion", motion, 0, false, NAOS_LOCAL);
   }
 
-  // track last sent position
-  static double sent = 0;
-
-  // publish update if distance changed more than 2cm
-  if (distance > sent + 2 || distance < sent - 2) {
-    naos_publish_d("distance", distance, 0, false, NAOS_LOCAL);
-    sent = distance;
-  }
-
   // feed state machine
   state_feed();
 }
@@ -368,8 +359,20 @@ static void enc(double rot) {
 }
 
 static void dst(double d) {
+  // track last sent position
+  static double sent = 0;
+
   // update distance
   distance = d;
+
+  // publish update if distance changed more than 2cm
+  if (distance > sent + 2 || distance < sent - 2) {
+    naos_publish_d("distance", distance, 0, false, NAOS_LOCAL);
+    sent = distance;
+  }
+
+  // feed state machine
+  state_feed();
 }
 
 static naos_param_t params[] = {

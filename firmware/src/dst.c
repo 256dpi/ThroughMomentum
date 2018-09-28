@@ -42,12 +42,8 @@ static void dst_handler(void *_) {
     // calculate real distance
     double distance = (double)value / 58.7;  // 29.3866996 us/cm
 
-    // send distance if value is greater than zero
-    if (distance > 0 && distance <= 400) {
-      // smooth distance
-      distance = a32_smooth_update(dst_smooth, distance);
-
-      // send to queue
+    // send distance if value is in acceptable range
+    if (distance > 25 && distance <= 300) {
       xQueueSendFromISR(dst_queue, &distance, NULL);
     }
   }
@@ -74,6 +70,9 @@ static void dst_task(void *p) {
       continue;
     }
 
+    // smooth distance
+    distance = a32_smooth_update(dst_smooth, distance);
+
     // call callback
     naos_acquire();
     dst_callback(distance);
@@ -92,7 +91,7 @@ void dst_init(dst_callback_t cb) {
   dst_queue = xQueueCreate(16, sizeof(double));
 
   // create smooth
-  dst_smooth = a32_smooth_new(5);
+  dst_smooth = a32_smooth_new(10);
 
   // prepare trigger rmt channel
   rmt_config_t trig;
