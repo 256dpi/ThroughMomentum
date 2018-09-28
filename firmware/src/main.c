@@ -15,6 +15,8 @@
 #include "mot.h"
 #include "pir.h"
 
+#define WINDING_LENGTH 7.5
+
 /* state */
 
 typedef enum {
@@ -40,7 +42,6 @@ static bool zero_switch = false;
 static bool invert_encoder = false;
 static int pir_sensitivity = 0;
 static int pir_interval = 0;
-static double winding_length = 0;
 
 /* variables */
 
@@ -347,7 +348,7 @@ static void enc(double r) {
   static double sent = 0;
 
   // apply rotation
-  position += (invert_encoder ? r * -1 : r) * winding_length;
+  position += (invert_encoder ? r * -1 : r) * WINDING_LENGTH;
 
   // publish update if position changed more than 1cm
   if (position > sent + 1 || position < sent - 1) {
@@ -387,13 +388,12 @@ static naos_param_t params[] = {
     {.name = "invert-encoder", .type = NAOS_BOOL, .default_b = true, .sync_b = &invert_encoder},
     {.name = "pir-sensitivity", .type = NAOS_LONG, .default_l = 300, .sync_l = &pir_sensitivity},
     {.name = "pir-interval", .type = NAOS_LONG, .default_l = 2000, .sync_l = &pir_interval},
-    {.name = "winding-length", .type = NAOS_DOUBLE, .default_d = 7.5, .sync_d = &winding_length},
 };
 
 static naos_config_t config = {.device_type = "tm-lo",
                                .firmware_version = "1.2.2",
                                .parameters = params,
-                               .num_parameters = 11,
+                               .num_parameters = 10,
                                .ping_callback = ping,
                                .online_callback = online,
                                .offline_callback = offline,
