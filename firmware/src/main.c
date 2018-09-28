@@ -209,7 +209,7 @@ static void state_feed() {
 
     case REPOSITION: {
       // approach target and transition to standby if reached
-      if (mot_approach(position, reset_height - 5, 1)) {
+      if (mot_approach(position, reset_height - 10, 1)) {
         state_transition(STANDBY);
       }
 
@@ -229,9 +229,8 @@ static void online() {
   // subscribe local topics
   naos_subscribe("move", 0, NAOS_LOCAL);
   naos_subscribe("stop", 0, NAOS_LOCAL);
+  naos_subscribe("fade", 0, NAOS_LOCAL);
   naos_subscribe("flash", 0, NAOS_LOCAL);
-  naos_subscribe("flash-color", 0, NAOS_LOCAL);
-  naos_subscribe("disco", 0, NAOS_LOCAL);
 
   // transition to standby state
   state_transition(STANDBY);
@@ -248,7 +247,7 @@ static void update(const char *param, const char *value) {
 }
 
 static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_t scope) {
-  // set target
+  // check for "move" command
   if (strcmp(topic, "move") == 0 && scope == NAOS_LOCAL) {
     // set target
     if (strcmp((const char *)payload, "up") == 0) {
@@ -263,13 +262,16 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
     state_transition(MOVE);
   }
 
-  // stop motor
+  // check for "stop" command
   else if (strcmp(topic, "stop") == 0 && scope == NAOS_LOCAL) {
+    // disable automate
     naos_set_b("automate", false);
+
+    // change state
     state_transition(STANDBY);
   }
 
-  // fade color
+  // check for "fade" command
   else if (strcmp(topic, "fade") == 0 && scope == NAOS_LOCAL) {
     // read colors and time
     int red = 0;
@@ -283,7 +285,7 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
     led_fade(led_color(red, green, blue, white), time);
   }
 
-  // perform flash
+  // check for "flash" command
   else if (strcmp(topic, "flash") == 0 && scope == NAOS_LOCAL) {
     // read colors and time
     int red = 0;
@@ -312,7 +314,7 @@ static void loop() {
     last_motion = naos_millis();
   }
 
-  // check if there was a motion in the last 8sec
+  // check if there was a motion in the last interval
   bool new_motion = last_motion > naos_millis() - pir_interval;
 
   // check motion
