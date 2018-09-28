@@ -9,13 +9,22 @@
 import UIKit
 import CocoaMQTT
 
-let lightsPerRow = 8
-let lightsPerColumn = 6
-let padding: Double = 150
-let paddingTop: Double = 200
+let grid = [
+    [ 1,  0,  9,  0, 17,  0],
+    [ 0,  5,  0, 13,  0, 21],
+    [ 2,  0, 10,  0, 18,  0],
+    [ 0,  6, 0,  14,  0, 22],
+    [ 3,  0, 11,  0, 19,  0],
+    [ 0,  7,  0, 15,  0, 23],
+    [ 4,  0, 12,  0, 20,  0],
+    [ 0,  8,  0, 16,  0, 24],
+]
 
-let offColor = UIColor(white: 0.1, alpha: 1)
-let onColor = UIColor(white: 1, alpha: 1)
+let rows = grid.count
+let columns = grid[0].count
+
+let margin: Double = 150
+let marginTop: Double = 200
 
 class MainViewController: UIViewController, CircleViewDelegate, CocoaMQTTDelegate {
     var circleViews: [CircleView]?
@@ -40,8 +49,8 @@ class MainViewController: UIViewController, CircleViewDelegate, CocoaMQTTDelegat
         fh = Double(view.frame.height)
         
         // calcuate gaps
-        gx = (fw-padding-padding)/Double(lightsPerRow-1)
-        gy = (fh-paddingTop-padding)/Double(lightsPerColumn-1)
+        gx = (fw-margin-margin)/Double(columns-1)
+        gy = (fh-marginTop-margin)/Double(rows-1)
         
         // create zero circle view
         let zcv = CircleView(frame: CGRect(x: fw-200, y: 100, width: 100, height: 40))
@@ -56,20 +65,22 @@ class MainViewController: UIViewController, CircleViewDelegate, CocoaMQTTDelegat
         circleViews!.append(zcv)
         
         // create all circles
-        for y in 0..<lightsPerColumn {
-            for x in 0..<lightsPerRow {
-                // calculate index
-                let idx = y * lightsPerRow + x
-                
+        for y in 0..<rows {
+            for x in 0..<columns {
                 // calculate position
-                let xx = padding+Double(x)*gx
-                let yy = paddingTop+Double(y)*gy
+                let xx = margin+Double(x)*gx
+                let yy = marginTop+Double(y)*gy
+                
+                // continue if not in grid
+                if grid[y][x] == 0 {
+                    continue
+                }
                 
                 // create view
                 let cv = CircleView(frame: CGRect(x: xx-50, y: yy-20, width: 100, height: 40))
                 cv.delegate = self
                 cv.prepare()
-                cv.id = idx + 1
+                cv.id = grid[y][x]
                 
                 // add to view
                 view.addSubview(cv)
@@ -109,11 +120,11 @@ class MainViewController: UIViewController, CircleViewDelegate, CocoaMQTTDelegat
     }
     
     @IBAction func automateAll() {
-        sendAll(topic: "naos/set/automate", payload: "on")
+        sendAll(topic: "naos/set/automate", payload: "1")
     }
     
     @IBAction func flashAll() {
-        sendAll(topic: "flash", payload: "500")
+        sendAll(topic: "flash", payload: "512 512 512 512 500")
     }
     
     @IBAction func discoAll() {

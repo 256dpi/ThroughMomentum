@@ -140,7 +140,7 @@ class DetailViewController: UIViewController {
     }
     
     @IBAction func flash() {
-        send(topic: "flash", payload: "500")
+        send(topic: "flash", payload: "512 512 512 512 500")
     }
     
     @IBAction func disco() {
