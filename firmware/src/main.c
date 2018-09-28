@@ -15,8 +15,6 @@
 #include "mot.h"
 #include "pir.h"
 
-// TODO: Make pir async.
-
 /* state */
 
 typedef enum {
@@ -303,21 +301,28 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
 }
 
 static void loop() {
-  // TODO: Use separate task?
+  // feed state machine
+  state_feed();
+}
 
+/* custom callbacks */
+
+static void pir(int m) {
   // track last motion
   static uint32_t last_motion = 0;
 
   // calculate dynamic pir threshold
-  int threshold = a32_safe_map_i((int)position, 0, (int)rise_height, 0, pir_sensitivity);
+  int threshold = a32_safe_map_i((int)position, 0, (int)rise_height, 50, pir_sensitivity);
 
   // update timestamp if motion detected
-  if (pir_read() > threshold) {
+  if (m > threshold) {
     last_motion = naos_millis();
   }
 
   // check if there was a motion in the last interval
   bool new_motion = last_motion > naos_millis() - pir_interval;
+
+  naos_log("pir: %d -> %d", m, new_motion);
 
   // check motion
   if (motion != new_motion) {
@@ -332,8 +337,6 @@ static void loop() {
   state_feed();
 }
 
-/* custom callbacks */
-
 static void end() {
   // transition to reset if zero switch is enabled
   if (zero_switch) {
@@ -341,12 +344,12 @@ static void end() {
   }
 }
 
-static void enc(double rot) {
+static void enc(double r) {
   // track last sent position
   static double sent = 0;
 
   // apply rotation
-  position += (invert_encoder ? rot * -1 : rot) * winding_length;
+  position += (invert_encoder ? r * -1 : r) * winding_length;
 
   // publish update if position changed more than 1cm
   if (position > sent + 1 || position < sent - 1) {
@@ -390,16 +393,16 @@ static naos_param_t params[] = {
 };
 
 static naos_config_t config = {.device_type = "tm-lo",
-                               .firmware_version = "1.2.1",
+                               .firmware_version = "1.2.2",
                                .parameters = params,
                                .num_parameters = 11,
                                .ping_callback = ping,
-                               .loop_callback = loop,
-                               .loop_interval = 1,
                                .online_callback = online,
                                .offline_callback = offline,
                                .update_callback = update,
                                .message_callback = message,
+                               .loop_callback = loop,
+                               .loop_interval = 1,
                                .password = "tm2018"};
 
 void app_main() {
@@ -412,14 +415,14 @@ void app_main() {
   // initialize led
   led_init();
 
-  // initialize motion sensor
-  pir_init();
-
   // initialize naos
   naos_init(&config);
 
+  // initialize motion sensor
+  pir_init(pir);
+
   // initialize end stop
-  end_init(&end);
+  end_init(end);
 
   // initialize encoder
   enc_init(enc);

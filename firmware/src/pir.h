@@ -4,15 +4,17 @@
 #include <stdbool.h>
 
 /**
- * Initialize PIR sensor.
+ * The callback.
+ *
+ * @param m The motion from 0 to ~400.
  */
-void pir_init();
+typedef void (*pir_callback_t)(int m);
 
 /**
- * Read the analog PIR value.
+ * Initialize PIR sensor.
  *
- * @return The motion from 0 to ~400.
+ * @param cb The callback.
  */
-int pir_read();
+void pir_init(pir_callback_t cb);
 
 #endif  // PIR_H
