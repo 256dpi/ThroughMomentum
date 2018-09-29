@@ -484,8 +484,11 @@ void app_main() {
   // initialize distance sensor
   dst_init(dst);
 
+  // disable automate mode if end switch is pressed
+  if(end_read()) {
+    naos_set_b("automate", false);
+  }
+
   // activate first state
   state_transition(OFFLINE);
-
-  // TODO: Perform reset if end switch is pressed. (Disable automate?)
 }
