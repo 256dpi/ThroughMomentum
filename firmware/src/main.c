@@ -32,7 +32,7 @@ typedef enum {
   RESET,      // resets position
 } state_t;
 
-state_t state = OFFLINE;
+state_t state = -1;
 
 /* parameters */
 
@@ -98,8 +98,8 @@ static void state_transition(state_t new_state) {
       // stop motor
       mot_stop();
 
-      // turn of led
-      led_fade(led_mono(0), 100);
+      // set led to red
+      led_fade(led_color(127, 0, 0, 0), 100);
 
       break;
     }
@@ -111,8 +111,8 @@ static void state_transition(state_t new_state) {
       // stop motor
       mot_stop();
 
-      // turn led to red
-      led_fade(led_color(127, 0, 0, 0), 100);
+      // turn led to blue
+      led_fade(led_color(0, 0, 127, 0), 100);
 
       // free existing calibration
       if (calibration_data != NULL) {
@@ -139,10 +139,16 @@ static void state_transition(state_t new_state) {
     }
 
     case MOVE: {
+      // turn led to green
+      led_fade(led_color(0, 127, 0, 0), 100);
+
       break;
     }
 
     case AUTOMATE: {
+      // enable idle light
+      led_fade(led_mono(idle_light), 100);
+
       break;
     }
 
@@ -477,6 +483,9 @@ void app_main() {
 
   // initialize distance sensor
   dst_init(dst);
+
+  // activate first state
+  state_transition(OFFLINE);
 
   // TODO: Perform reset if end switch is pressed. (Disable automate?)
 }
