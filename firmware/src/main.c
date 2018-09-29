@@ -310,18 +310,18 @@ static void loop() {
 
 static void pir(int m) {
   // track last motion
-  static uint32_t last_motion = 0;
+  static uint32_t last = 0;
 
   // calculate dynamic pir threshold
   int threshold = a32_safe_map_i((int)position, 0, (int)rise_height, 50, pir_sensitivity);
 
   // update timestamp if motion detected
   if (m > threshold) {
-    last_motion = naos_millis();
+    last = naos_millis();
   }
 
   // check if there was a motion in the last interval
-  bool new_motion = last_motion > naos_millis() - pir_interval;
+  bool new_motion = last > naos_millis() - pir_interval;
 
   // check motion
   if (motion != new_motion) {
