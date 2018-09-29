@@ -9,7 +9,7 @@
 
 #include "dst.h"
 
-#define DST_RANGE_MIN 5
+#define DST_RANGE_MIN 1
 #define DST_RANGE_MAX 300
 #define DST_INTERVAL 100
 #define DST_TIMEOUT 2000
