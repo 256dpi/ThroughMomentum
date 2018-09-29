@@ -15,4 +15,11 @@ typedef void (*end_callback_t)();
  */
 void end_init(end_callback_t cb);
 
+/**
+ * Read end switch.
+ *
+ * @return If switch is currently pressed.
+ */
+bool end_read();
+
 #endif  // END_H

@@ -63,3 +63,7 @@ void end_init(end_callback_t cb) {
   // run async task
   xTaskCreatePinnedToCore(&end_task, "end", 2048, NULL, 2, NULL, 1);
 }
+
+bool end_read() {
+  return gpio_get_level(GPIO_NUM_13) == 1;
+}
