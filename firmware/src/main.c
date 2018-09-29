@@ -153,10 +153,19 @@ static void state_feed() {
     }
 
     case INITIALIZE: {
-      // move up to trigger reset if automate is on
-      if (automate) {
-        mot_approach(position, 1000, 1);
+      // use measurement from distance sensor for initial position
+      if(!motion && distance >= idle_height && distance <= rise_height) {
+        position = distance;
+        initialized = true;
+        state_transition(STANDBY);
       }
+
+      // TODO: Use physical switch if not possible for a longer period of time?
+
+//      // move up to trigger reset if automate is on
+//      if (automate) {
+//        mot_approach(position, 1000, 1);
+//      }
 
       break;
     }
