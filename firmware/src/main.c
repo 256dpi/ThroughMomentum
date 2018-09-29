@@ -1,5 +1,6 @@
 #include <art32/motion.h>
 #include <art32/numbers.h>
+#include <art32/smooth.h>
 #include <art32/strconv.h>
 #include <driver/adc.h>
 #include <esp_system.h>
@@ -17,15 +18,18 @@
 
 #define WINDING_LENGTH 7.5
 
+#define CALIBRATION_SAMPLES 20
+#define CALIBRATION_TIMEOUT 1000 * 120
+
 /* state */
 
 typedef enum {
-  OFFLINE,     // offline state
-  INITIALIZE,  // initialize position system
-  STANDBY,     // waits for external commands
-  MOVE,        // move up, down to position
-  AUTOMATE,    // moves according to sensors
-  RESET,       // resets position
+  OFFLINE,    // offline state
+  CALIBRATE,  // initialize position system
+  STANDBY,    // waits for external commands
+  MOVE,       // move up, down to position
+  AUTOMATE,   // moves according to sensors
+  RESET,      // resets position
 } state_t;
 
 state_t state = OFFLINE;
@@ -46,11 +50,15 @@ static int pir_interval = 0;
 
 /* variables */
 
-static bool initialized = false;
 static bool motion = false;
 static double distance = 0;
 static double position = 0;
+
 static double move_to = 0;
+
+static bool calibrated = false;
+static a32_smooth_t *calibration_data = NULL;
+static uint32_t calibration_timeout = 0;
 
 /* state machine */
 
@@ -58,8 +66,8 @@ const char *state_str(state_t s) {
   switch (s) {
     case OFFLINE:
       return "OFFLINE";
-    case INITIALIZE:
-      return "INITIALIZE";
+    case CALIBRATE:
+      return "CALIBRATE";
     case STANDBY:
       return "STANDBY";
     case MOVE:
@@ -96,12 +104,26 @@ static void state_transition(state_t new_state) {
       break;
     }
 
-    case INITIALIZE: {
+    case CALIBRATE: {
+      // set flag
+      calibrated = false;
+
       // stop motor
       mot_stop();
 
-      // turn of led
+      // turn led to red
       led_fade(led_color(127, 0, 0, 0), 100);
+
+      // free existing calibration
+      if (calibration_data != NULL) {
+        a32_smooth_free(calibration_data);
+      }
+
+      // create new calibration
+      calibration_data = a32_smooth_new(CALIBRATION_SAMPLES);
+
+      // save current time
+      calibration_timeout = naos_millis() + CALIBRATION_TIMEOUT;
 
       break;
     }
@@ -146,14 +168,6 @@ static void state_transition(state_t new_state) {
 }
 
 static void state_feed() {
-  // TODO: This is tricky to do as the sensor lags and is not accurate.
-
-  /*// use measurement from distance sensor to adjust position
-  if (!motion && distance >= idle_height && distance <= rise_height) {
-    // adjust position a little towards the measured distance
-    position = a32_map_d(0.001, 0, 1, position, distance);
-  }*/
-
   // publish update if position changed more than 1cm
   static double _position = 0;
   if (position > _position + 1 || position < _position - 1) {
@@ -182,29 +196,35 @@ static void state_feed() {
       break;
     }
 
-    case INITIALIZE: {
-      // TODO: Make sure the used distance has been sample over a long period?
-
-      // use measurement from distance sensor for initial position
-      if (!motion && distance >= idle_height && distance <= rise_height) {
-        position = distance;
-        initialized = true;
-        state_transition(STANDBY);
+    case CALIBRATE: {
+      // perform physical calibration if automate is on and timeout has been reached
+      if (automate && calibration_timeout < naos_millis()) {
+        mot_approach(position, 1000, 1);
+        break;
       }
 
-      // TODO: Use physical switch if not possible for a longer period of time?
-      /*// move up to trigger reset if automate is on
-      if (automate) {
-        mot_approach(position, 1000, 1);
-      }*/
+      // calibrate if we have all samples and error is within 2cm
+      if (calibration_data->count == CALIBRATION_SAMPLES && calibration_data->max - calibration_data->min < 2) {
+        position = calibration_data->total / calibration_data->num;
+        calibrated = true;
+        state_transition(STANDBY);
+        break;
+      }
 
       break;
     }
 
     case STANDBY: {
+      // transition to standby if not calibrated
+      if (!calibrated) {
+        state_transition(CALIBRATE);
+        break;
+      }
+
       // transition to automate if enabled
       if (automate) {
         state_transition(AUTOMATE);
+        break;
       }
 
       break;
@@ -213,7 +233,8 @@ static void state_feed() {
     case MOVE: {
       // approach target and transition to standby if reached
       if (mot_approach(position, move_to, 1)) {
-        state_transition(initialized ? STANDBY : INITIALIZE);
+        state_transition(STANDBY);
+        break;
       }
 
       break;
@@ -223,6 +244,7 @@ static void state_feed() {
       // transition back to standby if disabled
       if (!automate) {
         state_transition(STANDBY);
+        break;
       }
 
       // default target to idle height
@@ -241,10 +263,11 @@ static void state_feed() {
     }
 
     case RESET: {
-      // approach target, set initialized flag and transition to standby if reached
+      // approach target, set flag and transition to standby if reached
       if (mot_approach(position, reset_height - 10, 1)) {
-        initialized = true;
+        calibrated = true;
         state_transition(STANDBY);
+        break;
       }
 
       break;
@@ -265,9 +288,10 @@ static void online() {
   naos_subscribe("stop", 0, NAOS_LOCAL);
   naos_subscribe("fade", 0, NAOS_LOCAL);
   naos_subscribe("flash", 0, NAOS_LOCAL);
+  naos_subscribe("calibrate", 0, NAOS_LOCAL);
 
-  // transition to initialize if not yet initialized or standby otherwise
-  state_transition(initialized ? STANDBY : INITIALIZE);
+  // transition to standby
+  state_transition(STANDBY);
 }
 
 static void offline() {
@@ -295,6 +319,7 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
     // change state if safe
     if (state != RESET) {
       state_transition(MOVE);
+      return;
     }
   }
 
@@ -305,7 +330,8 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
 
     // change state if safe
     if (state != RESET) {
-      state_transition(initialized ? STANDBY : INITIALIZE);
+      state_transition(STANDBY);
+      return;
     }
   }
 
@@ -335,6 +361,12 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
 
     // flash color
     led_flash(led_color(red, green, blue, white), time);
+  }
+
+  // check for "calibrate" command
+  else if (strcmp(topic, "calibrate") == 0 && scope == NAOS_LOCAL) {
+    state_transition(CALIBRATE);
+    return;
   }
 }
 
@@ -382,6 +414,11 @@ static void enc(double r) {
 static void dst(double d) {
   // update distance
   distance = d;
+
+  // update calibration data
+  if (calibration_data != NULL && d >= idle_height && d <= rise_height) {
+    a32_smooth_update(calibration_data, d);
+  }
 
   // feed state machine
   state_feed();
@@ -440,4 +477,6 @@ void app_main() {
 
   // initialize distance sensor
   dst_init(dst);
+
+  // TODO: Perform reset if end switch is pressed. (Disable automate?)
 }

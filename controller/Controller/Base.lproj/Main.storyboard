@@ -230,12 +230,12 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="C21-Yo-7Fe">
-                                <rect key="frame" x="100" y="352" width="40" height="30"/>
-                                <state key="normal" title="ZERO">
+                                <rect key="frame" x="100" y="352" width="78" height="30"/>
+                                <state key="normal" title="CALIBRATE">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <action selector="zero" destination="UJ0-D5-W48" eventType="touchUpInside" id="DVo-a5-rfd"/>
+                                    <action selector="calibrate" destination="UJ0-D5-W48" eventType="touchUpInside" id="08g-A4-zGM"/>
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="STANDBY" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Mpn-ZC-Ph9">
