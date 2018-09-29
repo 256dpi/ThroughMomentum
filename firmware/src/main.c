@@ -40,7 +40,8 @@ static double reset_height = 0;
 static int idle_light = 0;
 static bool zero_switch = false;
 static bool invert_encoder = false;
-static int pir_sensitivity = 0;
+static int pir_low = 0;
+static int pir_high = 0;
 static int pir_interval = 0;
 
 /* variables */
@@ -145,6 +146,35 @@ static void state_transition(state_t new_state) {
 }
 
 static void state_feed() {
+  // TODO: This is tricky to do as the sensor lags and is not accurate.
+
+  /*// use measurement from distance sensor to adjust position
+  if (!motion && distance >= idle_height && distance <= rise_height) {
+    // adjust position a little towards the measured distance
+    position = a32_map_d(0.001, 0, 1, position, distance);
+  }*/
+
+  // publish update if position changed more than 1cm
+  static double _position = 0;
+  if (position > _position + 1 || position < _position - 1) {
+    naos_publish_d("position", position, 0, false, NAOS_LOCAL);
+    _position = position;
+  }
+
+  // publish update if distance changed more than 2cm
+  static double _distance = 0;
+  if (distance > _distance + 2 || distance < _distance - 2) {
+    naos_publish_d("distance", distance, 0, false, NAOS_LOCAL);
+    _distance = distance;
+  }
+
+  // publish update if motion has been changed
+  static bool _motion = false;
+  if (motion != _motion) {
+    naos_publish_b("motion", motion, 0, false, NAOS_LOCAL);
+    _motion = motion;
+  }
+
   switch (state) {
     case OFFLINE: {
       // do nothing
@@ -153,19 +183,20 @@ static void state_feed() {
     }
 
     case INITIALIZE: {
+      // TODO: Make sure the used distance has been sample over a long period?
+
       // use measurement from distance sensor for initial position
-      if(!motion && distance >= idle_height && distance <= rise_height) {
+      if (!motion && distance >= idle_height && distance <= rise_height) {
         position = distance;
         initialized = true;
         state_transition(STANDBY);
       }
 
       // TODO: Use physical switch if not possible for a longer period of time?
-
-//      // move up to trigger reset if automate is on
-//      if (automate) {
-//        mot_approach(position, 1000, 1);
-//      }
+      /*// move up to trigger reset if automate is on
+      if (automate) {
+        mot_approach(position, 1000, 1);
+      }*/
 
       break;
     }
@@ -319,7 +350,7 @@ static void pir(int m) {
   static uint32_t last = 0;
 
   // calculate dynamic pir threshold
-  int threshold = a32_safe_map_i((int)position, 0, (int)rise_height, 50, pir_sensitivity);
+  int threshold = a32_safe_map_i((int)position, (int)idle_height, (int)rise_height, pir_low, pir_high);
 
   // update timestamp if motion detected
   if (m > threshold) {
@@ -327,16 +358,7 @@ static void pir(int m) {
   }
 
   // check if there was a motion in the last interval
-  bool new_motion = last > naos_millis() - pir_interval;
-
-  // check motion
-  if (motion != new_motion) {
-    // update motion
-    motion = new_motion;
-
-    // publish update
-    naos_publish_b("motion", motion, 0, false, NAOS_LOCAL);
-  }
+  motion = last > naos_millis() - pir_interval;
 
   // feed state machine
   state_feed();
@@ -350,38 +372,22 @@ static void end() {
 }
 
 static void enc(double r) {
-  // track last sent position
-  static double sent = 0;
-
   // apply rotation
   position += (invert_encoder ? r * -1 : r) * WINDING_LENGTH;
-
-  // publish update if position changed more than 1cm
-  if (position > sent + 1 || position < sent - 1) {
-    naos_publish_d("position", position, 0, false, NAOS_LOCAL);
-    sent = position;
-  }
 
   // feed state machine
   state_feed();
 }
 
 static void dst(double d) {
-  // track last sent position
-  static double sent = 0;
-
   // update distance
   distance = d;
-
-  // publish update if distance changed more than 2cm
-  if (distance > sent + 2 || distance < sent - 2) {
-    naos_publish_d("distance", distance, 0, false, NAOS_LOCAL);
-    sent = distance;
-  }
 
   // feed state machine
   state_feed();
 }
+
+/* initialization */
 
 static naos_param_t params[] = {
     {.name = "automate", .type = NAOS_BOOL, .default_b = false, .sync_b = &automate},
@@ -392,14 +398,15 @@ static naos_param_t params[] = {
     {.name = "idle-light", .type = NAOS_LONG, .default_l = 127, .sync_l = &idle_light},
     {.name = "zero-switch", .type = NAOS_BOOL, .default_b = true, .sync_b = &zero_switch},
     {.name = "invert-encoder", .type = NAOS_BOOL, .default_b = true, .sync_b = &invert_encoder},
-    {.name = "pir-sensitivity", .type = NAOS_LONG, .default_l = 300, .sync_l = &pir_sensitivity},
+    {.name = "pir-low", .type = NAOS_LONG, .default_l = 200, .sync_l = &pir_low},
+    {.name = "pir-high", .type = NAOS_LONG, .default_l = 400, .sync_l = &pir_high},
     {.name = "pir-interval", .type = NAOS_LONG, .default_l = 2000, .sync_l = &pir_interval},
 };
 
 static naos_config_t config = {.device_type = "tm-lo",
-                               .firmware_version = "1.2.2",
+                               .firmware_version = "1.2.3",
                                .parameters = params,
-                               .num_parameters = 10,
+                               .num_parameters = 11,
                                .ping_callback = ping,
                                .online_callback = online,
                                .offline_callback = offline,
