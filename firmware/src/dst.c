@@ -96,7 +96,7 @@ void dst_init(dst_callback_t cb) {
   dst_queue = xQueueCreate(16, sizeof(double));
 
   // create smooth
-  dst_smooth = a32_smooth_new(10);
+  dst_smooth = a32_smooth_new(5);
 
   // prepare trigger rmt channel
   rmt_config_t trig;
