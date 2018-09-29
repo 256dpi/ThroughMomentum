@@ -9,6 +9,11 @@
 
 #include "dst.h"
 
+#define DST_RANGE_MIN 25
+#define DST_RANGE_MAX 300
+#define DST_INTERVAL 100
+#define DST_TIMEOUT 2000
+
 #define DST_TIMER_GROUP TIMER_GROUP_0
 #define DST_TIMER_NUM TIMER_0
 #define DST_TRIGGER_RMT_CHANNEL RMT_CHANNEL_0
@@ -43,7 +48,7 @@ static void dst_handler(void *_) {
     double distance = (double)value / 58.7;  // 29.3866996 us/cm
 
     // send distance if value is in acceptable range
-    if (distance > 25 && distance <= 300) {
+    if (distance > DST_RANGE_MIN && distance <= DST_RANGE_MAX) {
       xQueueSendFromISR(dst_queue, &distance, NULL);
     }
   }
@@ -65,7 +70,7 @@ static void dst_task(void *p) {
 
     // wait for distance reading
     double distance = 0;
-    if (xQueueReceive(dst_queue, &distance, 2000 / portTICK_PERIOD_MS) == pdFALSE) {
+    if (xQueueReceive(dst_queue, &distance, DST_TIMEOUT / portTICK_PERIOD_MS) == pdFALSE) {
       // try again if no reading was received after 2s
       continue;
     }
@@ -78,8 +83,8 @@ static void dst_task(void *p) {
     dst_callback(distance);
     naos_release();
 
-    // wait 100ms
-    naos_delay(100);
+    // wait for next reading
+    naos_delay(DST_INTERVAL);
   }
 }
 

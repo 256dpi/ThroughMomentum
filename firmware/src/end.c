@@ -5,6 +5,8 @@
 
 #include "end.h"
 
+#define END_DELAY 50
+
 #define END_BIT (1 << 0)
 
 static EventGroupHandle_t end_group;
@@ -30,8 +32,8 @@ static void end_task(void *p) {
     end_callback();
     naos_release();
 
-    // wait for 50ms
-    naos_delay(50);
+    // delay next reading
+    naos_delay(END_DELAY);
 
     // clear bit
     xEventGroupClearBits(end_group, END_BIT);
