@@ -9,7 +9,7 @@
 
 #include "dst.h"
 
-#define DST_RANGE_MIN 25
+#define DST_RANGE_MIN 5
 #define DST_RANGE_MAX 300
 #define DST_INTERVAL 100
 #define DST_TIMEOUT 2000
@@ -48,7 +48,7 @@ static void dst_handler(void *_) {
     double distance = (double)value / 58.7;  // 29.3866996 us/cm
 
     // send distance if value is in acceptable range
-    if (distance > DST_RANGE_MIN && distance <= DST_RANGE_MAX) {
+    if (distance >= DST_RANGE_MIN && distance <= DST_RANGE_MAX) {
       xQueueSendFromISR(dst_queue, &distance, NULL);
     }
   }
