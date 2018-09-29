@@ -170,14 +170,14 @@ static void state_feed() {
     case MOVE: {
       // approach target and transition to standby if reached
       if (mot_approach(position, move_to, 1)) {
-        state_transition(STANDBY);
+        state_transition(initialized ? STANDBY : INITIALIZE);
       }
 
       break;
     }
 
     case AUTOMATE: {
-      // transition to standby if disabled
+      // transition back to standby if disabled
       if (!automate) {
         state_transition(STANDBY);
       }
@@ -223,14 +223,8 @@ static void online() {
   naos_subscribe("fade", 0, NAOS_LOCAL);
   naos_subscribe("flash", 0, NAOS_LOCAL);
 
-  // transition to initialize if not yet initialized
-  if (!initialized) {
-    state_transition(INITIALIZE);
-    return;
-  }
-
-  // otherwise transition to standby state
-  state_transition(STANDBY);
+  // transition to initialize if not yet initialized or standby otherwise
+  state_transition(initialized ? STANDBY : INITIALIZE);
 }
 
 static void offline() {
@@ -268,7 +262,7 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
 
     // change state if safe
     if (state != RESET) {
-      state_transition(STANDBY);
+      state_transition(initialized ? STANDBY : INITIALIZE);
     }
   }
 
