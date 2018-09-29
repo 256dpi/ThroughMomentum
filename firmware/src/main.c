@@ -20,6 +20,7 @@
 
 #define CALIBRATION_SAMPLES 20
 #define CALIBRATION_TIMEOUT 1000 * 120
+#define CALIBRATION_USAGE 200
 
 /* state */
 
@@ -53,6 +54,7 @@ static int pir_interval = 0;
 static bool motion = false;
 static double distance = 0;
 static double position = 0;
+static double usage = 0;
 
 static double move_to = 0;
 
@@ -410,8 +412,20 @@ static void end() {
 }
 
 static void enc(double r) {
+  // movement
+  double movement = (invert_encoder ? r * -1 : r) * WINDING_LENGTH;
+
   // apply rotation
-  position += (invert_encoder ? r * -1 : r) * WINDING_LENGTH;
+  position += movement;
+
+  // apply movement
+  usage += fabs(movement);
+
+  // re-calibrate if usage is high and no reset is being performed
+  if (state != RESET && usage > CALIBRATION_USAGE) {
+    usage = 0;
+    state_transition(CALIBRATE);
+  }
 
   // feed state machine
   state_feed();
@@ -485,7 +499,7 @@ void app_main() {
   dst_init(dst);
 
   // disable automate mode if end switch is pressed
-  if(end_read()) {
+  if (end_read()) {
     naos_set_b("automate", false);
   }
 
