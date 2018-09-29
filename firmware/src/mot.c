@@ -7,6 +7,53 @@
 
 static a32_motion_t mot_mp;
 
+static void mot_set(int speed) {
+  // cap speed
+  speed = a32_constrain_i(speed, -1023, 1023);
+
+  // set motor state
+  if (speed == 0) {
+    // disable motor (brake to GND)
+    ESP_ERROR_CHECK(gpio_set_level(GPIO_NUM_14, 0));
+    ESP_ERROR_CHECK(gpio_set_level(GPIO_NUM_16, 0));
+  } else if (speed < 0) {
+    // go backwards
+    ESP_ERROR_CHECK(gpio_set_level(GPIO_NUM_14, 0));
+    ESP_ERROR_CHECK(gpio_set_level(GPIO_NUM_16, 1));
+  } else if (speed > 0) {
+    // go forwards
+    ESP_ERROR_CHECK(gpio_set_level(GPIO_NUM_14, 1));
+    ESP_ERROR_CHECK(gpio_set_level(GPIO_NUM_16, 0));
+  }
+
+  // handle minus speeds
+  if (speed < 0) {
+    speed = speed * -1;
+  }
+
+  // set duty
+  ESP_ERROR_CHECK(ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, (uint32_t)speed));
+  ESP_ERROR_CHECK(ledc_update_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0));
+}
+
+static void mot_move_up(double speed) {
+  // cap speed
+  speed = a32_constrain_d(speed, 0, 12);
+
+  // calculate and set raw speed
+  int raw = (int)floor(69.88908 * speed + 142.488);
+  mot_set(raw);
+}
+
+static void mot_move_down(double speed) {
+  // cap speed
+  speed = a32_constrain_d(speed, 0, 12);
+
+  // calculate and set raw speed
+  int raw = (int)floor(59.54553 * speed + 65.3359);
+  mot_set(-raw);
+}
+
 void mot_init() {
   // prepare in a+b config
   gpio_config_t in_ab = {.pin_bit_mask = GPIO_SEL_14 | GPIO_SEL_16,
@@ -39,54 +86,7 @@ void mot_init() {
   ESP_ERROR_CHECK(ledc_channel_config(&c));
 
   // stop motor
-  mot_hard_stop();
-}
-
-void mot_set(int speed) {
-  // cap speed
-  speed = a32_constrain_i(speed, -1023, 1023);
-
-  // set motor state
-  if (speed == 0) {
-    // disable motor (brake to GND)
-    ESP_ERROR_CHECK(gpio_set_level(GPIO_NUM_14, 0));
-    ESP_ERROR_CHECK(gpio_set_level(GPIO_NUM_16, 0));
-  } else if (speed < 0) {
-    // go backwards
-    ESP_ERROR_CHECK(gpio_set_level(GPIO_NUM_14, 0));
-    ESP_ERROR_CHECK(gpio_set_level(GPIO_NUM_16, 1));
-  } else if (speed > 0) {
-    // go forwards
-    ESP_ERROR_CHECK(gpio_set_level(GPIO_NUM_14, 1));
-    ESP_ERROR_CHECK(gpio_set_level(GPIO_NUM_16, 0));
-  }
-
-  // handle minus speeds
-  if (speed < 0) {
-    speed = speed * -1;
-  }
-
-  // set duty
-  ESP_ERROR_CHECK(ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, (uint32_t)speed));
-  ESP_ERROR_CHECK(ledc_update_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0));
-}
-
-void mot_move_up(double speed) {
-  // cap speed
-  speed = a32_constrain_d(speed, 0, 12);
-
-  // calculate and set raw speed
-  int raw = (int)floor(69.88908 * speed + 142.488);
-  mot_set(raw);
-}
-
-void mot_move_down(double speed) {
-  // cap speed
-  speed = a32_constrain_d(speed, 0, 12);
-
-  // calculate and set raw speed
-  int raw = (int)floor(59.54553 * speed + 65.3359);
-  mot_set(-raw);
+  mot_stop();
 }
 
 bool mot_approach(double position, double target, uint32_t time) {
@@ -103,7 +103,7 @@ bool mot_approach(double position, double target, uint32_t time) {
   // check if target has been reached (within 0.2cm and velocity < 2cm/s)
   if (position < target + 0.2 && position > target - 0.2 && mot_mp.velocity < 0.002) {
     // stop motor
-    mot_hard_stop();
+    mot_stop();
 
     return true;
   }
@@ -118,7 +118,7 @@ bool mot_approach(double position, double target, uint32_t time) {
   return false;
 }
 
-void mot_hard_stop() {
+void mot_stop() {
   // set zero speed to stop motor
   mot_set(0);
 

@@ -87,7 +87,7 @@ static void state_transition(state_t new_state) {
   switch (new_state) {
     case OFFLINE: {
       // stop motor
-      mot_hard_stop();
+      mot_stop();
 
       // turn of led
       led_fade(led_mono(0), 100);
@@ -104,7 +104,7 @@ static void state_transition(state_t new_state) {
 
     case STANDBY: {
       // stop motor
-      mot_hard_stop();
+      mot_stop();
 
       // enable idle light
       led_fade(led_mono(idle_light), 100);
@@ -122,7 +122,7 @@ static void state_transition(state_t new_state) {
 
     case RESET: {
       // stop motor
-      mot_hard_stop();
+      mot_stop();
 
       // reset position
       position = reset_height;

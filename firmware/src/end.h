@@ -3,8 +3,16 @@
 
 #include <stdbool.h>
 
+/**
+ * The end stop callback.
+ */
 typedef void (*end_callback_t)();
 
-void end_init(end_callback_t);
+/**
+ * Initialize the end stop system.
+ *
+ * @param cb The end stop callback.
+ */
+void end_init(end_callback_t cb);
 
 #endif  // END_H
