@@ -20,6 +20,7 @@
 
 #define CALIBRATION_SAMPLES 20
 #define CALIBRATION_TIMEOUT 1000 * 120
+#define CALIBRATION_LEEWAY 20
 
 /* state */
 
@@ -436,7 +437,7 @@ static void dst(double d) {
   distance = d;
 
   // update calibration data
-  if (calibration_data != NULL && d >= idle_height && d <= rise_height) {
+  if (calibration_data != NULL && d >= (idle_height - CALIBRATION_LEEWAY) && d <= (rise_height + CALIBRATION_LEEWAY)) {
     a32_smooth_update(calibration_data, d);
   }
 
