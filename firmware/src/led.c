@@ -110,7 +110,7 @@ void led_init() {
   led_fade(led_mono(0), 100);
 
   // run async task
-  xTaskCreatePinnedToCore(&led_task, "led", 2048, NULL, 2, NULL, 1);
+  xTaskCreatePinnedToCore(&led_task, "led", 8192, NULL, 2, NULL, 1);
 }
 
 void led_fade(led_color_t c, int t) {

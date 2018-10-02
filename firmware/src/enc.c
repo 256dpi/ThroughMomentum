@@ -126,5 +126,5 @@ void enc_init(enc_callback_t cb) {
   gpio_isr_handler_add(GPIO_NUM_25, enc_rotation_handler, NULL);
 
   // run async task
-  xTaskCreatePinnedToCore(&enc_task, "enc", 2048, NULL, 2, NULL, 1);
+  xTaskCreatePinnedToCore(&enc_task, "enc", 8192, NULL, 2, NULL, 1);
 }

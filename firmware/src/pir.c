@@ -35,5 +35,5 @@ void pir_init(pir_callback_t cb) {
   ESP_ERROR_CHECK(adc1_config_channel_atten(ADC1_CHANNEL_6, ADC_ATTEN_11db));
 
   // run async task
-  xTaskCreatePinnedToCore(&pir_task, "pir", 2048, NULL, 2, NULL, 1);
+  xTaskCreatePinnedToCore(&pir_task, "pir", 8192, NULL, 2, NULL, 1);
 }

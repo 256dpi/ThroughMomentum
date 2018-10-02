@@ -151,5 +151,5 @@ void dst_init(dst_callback_t cb) {
   ESP_ERROR_CHECK(gpio_isr_handler_add(GPIO_NUM_22, dst_handler, NULL));
 
   // run async task
-  xTaskCreatePinnedToCore(&dst_task, "dst", 2048, NULL, 2, NULL, 1);
+  xTaskCreatePinnedToCore(&dst_task, "dst", 8192, NULL, 2, NULL, 1);
 }
