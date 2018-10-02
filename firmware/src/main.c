@@ -20,7 +20,6 @@
 
 #define CALIBRATION_SAMPLES 20
 #define CALIBRATION_TIMEOUT 1000 * 120
-#define CALIBRATION_USAGE 200
 
 /* state */
 
@@ -48,6 +47,7 @@ static bool invert_encoder = false;
 static int pir_low = 0;
 static int pir_high = 0;
 static int pir_interval = 0;
+static int calib_interval = 0;
 
 /* variables */
 
@@ -422,7 +422,7 @@ static void enc(double r) {
   usage += fabs(movement);
 
   // re-calibrate if usage is high and no reset is being performed
-  if (state != RESET && usage > CALIBRATION_USAGE) {
+  if (state != RESET && usage > calib_interval) {
     usage = 0;
     state_transition(CALIBRATE);
   }
@@ -458,12 +458,13 @@ static naos_param_t params[] = {
     {.name = "pir-low", .type = NAOS_LONG, .default_l = 200, .sync_l = &pir_low},
     {.name = "pir-high", .type = NAOS_LONG, .default_l = 400, .sync_l = &pir_high},
     {.name = "pir-interval", .type = NAOS_LONG, .default_l = 2000, .sync_l = &pir_interval},
+    {.name = "calib-interval", .type = NAOS_LONG, .default_l = 200, .sync_l = &calib_interval},
 };
 
 static naos_config_t config = {.device_type = "tm-lo",
                                .firmware_version = "1.3.0",
                                .parameters = params,
-                               .num_parameters = 11,
+                               .num_parameters = 12,
                                .ping_callback = ping,
                                .online_callback = online,
                                .offline_callback = offline,

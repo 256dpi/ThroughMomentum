@@ -12,10 +12,6 @@ Move up, down or to a specific position.
 
 Immediately stop any movement.
 
-### `-> zero`
-
-Zero light object using end stop.
-
 ### `-> fade {RED} {GREEN} {BLUE} {WHITE} {TIME}`
 
 Fades the color of the lights for the specified amount of milliseconds.
@@ -24,9 +20,17 @@ Fades the color of the lights for the specified amount of milliseconds.
 
 Flashes the light in colors for the specified amount of milliseconds.
 
+### `-> calibrate`
+
+Trigger a new calibration.
+
 ### `<- position`
 
 The current position of the object.
+
+### `<- distance`
+
+The current distance measured by the sensor.
 
 ### `<- motion`
 
@@ -34,7 +38,7 @@ If motions is currently measured.
 
 ## Parameters
 
-### `automate (0)`
+### `automate (false)`
 
 When automate is `1` the light will move according to the sensors.
 
@@ -54,26 +58,30 @@ The rise height of the light object when motion is detected.
 
 The reset height of the light object.
 
-### `idle-ligth (127)`
+### `idle-light (127)`
 
 The intensity of the light in idle mode.
 
-### `zero-switch (1)`
+### `zero-switch (true)`
 
 If the zero switch should be enabled.
 
-### `invert-encoder`
+### `invert-encoder (true)`
 
 If the encoder value should be inverted.
 
-### `pir-sensitivity (400)`
+### `pir-low (200)`
 
-The PIR sensitivity from 0 (high) to 400 (low).
+The PIR low sensitivity from 0 (high) to 400 (low).
+
+### `pir-high (400)`
+
+The PIR high sensitivity from 0 (high) to 400 (low).
 
 ### `pir-interval (2000)`
 
 The interval between motion on off detection.
 
-### `winding-length (7.5)`
+### `calib-interval (200)`
 
-The length of the cable needed for one average winding.
+The amount of way the object moves before another calibration is triggered.
