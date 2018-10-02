@@ -20,8 +20,8 @@ let grid = [
     [ 0,  8,  0, 16,  0, 24],
 ]
 
-let columns = grid.count
-let rows = grid[0].count
+let rows = grid.count
+let columns = grid[0].count
 
 let dotSize = 12
 
@@ -33,17 +33,13 @@ class ViewController: UIViewController, CocoaMQTTDelegate {
     var states: [[Bool]]?
     var client: CocoaMQTT?
     var connected = false
+    var timer: Timer?
     
     var fw: Double = 0
     var fh: Double = 0
     var gx: Double = 0
     var gy: Double = 0
-    
-    var red: String = "0"
-    var green: String = "0"
-    var blue: String = "0"
-    var white: String = "0"
-    
+
     var offColor = UIColor(white: 0.1, alpha: 1)
     var onColor = UIColor(white: 1, alpha: 1)
     
@@ -51,10 +47,10 @@ class ViewController: UIViewController, CocoaMQTTDelegate {
         super.viewDidLoad()
         
         // load colors
-        red = UserDefaults.standard.string(forKey: "color-red") ?? "0"
-        green = UserDefaults.standard.string(forKey: "color-green") ?? "0"
-        blue = UserDefaults.standard.string(forKey: "color-blue") ?? "0"
-        white = UserDefaults.standard.string(forKey: "color-white") ?? "0"
+        let red = UserDefaults.standard.string(forKey: "color-red") ?? "0"
+        let green = UserDefaults.standard.string(forKey: "color-green") ?? "0"
+        let blue = UserDefaults.standard.string(forKey: "color-blue") ?? "0"
+        let cycle = UserDefaults.standard.bool(forKey: "color-cycle")
         
         // save color
         let _red = CGFloat(Float(red) ?? 0)
@@ -77,16 +73,16 @@ class ViewController: UIViewController, CocoaMQTTDelegate {
         fh = Double(container!.frame.height)
         
         // calcuate gaps
-        gx = (fw-(2.0*margin))/Double(rows-1)
-        gy = (fh-(2.0*margin))/Double(columns-1)
+        gy = (fh-(2.0*margin))/Double(rows-1)
+        gx = (fw-(2.0*margin))/Double(columns-1)
         
         // create all circles
-        for y in 0..<columns {
+        for y in 0..<rows {
             // add rows
             circles!.insert([UIView](), at: y)
             states!.insert([Bool](), at: y)
             
-            for x in 0..<rows {
+            for x in 0..<columns {
                 // calculate position
                 let xx = margin+Double(x)*gx
                 let yy = margin+Double(y)*gy
@@ -126,6 +122,35 @@ class ViewController: UIViewController, CocoaMQTTDelegate {
         
         // connect to broker
         client!.connect()
+        
+        // create timer
+        if cycle {
+            timer = Timer.scheduledTimer(timeInterval: 0.03, target: self, selector: #selector(cycleColors), userInfo: nil, repeats: true)
+        }
+    }
+    
+    @objc
+    func cycleColors() {
+        // get current color
+        var hue: CGFloat = 0
+        var sat: CGFloat = 0
+        var brg: CGFloat = 0
+        onColor.getHue(&hue, saturation: &sat, brightness: &brg, alpha: nil)
+        
+        // set new colors
+        onColor = UIColor(hue: hue + 0.001, saturation: sat, brightness: brg, alpha: 1)
+        offColor = UIColor(hue: hue + 0.001, saturation: sat, brightness: brg, alpha: 0.25)
+        
+        // update circles
+        for y in 0..<rows {
+            for x in 0..<columns {
+                if !states![y][x] {
+                    circles![y][x].backgroundColor = offColor
+                } else {
+                    circles![y][x].backgroundColor = onColor
+                }
+            }
+        }
     }
     
     func handleTouches(touches: Set<UITouch>) {
@@ -145,7 +170,7 @@ class ViewController: UIViewController, CocoaMQTTDelegate {
         let yy = Int(round(y / gy))
         
         // check bounds
-        if xx < 0 || xx >= rows || yy < 0 || yy >= columns {
+        if xx < 0 || xx >= columns || yy < 0 || yy >= rows {
             return
         }
         
@@ -165,7 +190,16 @@ class ViewController: UIViewController, CocoaMQTTDelegate {
         
         // send message
         if connected {
-            let payload = red + " " + green + " " + blue + " " + white + " 500"
+            // get current color
+            var red: CGFloat = 0
+            var green: CGFloat = 0
+            var blue: CGFloat = 0
+            onColor.getRed(&red, green: &green, blue: &blue, alpha: nil)
+            
+            // construct payload
+            let payload = String(Int(red * 1023)) + " " + String(Int(green * 1023)) + " " + String(Int(blue * 1023)) + " 0 500"
+            
+            // perform flash
             client!.publish("lights/" + String(id) + "/flash", withString: payload)
         }
         

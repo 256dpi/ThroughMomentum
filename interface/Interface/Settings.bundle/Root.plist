@@ -38,11 +38,13 @@
 		</dict>
 		<dict>
 			<key>Type</key>
-			<string>PSTextFieldSpecifier</string>
+			<string>PSToggleSwitchSpecifier</string>
 			<key>Title</key>
-			<string>White</string>
+			<string>Cycle</string>
 			<key>Key</key>
-			<string>color-white</string>
+			<string>color-cycle</string>
+			<key>DefaultValue</key>
+			<false/>
 		</dict>
 		<dict>
 			<key>Type</key>
