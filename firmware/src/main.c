@@ -463,7 +463,7 @@ static naos_param_t params[] = {
 };
 
 static naos_config_t config = {.device_type = "tm-lo",
-                               .firmware_version = "1.3.1",
+                               .firmware_version = "1.3.2",
                                .parameters = params,
                                .num_parameters = 12,
                                .ping_callback = ping,
