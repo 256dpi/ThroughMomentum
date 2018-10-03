@@ -23,6 +23,7 @@ let grid = [
 let rows = grid.count
 let columns = grid[0].count
 
+let lights = 24
 let dotSize = 16
 
 let marginX: Double = 250
@@ -34,7 +35,8 @@ class ViewController: UIViewController, CocoaMQTTDelegate {
     var states: [[Bool]]?
     var client: CocoaMQTT?
     var connected = false
-    var timer: Timer?
+    var colorTimer: Timer?
+    var animationTimer: Timer?
     
     var fw: Double = 0
     var fh: Double = 0
@@ -128,10 +130,13 @@ class ViewController: UIViewController, CocoaMQTTDelegate {
         // connect to broker
         client!.connect()
         
-        // create timer
+        // create color timer
         if cycle {
-            timer = Timer.scheduledTimer(timeInterval: 0.03, target: self, selector: #selector(cycleColors), userInfo: nil, repeats: true)
+            colorTimer = Timer.scheduledTimer(timeInterval: 0.03, target: self, selector: #selector(cycleColors), userInfo: nil, repeats: true)
         }
+        
+        // create animation timer
+        animationTimer = Timer.scheduledTimer(timeInterval: 25, target: self, selector: #selector(animation), userInfo: nil, repeats: true)
     }
     
     @objc
@@ -158,11 +163,32 @@ class ViewController: UIViewController, CocoaMQTTDelegate {
         }
     }
     
+    @objc
+    func animation() {
+        // get current color
+        var red: CGFloat = 0
+        var green: CGFloat = 0
+        var blue: CGFloat = 0
+        onColor.getRed(&red, green: &green, blue: &blue, alpha: nil)
+        
+        // construct payload
+        let payload = String(Int(red * 1023)) + " " + String(Int(green * 1023)) + " " + String(Int(blue * 1023)) + " 0 4000"
+        
+        // send messages
+        for id in 1...24 {
+            client!.publish("lights/" + String(id) + "/flash", withString: payload)
+        }
+    }
+ 
     func handleTouches(touches: Set<UITouch>) {
         // handle all touches
         touches.forEach { (touch) in
             handleTouch(touch: touch)
         }
+        
+        // reset timer
+        animationTimer?.invalidate()
+        animationTimer = Timer.scheduledTimer(timeInterval: 25, target: self, selector: #selector(animation), userInfo: nil, repeats: true)
     }
     
     func handleTouch(touch: UITouch) {
