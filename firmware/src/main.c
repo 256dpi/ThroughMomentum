@@ -22,9 +22,6 @@
 #define CALIBRATION_TIMEOUT 1000 * 120
 #define CALIBRATION_LEEWAY 20
 
-#define AUTOMATE_RANGE 40
-#define AUTOMATE_APPROACH 20
-
 #define RESET_OFFSET 10
 
 #define COLOR_OFFLINE led_color(127, 0, 0, 0)
@@ -48,6 +45,8 @@ state_t state = -1;
 /* parameters */
 
 static bool automate = false;
+static double automate_range = 0;
+static double automate_approach = 0;
 static double idle_height = 0;
 static double base_height = 0;
 static double rise_height = 0;
@@ -273,9 +272,9 @@ static void state_feed() {
       double target = idle_height;
 
       // check if we have motion or something below
-      if (motion || distance < AUTOMATE_RANGE) {
+      if (motion || distance < automate_range) {
         // approach object
-        target = a32_constrain_d(position + (-distance + AUTOMATE_APPROACH), base_height, rise_height);
+        target = a32_constrain_d(position + (-distance + automate_approach), base_height, rise_height);
       }
 
       // approach new target
@@ -464,6 +463,8 @@ static void dst(double d) {
 
 static naos_param_t params[] = {
     {.name = "automate", .type = NAOS_BOOL, .default_b = false, .sync_b = &automate},
+    {.name = "automate-range", .type = NAOS_DOUBLE, .default_d = 40, .sync_d = &automate_range},
+    {.name = "automate-approach", .type = NAOS_DOUBLE, .default_d = 20, .sync_d = &automate_approach},
     {.name = "idle-height", .type = NAOS_DOUBLE, .default_d = 50, .sync_d = &idle_height},
     {.name = "base-height", .type = NAOS_DOUBLE, .default_d = 100, .sync_d = &base_height},
     {.name = "rise-height", .type = NAOS_DOUBLE, .default_d = 150, .sync_d = &rise_height},
@@ -480,7 +481,7 @@ static naos_param_t params[] = {
 static naos_config_t config = {.device_type = "tm-lo",
                                .firmware_version = "1.3.2",
                                .parameters = params,
-                               .num_parameters = 12,
+                               .num_parameters = 14,
                                .ping_callback = ping,
                                .online_callback = online,
                                .offline_callback = offline,

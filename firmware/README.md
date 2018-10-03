@@ -42,6 +42,14 @@ If motions is currently measured.
 
 When automate is `1` the light will move according to the sensors.
 
+### `automate-range (40)`
+
+The distance considered a valid automate range.
+
+### `automate-approach (20)`
+
+The distance to approach from the detected object.
+
 ### `idle-height (50)`
 
 The idle height of the light object.
