@@ -13,7 +13,7 @@ let lightLength: Double = 200
 let objectWidth: Double = 100
 let floorWidth: Double = 300
 let floorHeight: Double = 3
-let bottomPadding: Double = 50
+let bottomMargin: Double = 110
 
 class DetailViewController: UIViewController {
     var mainVC: MainViewController?
@@ -106,25 +106,21 @@ class DetailViewController: UIViewController {
         let fw = Double(view.frame.width)
         let fh = Double(view.frame.height)
         let objectHeight = position-distance
-        let ropeLength = fh-bottomPadding-objectHeight-distance-lightLength
+        let ropeLength = fh-bottomMargin-objectHeight-distance-lightLength
         
         // set frames
         ropeView!.frame = CGRect(x: fw/2, y: 0, width: 1, height: ropeLength)
         lightView!.frame = CGRect(x: fw/2 - lightWidth/2, y: ropeLength, width: lightWidth, height: lightLength)
-        floorView!.frame = CGRect(x: fw/2 - floorWidth/2, y: fh-bottomPadding, width: floorWidth, height: floorHeight)
-        objectView!.frame = CGRect(x: fw/2 - objectWidth/2, y: fh-bottomPadding-objectHeight, width: objectWidth, height: objectHeight)
+        floorView!.frame = CGRect(x: fw/2 - floorWidth/2, y: fh-bottomMargin, width: floorWidth, height: floorHeight)
+        objectView!.frame = CGRect(x: fw/2 - objectWidth/2, y: fh-bottomMargin-objectHeight, width: objectWidth, height: objectHeight)
     }
     
     @IBAction func stop() {
         send(topic: "stop", payload: "")
     }
     
-    @IBAction func automateOn() {
+    @IBAction func automate() {
         send(topic: "naos/set/automate", payload: "1")
-    }
-    
-    @IBAction func automateOff() {
-        send(topic: "naos/set/automate", payload: "0")
     }
     
     @IBAction func moveUp() {

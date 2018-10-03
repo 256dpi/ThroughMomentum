@@ -37,7 +37,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4X5-Vw-BHk">
-                                <rect key="frame" x="260" y="120" width="47" height="30"/>
+                                <rect key="frame" x="290" y="120" width="47" height="30"/>
                                 <state key="normal" title="FLASH">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
@@ -46,7 +46,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kKZ-iC-rZP">
-                                <rect key="frame" x="327" y="120" width="46" height="30"/>
+                                <rect key="frame" x="357" y="120" width="46" height="30"/>
                                 <state key="normal" title="DISCO">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
@@ -55,8 +55,8 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Lhp-hv-0UQ">
-                                <rect key="frame" x="393" y="120" width="127" height="30"/>
-                                <state key="normal" title="MOVE DOWN (80)">
+                                <rect key="frame" x="453" y="120" width="65" height="30"/>
+                                <state key="normal" title="MOVE 80">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
@@ -64,8 +64,8 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="X8n-RT-IOm">
-                                <rect key="frame" x="540" y="120" width="108" height="30"/>
-                                <state key="normal" title="MOVE UP (140)">
+                                <rect key="frame" x="538" y="120" width="72" height="30"/>
+                                <state key="normal" title="MOVE 140">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
@@ -78,14 +78,14 @@
                             <constraint firstItem="Gyg-bm-Sr0" firstAttribute="leading" secondItem="WA8-Fk-Ril" secondAttribute="trailing" constant="20" id="22E-cs-EyO"/>
                             <constraint firstItem="Gyg-bm-Sr0" firstAttribute="top" secondItem="iAZ-4m-2z3" secondAttribute="top" constant="100" id="65q-li-Ldi"/>
                             <constraint firstItem="X8n-RT-IOm" firstAttribute="leading" secondItem="Lhp-hv-0UQ" secondAttribute="trailing" constant="20" id="Cxi-0r-iz3"/>
-                            <constraint firstItem="4X5-Vw-BHk" firstAttribute="leading" secondItem="Gyg-bm-Sr0" secondAttribute="trailing" constant="20" id="Doe-2M-jYX"/>
+                            <constraint firstItem="4X5-Vw-BHk" firstAttribute="leading" secondItem="Gyg-bm-Sr0" secondAttribute="trailing" constant="50" id="Doe-2M-jYX"/>
                             <constraint firstItem="4X5-Vw-BHk" firstAttribute="top" secondItem="iAZ-4m-2z3" secondAttribute="top" constant="100" id="P00-Bb-rZe"/>
                             <constraint firstItem="WA8-Fk-Ril" firstAttribute="top" secondItem="iAZ-4m-2z3" secondAttribute="top" constant="100" id="P8p-vZ-bga"/>
                             <constraint firstItem="kKZ-iC-rZP" firstAttribute="leading" secondItem="4X5-Vw-BHk" secondAttribute="trailing" constant="20" id="SgI-Gk-gZu"/>
                             <constraint firstItem="X8n-RT-IOm" firstAttribute="top" secondItem="iAZ-4m-2z3" secondAttribute="top" constant="100" id="eam-aw-O5O"/>
                             <constraint firstItem="kKZ-iC-rZP" firstAttribute="top" secondItem="iAZ-4m-2z3" secondAttribute="top" constant="100" id="kyY-cU-IRD"/>
                             <constraint firstItem="WA8-Fk-Ril" firstAttribute="leading" secondItem="iAZ-4m-2z3" secondAttribute="leading" constant="100" id="lPO-RP-udC"/>
-                            <constraint firstItem="Lhp-hv-0UQ" firstAttribute="leading" secondItem="kKZ-iC-rZP" secondAttribute="trailing" constant="20" id="mop-Qv-7io"/>
+                            <constraint firstItem="Lhp-hv-0UQ" firstAttribute="leading" secondItem="kKZ-iC-rZP" secondAttribute="trailing" constant="50" id="mop-Qv-7io"/>
                             <constraint firstItem="Lhp-hv-0UQ" firstAttribute="top" secondItem="iAZ-4m-2z3" secondAttribute="top" constant="100" id="nJK-Rv-ZIx"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="iAZ-4m-2z3"/>
@@ -122,25 +122,16 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DFs-Oc-c9C">
-                                <rect key="frame" x="100" y="158" width="107" height="30"/>
-                                <state key="normal" title="AUTOMATE ON">
+                                <rect key="frame" x="100" y="158" width="81" height="30"/>
+                                <state key="normal" title="AUTOMATE">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <action selector="automateOn" destination="UJ0-D5-W48" eventType="touchUpInside" id="FGa-Ue-z9I"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0M8-wj-WKr">
-                                <rect key="frame" x="100" y="196" width="113" height="30"/>
-                                <state key="normal" title="AUTOMATE OFF">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="automateOff" destination="UJ0-D5-W48" eventType="touchUpInside" id="TUk-Tm-yzz"/>
+                                    <action selector="automate" destination="UJ0-D5-W48" eventType="touchUpInside" id="FGa-Ue-z9I"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MBZ-O0-Rwc">
-                                <rect key="frame" x="100" y="432" width="47" height="30"/>
+                                <rect key="frame" x="100" y="394" width="47" height="30"/>
                                 <state key="normal" title="FLASH">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
@@ -149,7 +140,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FgT-7P-tEa">
-                                <rect key="frame" x="100" y="276" width="67" height="30"/>
+                                <rect key="frame" x="100" y="238" width="67" height="30"/>
                                 <state key="normal" title="MOVE UP">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
@@ -158,7 +149,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="a2m-gb-aPD">
-                                <rect key="frame" x="100" y="314" width="94" height="30"/>
+                                <rect key="frame" x="100" y="276" width="94" height="30"/>
                                 <state key="normal" title="MOVE DOWN">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
@@ -167,7 +158,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fBl-nX-G9U">
-                                <rect key="frame" x="100" y="470" width="46" height="30"/>
+                                <rect key="frame" x="100" y="432" width="46" height="30"/>
                                 <state key="normal" title="DISCO">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
@@ -230,7 +221,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="C21-Yo-7Fe">
-                                <rect key="frame" x="100" y="352" width="78" height="30"/>
+                                <rect key="frame" x="100" y="314" width="78" height="30"/>
                                 <state key="normal" title="CALIBRATE">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
@@ -257,10 +248,10 @@
                             <constraint firstItem="gPd-yB-e1I" firstAttribute="trailing" secondItem="p29-QX-60C" secondAttribute="trailing" constant="100" id="A6W-y3-Mvf"/>
                             <constraint firstItem="6HH-Av-hdT" firstAttribute="top" secondItem="yxs-1g-XjV" secondAttribute="bottom" constant="8" id="BN8-Ju-ocK"/>
                             <constraint firstItem="fBl-nX-G9U" firstAttribute="top" secondItem="MBZ-O0-Rwc" secondAttribute="bottom" constant="8" id="EIJ-jd-7v8"/>
+                            <constraint firstItem="FgT-7P-tEa" firstAttribute="top" secondItem="DFs-Oc-c9C" secondAttribute="bottom" constant="50" id="HD8-89-6Yy"/>
                             <constraint firstItem="esE-Dd-8t7" firstAttribute="top" secondItem="gPd-yB-e1I" secondAttribute="top" constant="100" id="IU9-w5-0JR"/>
                             <constraint firstItem="gPd-yB-e1I" firstAttribute="trailing" secondItem="lL8-Aa-Cg9" secondAttribute="trailing" constant="100" id="JH6-9s-vCM"/>
                             <constraint firstItem="gPd-yB-e1I" firstAttribute="trailing" secondItem="6HH-Av-hdT" secondAttribute="trailing" constant="100" id="JwN-4m-hvW"/>
-                            <constraint firstItem="0M8-wj-WKr" firstAttribute="leading" secondItem="gPd-yB-e1I" secondAttribute="leading" constant="100" id="KyG-g1-a4n"/>
                             <constraint firstItem="2X7-Un-BEP" firstAttribute="top" secondItem="gPd-yB-e1I" secondAttribute="top" constant="100" id="NYh-cs-Ghr"/>
                             <constraint firstItem="Mpn-ZC-Ph9" firstAttribute="top" secondItem="esE-Dd-8t7" secondAttribute="bottom" constant="8" id="NZp-Gr-EQg"/>
                             <constraint firstItem="a2m-gb-aPD" firstAttribute="leading" secondItem="gPd-yB-e1I" secondAttribute="leading" constant="100" id="Nre-YZ-OkD"/>
@@ -279,9 +270,7 @@
                             <constraint firstItem="C21-Yo-7Fe" firstAttribute="top" secondItem="a2m-gb-aPD" secondAttribute="bottom" constant="8" id="ib6-gc-YI9"/>
                             <constraint firstItem="DFs-Oc-c9C" firstAttribute="top" secondItem="2X7-Un-BEP" secondAttribute="bottom" constant="8" id="jYt-JH-3L4"/>
                             <constraint firstItem="gPd-yB-e1I" firstAttribute="trailing" secondItem="yxs-1g-XjV" secondAttribute="trailing" constant="100" id="rpL-TZ-MVS"/>
-                            <constraint firstItem="FgT-7P-tEa" firstAttribute="top" secondItem="0M8-wj-WKr" secondAttribute="bottom" constant="50" id="sBO-Gm-wjm"/>
                             <constraint firstItem="2X7-Un-BEP" firstAttribute="leading" secondItem="gPd-yB-e1I" secondAttribute="leading" constant="100" id="slC-8r-bSc"/>
-                            <constraint firstItem="0M8-wj-WKr" firstAttribute="top" secondItem="DFs-Oc-c9C" secondAttribute="bottom" constant="8" id="tSd-zH-p8P"/>
                             <constraint firstItem="gPd-yB-e1I" firstAttribute="trailing" secondItem="Mkx-08-JSD" secondAttribute="trailing" constant="100" id="uKf-5A-NgQ"/>
                             <constraint firstItem="DFs-Oc-c9C" firstAttribute="leading" secondItem="gPd-yB-e1I" secondAttribute="leading" constant="100" id="w3l-XP-usm"/>
                             <constraint firstItem="p29-QX-60C" firstAttribute="top" secondItem="0xO-N4-Gwv" secondAttribute="bottom" constant="8" id="xEB-oZ-e15"/>
