@@ -22,6 +22,16 @@
 #define CALIBRATION_TIMEOUT 1000 * 120
 #define CALIBRATION_LEEWAY 20
 
+#define AUTOMATE_RANGE 40
+#define AUTOMATE_APPROACH 20
+
+#define RESET_OFFSET 10
+
+#define COLOR_OFFLINE led_color(127, 0, 0, 0)
+#define COLOR_CALIBRATE led_color(0, 0, 127, 0)
+#define COLOR_MOVE led_color(0, 127, 0, 0)
+#define COLOR_RESET led_color(127, 127, 0, 0)
+
 /* state */
 
 typedef enum {
@@ -101,8 +111,8 @@ static void state_transition(state_t new_state) {
       // stop motor
       mot_stop();
 
-      // set led to red
-      led_fade(led_color(127, 0, 0, 0), 100);
+      // set led
+      led_fade(COLOR_OFFLINE, 100);
 
       break;
     }
@@ -114,8 +124,8 @@ static void state_transition(state_t new_state) {
       // stop motor
       mot_stop();
 
-      // turn led to blue
-      led_fade(led_color(0, 0, 127, 0), 100);
+      // set led
+      led_fade(COLOR_CALIBRATE, 100);
 
       // free existing calibration
       if (calibration_data != NULL) {
@@ -142,8 +152,8 @@ static void state_transition(state_t new_state) {
     }
 
     case MOVE: {
-      // turn led to green
-      led_fade(led_color(0, 127, 0, 0), 100);
+      // set led
+      led_fade(COLOR_MOVE, 100);
 
       break;
     }
@@ -161,6 +171,9 @@ static void state_transition(state_t new_state) {
 
       // reset position
       position = reset_height;
+
+      // set led
+      led_fade(COLOR_RESET, 100);
 
       break;
     }
@@ -260,9 +273,9 @@ static void state_feed() {
       double target = idle_height;
 
       // check if we have motion or something below
-      if (motion || distance < idle_height) {
+      if (motion || distance < AUTOMATE_RANGE) {
         // approach object
-        target = a32_constrain_d(position + (-distance + 20), base_height, rise_height);
+        target = a32_constrain_d(position + (-distance + AUTOMATE_APPROACH), base_height, rise_height);
       }
 
       // approach new target
@@ -273,7 +286,7 @@ static void state_feed() {
 
     case RESET: {
       // approach target, set flag and transition to standby if reached
-      if (mot_approach(position, reset_height - 10, 1)) {
+      if (mot_approach(position, reset_height - RESET_OFFSET, 1)) {
         calibrated = true;
         state_transition(STANDBY);
         break;
@@ -355,7 +368,9 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
     sscanf((const char *)payload, "%d %d %d %d %d", &red, &green, &blue, &white, &time);
 
     // fade color
-    led_fade(led_color(red, green, blue, white), time);
+    if (state == STANDBY || state == AUTOMATE) {
+      led_fade(led_color(red, green, blue, white), time);
+    }
   }
 
   // check for "flash" command
