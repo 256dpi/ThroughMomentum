@@ -23,9 +23,10 @@ let grid = [
 let rows = grid.count
 let columns = grid[0].count
 
-let dotSize = 12
+let dotSize = 16
 
-let margin: Double = 150
+let marginX: Double = 250
+let marginY: Double = 200
 
 class ViewController: UIViewController, CocoaMQTTDelegate {
     var container: UIView?
@@ -40,7 +41,7 @@ class ViewController: UIViewController, CocoaMQTTDelegate {
     var gx: Double = 0
     var gy: Double = 0
 
-    var offColor = UIColor(white: 0.1, alpha: 1)
+    var offColor = UIColor(white: 1, alpha: 0.5)
     var onColor = UIColor(white: 1, alpha: 1)
     
     override func viewDidLoad() {
@@ -57,12 +58,16 @@ class ViewController: UIViewController, CocoaMQTTDelegate {
         let _green = CGFloat(Float(green) ?? 0)
         let _blue = CGFloat(Float(blue) ?? 0)
         onColor = UIColor(red: _red/1023, green: _green/1023, blue: _blue/1023, alpha: 1.0)
-        offColor = UIColor(red: _red/1023, green: _green/1023, blue: _blue/1023, alpha: 0.25)
+        offColor = UIColor(red: _red/1023, green: _green/1023, blue: _blue/1023, alpha: 0.5)
         
         // create container
         container = UIView(frame: view.frame)
         container!.alpha = 0
         view.addSubview(container!)
+        
+        // set multi touch
+        view.isMultipleTouchEnabled = true
+        container!.isMultipleTouchEnabled = true
         
         // allocate arrays
         circles = [[UIView]]()
@@ -73,8 +78,8 @@ class ViewController: UIViewController, CocoaMQTTDelegate {
         fh = Double(container!.frame.height)
         
         // calcuate gaps
-        gy = (fh-(2.0*margin))/Double(rows-1)
-        gx = (fw-(2.0*margin))/Double(columns-1)
+        gy = (fh-(2.0*marginY))/Double(rows-1)
+        gx = (fw-(2.0*marginX))/Double(columns-1)
         
         // create all circles
         for y in 0..<rows {
@@ -84,8 +89,8 @@ class ViewController: UIViewController, CocoaMQTTDelegate {
             
             for x in 0..<columns {
                 // calculate position
-                let xx = margin+Double(x)*gx
-                let yy = margin+Double(y)*gy
+                let xx = marginX+Double(x)*gx
+                let yy = marginY+Double(y)*gy
                 
                 // create view
                 let v = UIView(frame: CGRect(x: xx, y: yy, width: Double(dotSize), height: Double(dotSize)))
@@ -139,7 +144,7 @@ class ViewController: UIViewController, CocoaMQTTDelegate {
         
         // set new colors
         onColor = UIColor(hue: hue + 0.001, saturation: sat, brightness: brg, alpha: 1)
-        offColor = UIColor(hue: hue + 0.001, saturation: sat, brightness: brg, alpha: 0.25)
+        offColor = UIColor(hue: hue + 0.001, saturation: sat, brightness: brg, alpha: 0.5)
         
         // update circles
         for y in 0..<rows {
@@ -162,8 +167,8 @@ class ViewController: UIViewController, CocoaMQTTDelegate {
     
     func handleTouch(touch: UITouch) {
         // get location
-        let x = Double(touch.location(in: container).x) - Double(margin)
-        let y = Double(touch.location(in: container).y) - Double(margin)
+        let x = Double(touch.location(in: container).x) - Double(marginX)
+        let y = Double(touch.location(in: container).y) - Double(marginY)
         
         // calculate row and column number
         let xx = Int(round(x / gx))
