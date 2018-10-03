@@ -154,7 +154,7 @@ class MainViewController: UIViewController, CircleViewDelegate, CocoaMQTTDelegat
         }
         
         // send message to all lights
-        for id in 1...48 {
+        for id in 1...circleViews!.count {
             send(id: id, topic: topic, payload: payload)
         }
     }
@@ -223,35 +223,41 @@ class MainViewController: UIViewController, CircleViewDelegate, CocoaMQTTDelegat
         if segments.count == 3 && segments.first == "lights" {
             // get and check id
             let id = Int(segments[1]) ?? 0
-            if id < 0 || id > 48 {
+            if id < 0 || id > circleViews!.count {
                 return
             }
             
             // get circle view
-            let cv = circleViews![id]
+            var circleView: CircleView?
+            for cv in circleViews! {
+                if cv.id == id {
+                    circleView = cv
+                    break
+                }
+            }
     
             // get detail view controller
-            var dvc: DetailViewController?
+            var detailViewController: DetailViewController?
             if detailVC?.id == id {
-                dvc = detailVC
+                detailViewController = detailVC
             }
             
             // update circle view and detail view controller based on the received information
             if segments.last == "position" {
                 let position = Double(String(data: Data(bytes: message.payload), encoding: .utf8) ?? "0") ?? 0
-                cv.position = position
-                dvc?.position = position
+                circleView?.position = position
+                detailViewController?.position = position
             } else if segments.last == "distance" {
                 let distance = Double(String(data: Data(bytes: message.payload), encoding: .utf8) ?? "0") ?? 0
-                cv.distance = distance
-                dvc?.distance = distance
+                circleView?.distance = distance
+                detailViewController?.distance = distance
             } else if segments.last == "motion" {
                 let motion = String(data: Data(bytes: message.payload), encoding: .utf8) == "1"
-                cv.motion = motion
-                dvc?.motion = motion
+                circleView?.motion = motion
+                detailViewController?.motion = motion
             } else if segments.last == "state" {
                 let state = String(data: Data(bytes: message.payload), encoding: .utf8)
-                dvc?.state = state ?? ""
+                detailViewController?.state = state ?? ""
             }
         }
     }
