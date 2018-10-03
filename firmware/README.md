@@ -38,6 +38,10 @@ If motions is currently measured.
 
 ## Parameters
 
+### `debug (false)`
+
+Enable debug lighting.
+
 ### `automate (false)`
 
 When automate is `1` the light will move according to the sensors.
