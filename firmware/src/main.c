@@ -44,6 +44,7 @@ state_t state = -1;
 
 /* parameters */
 
+static bool debug = false;
 static bool automate = false;
 static double automate_range = 0;
 static double automate_approach = 0;
@@ -111,7 +112,11 @@ static void state_transition(state_t new_state) {
       mot_stop();
 
       // set led
-      led_fade(COLOR_OFFLINE, 100);
+      if (debug) {
+        led_fade(COLOR_OFFLINE, 100);
+      } else {
+        led_fade(led_mono(0), 100);
+      }
 
       break;
     }
@@ -124,7 +129,9 @@ static void state_transition(state_t new_state) {
       mot_stop();
 
       // set led
-      led_fade(COLOR_CALIBRATE, 100);
+      if (debug) {
+        led_fade(COLOR_CALIBRATE, 100);
+      }
 
       // free existing calibration
       if (calibration_data != NULL) {
@@ -152,7 +159,9 @@ static void state_transition(state_t new_state) {
 
     case MOVE: {
       // set led
-      led_fade(COLOR_MOVE, 100);
+      if (debug) {
+        led_fade(COLOR_MOVE, 100);
+      }
 
       break;
     }
@@ -172,7 +181,9 @@ static void state_transition(state_t new_state) {
       position = reset_height;
 
       // set led
-      led_fade(COLOR_RESET, 100);
+      if (debug) {
+        led_fade(COLOR_RESET, 100);
+      }
 
       break;
     }
@@ -203,7 +214,7 @@ static void state_feed() {
     _distance = distance;
   }
 
-  // publish update if motion has been changed
+  // publish update if motion has changed
   static bool _motion = false;
   if (motion != _motion) {
     naos_publish_b("motion", motion, 0, false, NAOS_LOCAL);
@@ -367,7 +378,7 @@ static void message(const char *topic, uint8_t *payload, size_t len, naos_scope_
     sscanf((const char *)payload, "%d %d %d %d %d", &red, &green, &blue, &white, &time);
 
     // fade color
-    if (state == STANDBY || state == AUTOMATE) {
+    if (!debug || (state == STANDBY || state == AUTOMATE)) {
       led_fade(led_color(red, green, blue, white), time);
     }
   }
@@ -462,6 +473,7 @@ static void dst(double d) {
 /* initialization */
 
 static naos_param_t params[] = {
+    {.name = "debug", .type = NAOS_BOOL, .default_b = true, .sync_b = &debug},
     {.name = "automate", .type = NAOS_BOOL, .default_b = false, .sync_b = &automate},
     {.name = "automate-range", .type = NAOS_DOUBLE, .default_d = 40, .sync_d = &automate_range},
     {.name = "automate-approach", .type = NAOS_DOUBLE, .default_d = 20, .sync_d = &automate_approach},
@@ -481,7 +493,7 @@ static naos_param_t params[] = {
 static naos_config_t config = {.device_type = "tm-lo",
                                .firmware_version = "1.3.2",
                                .parameters = params,
-                               .num_parameters = 14,
+                               .num_parameters = 15,
                                .ping_callback = ping,
                                .online_callback = online,
                                .offline_callback = offline,
