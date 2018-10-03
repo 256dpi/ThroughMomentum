@@ -42,11 +42,11 @@ If motions is currently measured.
 
 When automate is `1` the light will move according to the sensors.
 
-### `automate-range (40)`
+### `approach-range (40)`
 
-The distance considered a valid automate range.
+The distance considered a valid approach range.
 
-### `automate-approach (20)`
+### `approach-target (20)`
 
 The distance to approach from the detected object.
 

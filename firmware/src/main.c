@@ -46,8 +46,8 @@ state_t state = -1;
 
 static bool debug = false;
 static bool automate = false;
-static double automate_range = 0;
-static double automate_approach = 0;
+static double approach_range = 0;
+static double approach_target = 0;
 static double idle_height = 0;
 static double base_height = 0;
 static double rise_height = 0;
@@ -283,9 +283,9 @@ static void state_feed() {
       double target = idle_height;
 
       // check if we have motion or something below
-      if (motion || distance < automate_range) {
+      if (motion || distance < approach_range) {
         // approach object
-        target = a32_constrain_d(position + (-distance + automate_approach), base_height, rise_height);
+        target = a32_constrain_d(position + (-distance + approach_target), base_height, rise_height);
       }
 
       // approach new target
@@ -475,8 +475,8 @@ static void dst(double d) {
 static naos_param_t params[] = {
     {.name = "debug", .type = NAOS_BOOL, .default_b = true, .sync_b = &debug},
     {.name = "automate", .type = NAOS_BOOL, .default_b = false, .sync_b = &automate},
-    {.name = "automate-range", .type = NAOS_DOUBLE, .default_d = 40, .sync_d = &automate_range},
-    {.name = "automate-approach", .type = NAOS_DOUBLE, .default_d = 20, .sync_d = &automate_approach},
+    {.name = "approach-range", .type = NAOS_DOUBLE, .default_d = 40, .sync_d = &approach_range},
+    {.name = "approach-target", .type = NAOS_DOUBLE, .default_d = 20, .sync_d = &approach_target},
     {.name = "idle-height", .type = NAOS_DOUBLE, .default_d = 50, .sync_d = &idle_height},
     {.name = "base-height", .type = NAOS_DOUBLE, .default_d = 100, .sync_d = &base_height},
     {.name = "rise-height", .type = NAOS_DOUBLE, .default_d = 150, .sync_d = &rise_height},
