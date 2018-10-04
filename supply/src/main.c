@@ -44,12 +44,13 @@ static naos_param_t params[3] = {
 };
 
 static naos_config_t config = {.device_type = "tm-ps",
-                               .firmware_version = "0.2.0",
+                               .firmware_version = "0.3.0",
                                .parameters = params,
                                .num_parameters = 3,
                                .ping_callback = ping,
                                .update_callback = update,
-                               .status_callback = status};
+                               .status_callback = status,
+                               .password = "tm2018"};
 
 void app_main() {
   // init led
