@@ -23,7 +23,6 @@ let grid = [
 let rows = grid.count
 let columns = grid[0].count
 
-let lights = 24
 let dotSize = 16
 
 let marginX: Double = 250
