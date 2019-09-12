@@ -92,11 +92,12 @@ class MainViewController: UIViewController, CircleViewDelegate, CocoaMQTTDelegat
         
         // get settings
         let host = UserDefaults.standard.string(forKey: "host") ?? ""
+        let port = UserDefaults.standard.integer(forKey: "port")
         let username = UserDefaults.standard.string(forKey: "username")
         let password = UserDefaults.standard.string(forKey: "password")
         
         // create client
-        client = CocoaMQTT(clientID: "controller", host: host, port: 1883)
+        client = CocoaMQTT(clientID: "controller", host: host, port: UInt16(port))
         client!.username = username
         client!.password = password
         client!.delegate = self
