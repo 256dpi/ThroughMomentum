@@ -1,9 +1,7 @@
 #include <art32/motion.h>
 #include <art32/numbers.h>
 #include <art32/smooth.h>
-#include <art32/strconv.h>
 #include <driver/adc.h>
-#include <esp_system.h>
 #include <math.h>
 #include <naos.h>
 #include <stdlib.h>
@@ -66,9 +64,7 @@ static bool motion = false;
 static double distance = 0;
 static double position = 0;
 static double usage = 0;
-
 static double move_to = 0;
-
 static bool calibrated = false;
 static a32_smooth_t *calibration_data = NULL;
 static uint32_t calibration_timeout = 0;
