@@ -75,7 +75,7 @@ static uint32_t calibration_timeout = 0;
 
 /* state machine */
 
-const char *state_str(state_t s) {
+static const char *state_str(state_t s) {
   switch (s) {
     case OFFLINE:
       return "OFFLINE";
@@ -89,9 +89,9 @@ const char *state_str(state_t s) {
       return "AUTOMATE";
     case RESET:
       return "RESET";
+    default:
+      return "UNKNOWN";
   }
-
-  return "";
 }
 
 static void state_feed();
